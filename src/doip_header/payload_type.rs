@@ -13,32 +13,77 @@ use crate::{
     error::PayloadError,
 };
 
+/// Implemented across DoIP Payload Types for consistent encoding and decoding of buffers.
+///
+/// `DoipPayload` is implemented across all the DoIP Payload Types for the
+/// purpose of consistent encoding and decoding as well as identification within
+/// a buffer.
 pub trait DoipPayload: Debug + Send {
+    /// Used to identify the payload self for `DoipHeader` construction.
     fn payload_type(&self) -> PayloadType;
+
+    /// Used to convert the payload into bytes.
     fn to_bytes(&self) -> Vec<u8>;
+
+    /// Used to convert the payload from bytes.
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError>
     where
         Self: Sized;
 }
 
+/// Defines the variants of payloads available to DoIP.
+///
+/// `PayloadType` values map to the `u16` representing the bytes it makes up
+/// within the DoIP packet.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u16)]
 pub enum PayloadType {
+    /// Generic Negative Acknowledge
     GenericNack = DOIP_GENERIC_NACK,
+
+    /// Vehicle Identification Request
     VehicleIdentificationRequest = DOIP_VEHICLE_IDENTIFICATION_REQ,
+
+    /// Vehicle Identification Request by EID
     VehicleIdentificationRequestEid = DOIP_VEHICLE_IDENTIFICATION_REQ_EID,
+
+    /// Vehicle Identification Request by VIN
     VehicleIdentificationRequestVin = DOIP_VEHICLE_IDENTIFICATION_REQ_VIN,
+
+    /// Vehicle Announcement Message
     VehicleAnnouncementMessage = DOIP_VEHICLE_ANNOUNCEMENT_MESSAGE,
+
+    /// Routing Activation Request
     RoutingActivationRequest = DOIP_ROUTING_ACTIVATION_REQUEST,
+
+    /// Routing Activation Response
     RoutingActivationResponse = DOIP_ROUTING_ACTIVATION_RESPONSE,
+
+    /// Alive Check Request
     AliveCheckRequest = DOIP_ALIVE_CHECK_REQUEST,
+
+    /// Alive Check Response
     AliveCheckResponse = DOIP_ALIVE_CHECK_RESPONSE,
+
+    /// Entity Status Request
     EntityStatusRequest = DOIP_ENTITY_STATUS_REQUEST,
+
+    /// Entity Status Response
     EntityStatusResponse = DOIP_ENTITY_STATUS_RESPONSE,
+
+    /// Power Information Request
     PowerInformationRequest = DOIP_POWER_INFORMATION_REQUEST,
+
+    /// Power Information Response
     PowerInformationResponse = DOIP_POWER_INFORMATION_RESPONSE,
+
+    /// Diagnostic Message
     DiagnosticMessage = DOIP_DIAGNOSTIC_MESSAGE,
+
+    /// Diagnostic Message Acknowledgement
     DiagnosticMessageAck = DOIP_DIAGNOSTIC_MESSAGE_ACK,
+
+    /// Diagnostic Message Negative Acknowledgement
     DiagnosticMessageNack = DOIP_DIAGNOSTIC_MESSAGE_NACK,
 }
 
