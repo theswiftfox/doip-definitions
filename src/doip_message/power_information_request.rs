@@ -1,6 +1,7 @@
-use crate::error::PayloadError;
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    error::PayloadError,
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct PowerInformationRequest {}
@@ -21,7 +22,10 @@ impl DoipPayload for PowerInformationRequest {
 
 #[cfg(test)]
 mod tests {
-    use crate::header::payload::{DoipPayload, PayloadType, PowerInformationRequest};
+    use crate::{
+        header::{DoipPayload, PayloadType},
+        doip_message::power_information_request::PowerInformationRequest,
+    };
 
     #[test]
     fn test_payload_type() {

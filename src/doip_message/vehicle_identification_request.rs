@@ -1,6 +1,7 @@
-use crate::error::PayloadError;
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    error::PayloadError,
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleIdentificationRequest {}
@@ -21,7 +22,10 @@ impl DoipPayload for VehicleIdentificationRequest {
 
 #[cfg(test)]
 mod tests {
-    use crate::header::payload::{DoipPayload, PayloadType, VehicleIdentificationRequest};
+    use crate::{
+        header::{DoipPayload, PayloadType},
+        doip_message::vehicle_identification_request::VehicleIdentificationRequest,
+    };
 
     #[test]
     fn test_payload_type() {

@@ -1,8 +1,8 @@
-use thiserror::Error;
-
-use crate::{definitions::DOIP_COMMON_EID_LEN, error::PayloadError};
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    definitions::DOIP_COMMON_EID_LEN,
+    error::{PayloadError, VehicleIdentificationRequestEidError},
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleIdentificationRequestEid {
@@ -42,23 +42,13 @@ impl DoipPayload for VehicleIdentificationRequestEid {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum VehicleIdentificationRequestEidError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
         definitions::DOIP_COMMON_EID_LEN,
-        error::PayloadError,
-        header::payload::{
-            DoipPayload, PayloadType, VehicleIdentificationRequestEid,
-            VehicleIdentificationRequestEidError,
-        },
+        error::{PayloadError, VehicleIdentificationRequestEidError},
+        header::{DoipPayload, PayloadType},
+        doip_message::vehicle_identification_request_eid::VehicleIdentificationRequestEid,
     };
 
     const DEFAULT_EID: [u8; DOIP_COMMON_EID_LEN] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05];

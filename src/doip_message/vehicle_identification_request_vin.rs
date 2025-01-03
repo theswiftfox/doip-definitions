@@ -1,8 +1,8 @@
-use thiserror::Error;
-
-use crate::{definitions::DOIP_COMMON_VIN_LEN, error::PayloadError};
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    definitions::DOIP_COMMON_VIN_LEN,
+    error::{PayloadError, VehicleIdentificationRequestVinError},
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleIdentificationRequestVin {
@@ -42,23 +42,13 @@ impl DoipPayload for VehicleIdentificationRequestVin {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum VehicleIdentificationRequestVinError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
         definitions::DOIP_COMMON_VIN_LEN,
-        error::PayloadError,
-        header::payload::{
-            DoipPayload, PayloadType, VehicleIdentificationRequestVin,
-            VehicleIdentificationRequestVinError,
-        },
+        error::{PayloadError, VehicleIdentificationRequestVinError},
+        header::{DoipPayload, PayloadType},
+        doip_message::vehicle_identification_request_vin::VehicleIdentificationRequestVin,
     };
 
     const DEFAULT_VIN: [u8; DOIP_COMMON_VIN_LEN] = [

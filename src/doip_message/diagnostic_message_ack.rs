@@ -1,14 +1,11 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{
         DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN, DOIP_DIAG_MESSAGE_ACK_CODE_LEN,
     },
-    error::PayloadError,
+    error::{DiagnosticMessageAckError, PayloadError},
+    header::{DoipPayload, PayloadType},
     message::DiagnosticAckCode,
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Copy, Clone, Debug)]
 pub struct DiagnosticMessageAck {
@@ -82,24 +79,13 @@ impl DoipPayload for DiagnosticMessageAck {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum DiagnosticMessageAckError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("invalid acknowledgement code")]
-    InvalidAckCode,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError,
-        header::payload::{
-            DiagnosticMessageAck, DiagnosticMessageAckError, DoipPayload, PayloadType,
-        },
+        error::{DiagnosticMessageAckError, PayloadError},
+        header::{DoipPayload, PayloadType},
         message::DiagnosticAckCode,
+        doip_message::diagnostic_message_ack::DiagnosticMessageAck,
     };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];

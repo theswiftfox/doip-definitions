@@ -1,16 +1,13 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{
         DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN, DOIP_ROUTING_ACTIVATION_RES_CODE_LEN,
         DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
         DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN,
     },
-    error::PayloadError,
+    error::{PayloadError, RoutingActivationResponseError},
+    header::{DoipPayload, PayloadType},
     message::ActivationCode,
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Copy, Clone, Debug)]
 pub struct RoutingActivationResponse {
@@ -124,24 +121,13 @@ impl DoipPayload for RoutingActivationResponse {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum RoutingActivationResponseError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("activation code not supported")]
-    InvalidActivationCode,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError,
-        header::payload::{
-            DoipPayload, PayloadType, RoutingActivationResponse, RoutingActivationResponseError,
-        },
+        error::{PayloadError, RoutingActivationResponseError},
+        header::{DoipPayload, PayloadType},
         message::ActivationCode,
+        doip_message::routing_activation_response::RoutingActivationResponse,
     };
 
     const DEFAULT_LOGICAL_ADDRESS: [u8; 2] = [0x01, 0x02];

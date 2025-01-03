@@ -1,8 +1,9 @@
-use thiserror::Error;
-
-use crate::{definitions::DOIP_POWER_MODE_LEN, error::PayloadError, message::PowerMode};
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    definitions::DOIP_POWER_MODE_LEN,
+    error::{PayloadError, PowerInformationResponseError},
+    header::{DoipPayload, PayloadType},
+    message::PowerMode,
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct PowerInformationResponse {
@@ -48,24 +49,13 @@ impl DoipPayload for PowerInformationResponse {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum PowerInformationResponseError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("powermode not supported")]
-    InvalidPowerMode,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError,
-        header::payload::{
-            DoipPayload, PayloadType, PowerInformationResponse, PowerInformationResponseError,
-        },
+        error::{PayloadError, PowerInformationResponseError},
+        header::{DoipPayload, PayloadType},
         message::PowerMode,
+        doip_message::power_information_response::PowerInformationResponse,
     };
 
     const DEFAULT_POWER_MODE: PowerMode = PowerMode::NotReady;

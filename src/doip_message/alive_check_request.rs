@@ -1,6 +1,7 @@
-use crate::error::PayloadError;
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    error::PayloadError,
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct AliveCheckRequest {}
@@ -21,7 +22,10 @@ impl DoipPayload for AliveCheckRequest {
 
 #[cfg(test)]
 mod tests {
-    use crate::header::payload::{AliveCheckRequest, DoipPayload, PayloadType};
+    use crate::{
+        header::{DoipPayload, PayloadType},
+        doip_message::alive_check_request::AliveCheckRequest,
+    };
 
     #[test]
     fn test_payload_type() {

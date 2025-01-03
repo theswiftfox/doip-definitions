@@ -1,11 +1,8 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN},
-    error::PayloadError,
+    error::{DiagnosticMessageError, PayloadError},
+    header::{DoipPayload, PayloadType},
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Clone, Debug)]
 pub struct DiagnosticMessage {
@@ -71,19 +68,13 @@ impl DoipPayload for DiagnosticMessage {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum DiagnosticMessageError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::{error::PayloadError, header::payload::{
-        DiagnosticMessage, DiagnosticMessageError, DoipPayload, PayloadType,
-    }};
+    use crate::{
+        error::{DiagnosticMessageError, PayloadError},
+        header::{DoipPayload, PayloadType},
+        doip_message::diagnostic_message::DiagnosticMessage,
+    };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];
     const DEFAULT_TARGET_ADDRESS: [u8; 2] = [0x03, 0x04];

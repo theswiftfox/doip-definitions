@@ -1,15 +1,12 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{
         DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN, DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN,
         DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN, DOIP_ENTITY_STATUS_RESPONSE_NODE_LEN,
     },
-    error::PayloadError,
+    error::{EntityStatusResponseError, PayloadError},
+    header::{DoipPayload, PayloadType},
     message::NodeType,
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Copy, Clone, Debug)]
 pub struct EntityStatusResponse {
@@ -103,22 +100,13 @@ impl DoipPayload for EntityStatusResponse {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum EntityStatusResponseError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("invalid node type")]
-    InvalidNodeType,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError, header::payload::{
-            DoipPayload, EntityStatusResponse, EntityStatusResponseError, PayloadType,
-        }, message::NodeType
+        error::{EntityStatusResponseError, PayloadError},
+        header::{DoipPayload, PayloadType},
+        message::NodeType,
+        doip_message::entity_status_response::EntityStatusResponse,
     };
 
     const DEFAULT_NODE_TYPE: NodeType = NodeType::DoipNode;

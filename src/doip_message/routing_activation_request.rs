@@ -1,15 +1,12 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{
         DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN,
         DOIP_ROUTING_ACTIVATION_REQ_TYPE_LEN_V2,
     },
-    error::PayloadError,
+    error::{PayloadError, RoutingActivationRequestError},
+    header::{DoipPayload, PayloadType},
     message::ActivationType,
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Copy, Clone, Debug)]
 pub struct RoutingActivationRequest {
@@ -88,24 +85,13 @@ impl DoipPayload for RoutingActivationRequest {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum RoutingActivationRequestError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("activation type not supported")]
-    InvalidActivationType,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError,
-        header::payload::{
-            DoipPayload, PayloadType, RoutingActivationRequest, RoutingActivationRequestError,
-        },
+        error::{PayloadError, RoutingActivationRequestError},
+        header::{DoipPayload, PayloadType},
         message::ActivationType,
+        doip_message::routing_activation_request::RoutingActivationRequest,
     };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];

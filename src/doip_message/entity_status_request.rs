@@ -1,6 +1,7 @@
-use crate::error::PayloadError;
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    error::PayloadError,
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct EntityStatusRequest {}
@@ -21,7 +22,10 @@ impl DoipPayload for EntityStatusRequest {
 
 #[cfg(test)]
 mod tests {
-    use crate::header::payload::{DoipPayload, EntityStatusRequest, PayloadType};
+    use crate::{
+        header::{DoipPayload, PayloadType},
+        doip_message::entity_status_request::EntityStatusRequest,
+    };
 
     #[test]
     fn test_payload_type() {

@@ -1,14 +1,11 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{
         DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN, DOIP_DIAG_MESSAGE_NACK_CODE_LEN,
     },
-    error::PayloadError,
+    error::{DiagnosticMessageNackError, PayloadError},
+    header::{DoipPayload, PayloadType},
     message::DiagnosticNackCode,
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Copy, Clone, Debug)]
 pub struct DiagnosticMessageNack {
@@ -40,7 +37,7 @@ impl DoipPayload for DiagnosticMessageNack {
 
         if bytes.len() < min_length {
             return Err(PayloadError::DiagnosticMessageNackParseError(
-                DiagnosticMessageNackParseError::InvalidLength,
+                DiagnosticMessageNackError::InvalidLength,
             ));
         }
 
@@ -50,7 +47,7 @@ impl DoipPayload for DiagnosticMessageNack {
                 Ok(array) => array,
                 Err(_) => {
                     return Err(PayloadError::DiagnosticMessageNackParseError(
-                        DiagnosticMessageNackParseError::InvalidIndexRange,
+                        DiagnosticMessageNackError::InvalidIndexRange,
                     ))
                 }
             };
@@ -61,7 +58,7 @@ impl DoipPayload for DiagnosticMessageNack {
                 Ok(array) => array,
                 Err(_) => {
                     return Err(PayloadError::DiagnosticMessageNackParseError(
-                        DiagnosticMessageNackParseError::InvalidIndexRange,
+                        DiagnosticMessageNackError::InvalidIndexRange,
                     ))
                 }
             };
@@ -79,7 +76,7 @@ impl DoipPayload for DiagnosticMessageNack {
             0x08 => DiagnosticNackCode::TransportProtocolError,
             _ => {
                 return Err(PayloadError::DiagnosticMessageNackParseError(
-                    DiagnosticMessageNackParseError::InvalidNackCode,
+                    DiagnosticMessageNackError::InvalidNackCode,
                 ))
             }
         };
@@ -92,24 +89,13 @@ impl DoipPayload for DiagnosticMessageNack {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum DiagnosticMessageNackParseError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("invalid negative acknowledgement code")]
-    InvalidNackCode,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError,
-        header::payload::{
-            DiagnosticMessageNack, DiagnosticMessageNackParseError, DoipPayload, PayloadType,
-        },
+        error::{DiagnosticMessageNackError, PayloadError},
+        header::{DoipPayload, PayloadType},
         message::DiagnosticNackCode,
+        doip_message::diagnostic_message_nack::DiagnosticMessageNack,
     };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];
@@ -151,7 +137,7 @@ mod tests {
         assert_eq!(
             error,
             PayloadError::DiagnosticMessageNackParseError(
-                DiagnosticMessageNackParseError::InvalidLength
+                DiagnosticMessageNackError::InvalidLength
             ),
             "Unexpected error message: {}",
             error
@@ -172,7 +158,7 @@ mod tests {
         assert_eq!(
             error,
             PayloadError::DiagnosticMessageNackParseError(
-                DiagnosticMessageNackParseError::InvalidNackCode
+                DiagnosticMessageNackError::InvalidNackCode
             ),
             "Unexpected error message: {}",
             error

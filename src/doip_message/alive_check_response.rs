@@ -1,8 +1,8 @@
-use thiserror::Error;
-
-use crate::{definitions::DOIP_DIAG_COMMON_SOURCE_LEN, error::PayloadError};
-
-use super::doip_payload::{DoipPayload, PayloadType};
+use crate::{
+    definitions::DOIP_DIAG_COMMON_SOURCE_LEN,
+    error::{AliveCheckResponseError, PayloadError},
+    header::{DoipPayload, PayloadType},
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct AliveCheckResponse {
@@ -24,7 +24,7 @@ impl DoipPayload for AliveCheckResponse {
 
         if bytes.len() < min_length {
             return Err(PayloadError::AliveCheckResponseParseError(
-                AliveCheckResponseParseError::InvalidLength,
+                AliveCheckResponseError::InvalidLength,
             ));
         }
 
@@ -34,7 +34,7 @@ impl DoipPayload for AliveCheckResponse {
                 Ok(array) => array,
                 Err(_) => {
                     return Err(PayloadError::AliveCheckResponseParseError(
-                        AliveCheckResponseParseError::InvalidIndexRange,
+                        AliveCheckResponseError::InvalidIndexRange,
                     ))
                 }
             };
@@ -43,21 +43,12 @@ impl DoipPayload for AliveCheckResponse {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum AliveCheckResponseParseError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
         error::PayloadError,
-        header::payload::{
-            AliveCheckResponse, AliveCheckResponseParseError, DoipPayload, PayloadType,
-        },
+        header::{DoipPayload, PayloadType},
+        doip_message::alive_check_response::{AliveCheckResponse, AliveCheckResponseError},
     };
 
     const SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];
@@ -93,7 +84,7 @@ mod tests {
 
         assert_eq!(
             error,
-            PayloadError::AliveCheckResponseParseError(AliveCheckResponseParseError::InvalidLength),
+            PayloadError::AliveCheckResponseParseError(AliveCheckResponseError::InvalidLength),
             "Unexpected error message: {}",
             error
         );

@@ -1,7 +1,9 @@
-use thiserror::Error;
-
-use super::doip_payload::{DoipPayload, PayloadType};
-use crate::{definitions::DOIP_GENERIC_NACK_LEN, error::PayloadError, message::NackCode};
+use crate::{
+    definitions::DOIP_GENERIC_NACK_LEN,
+    error::{GenericNackError, PayloadError},
+    header::{DoipPayload, PayloadType},
+    message::NackCode,
+};
 
 #[derive(Copy, Clone, Debug)]
 pub struct GenericNack {
@@ -49,22 +51,13 @@ impl DoipPayload for GenericNack {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum GenericNackError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("invalid nack code")]
-    InvalidNackCode,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        error::PayloadError,
-        header::payload::{DoipPayload, GenericNack, GenericNackError, PayloadType},
+        error::{GenericNackError, PayloadError},
+        header::{DoipPayload, PayloadType},
         message::NackCode,
+        doip_message::generic_nack::GenericNack,
     };
 
     const DEFAULT_NACK_CODE: NackCode = NackCode::IncorrectPatternFormat;

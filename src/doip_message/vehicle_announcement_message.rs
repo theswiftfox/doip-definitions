@@ -1,15 +1,12 @@
-use thiserror::Error;
-
 use crate::{
     definitions::{
         DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
         DOIP_VEHICLE_ANNOUNCEMENT_ACTION_LEN, DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
     },
-    error::PayloadError,
+    error::{PayloadError, VehicleAnnouncementMessageError},
+    header::{DoipPayload, PayloadType},
     message::{ActionCode, SyncStatus},
 };
-
-use super::doip_payload::{DoipPayload, PayloadType};
 
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleAnnouncementMessage {
@@ -159,16 +156,6 @@ impl DoipPayload for VehicleAnnouncementMessage {
     }
 }
 
-#[derive(Error, Debug, PartialEq)]
-pub enum VehicleAnnouncementMessageError {
-    #[error("length of bytes is too short")]
-    InvalidLength,
-    #[error("invalid index range supplied")]
-    InvalidIndexRange,
-    #[error("action code not supported")]
-    InvalidActionCode,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -176,11 +163,10 @@ mod tests {
             DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
             DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
         },
-        error::PayloadError,
-        header::payload::{
-            DoipPayload, PayloadType, VehicleAnnouncementMessage, VehicleAnnouncementMessageError,
-        },
+        error::{PayloadError, VehicleAnnouncementMessageError},
+        header::{DoipPayload, PayloadType},
         message::{ActionCode, SyncStatus},
+        doip_message::vehicle_announcement_message::VehicleAnnouncementMessage,
     };
 
     const DEFAULT_VIN: [u8; DOIP_COMMON_VIN_LEN] = [

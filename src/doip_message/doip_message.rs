@@ -5,17 +5,23 @@ use crate::{
     },
     error::ParseError,
     header::{
-        payload::{
-            AliveCheckRequest, AliveCheckResponse, DiagnosticMessage, DiagnosticMessageAck,
-            DiagnosticMessageNack, EntityStatusRequest, EntityStatusResponse, GenericNack,
-            PowerInformationRequest, PowerInformationResponse, RoutingActivationRequest,
-            RoutingActivationResponse, VehicleAnnouncementMessage, VehicleIdentificationRequest,
-            VehicleIdentificationRequestEid, VehicleIdentificationRequestVin,
-            {DoipPayload, PayloadType},
-        },
-        version::DoipVersion,
-        DoipHeader,
+        DoipHeader, DoipVersion, {DoipPayload, PayloadType},
     },
+};
+
+use super::{
+    alive_check_request::AliveCheckRequest, alive_check_response::AliveCheckResponse,
+    diagnostic_message::DiagnosticMessage, diagnostic_message_ack::DiagnosticMessageAck,
+    diagnostic_message_nack::DiagnosticMessageNack, entity_status_request::EntityStatusRequest,
+    entity_status_response::EntityStatusResponse, generic_nack::GenericNack,
+    power_information_request::PowerInformationRequest,
+    power_information_response::PowerInformationResponse,
+    routing_activation_request::RoutingActivationRequest,
+    routing_activation_response::RoutingActivationResponse,
+    vehicle_announcement_message::VehicleAnnouncementMessage,
+    vehicle_identification_request::VehicleIdentificationRequest,
+    vehicle_identification_request_eid::VehicleIdentificationRequestEid,
+    vehicle_identification_request_vin::VehicleIdentificationRequestVin,
 };
 
 #[derive(Debug)]
@@ -223,8 +229,9 @@ impl DoipMessage {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::vehicle_identification_request::VehicleIdentificationRequest,
         error::{ParseError, PayloadError},
-        header::payload::VehicleIdentificationRequest,
+        header::DoipVersion,
     };
 
     use super::DoipMessage;
@@ -232,7 +239,7 @@ mod tests {
     #[test]
     fn test_to_bytes() {
         let msg = DoipMessage::new(
-            crate::header::version::DoipVersion::Iso13400_2012,
+            DoipVersion::Iso13400_2012,
             Box::new(VehicleIdentificationRequest {}),
         );
 
@@ -251,7 +258,7 @@ mod tests {
         let msg = msg_raw.unwrap();
 
         let comp = DoipMessage::new(
-            crate::header::version::DoipVersion::Iso13400_2012,
+            DoipVersion::Iso13400_2012,
             Box::new(VehicleIdentificationRequest {}),
         );
         let msg_len_raw = (&*msg.payload).to_bytes().len();
