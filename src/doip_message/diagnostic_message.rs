@@ -12,10 +12,10 @@ use crate::{
 #[derive(Clone, Debug)]
 pub struct DiagnosticMessage {
     /// The source address of the responding DoIP Entity
-    pub source_address: [u8; 2],
+    pub source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
 
     /// The target address of the requesting DoIP Entity
-    pub target_address: [u8; 2],
+    pub target_address: [u8; DOIP_DIAG_COMMON_TARGET_LEN],
 
     /// Message containing the UDS protocol message
     pub message: Vec<u8>,

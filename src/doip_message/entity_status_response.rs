@@ -19,13 +19,13 @@ pub struct EntityStatusResponse {
     pub node_type: NodeType,
 
     /// The number of maximum concurrent TCP sockets allowed on this entity
-    pub max_concurrent_sockets: [u8; 1],
+    pub max_concurrent_sockets: [u8; DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN],
 
     /// The number of currently open TCP sockets on the entity
-    pub currently_open_sockets: [u8; 1],
+    pub currently_open_sockets: [u8; DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN],
 
     /// The max data size allowed to be sent to the entity
-    pub max_data_size: [u8; 4],
+    pub max_data_size: [u8; DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN],
 }
 
 impl DoipPayload for EntityStatusResponse {

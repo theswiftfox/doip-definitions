@@ -14,10 +14,10 @@ use crate::{
 #[derive(Copy, Clone, Debug)]
 pub struct DiagnosticMessageNack {
     /// The source address of the responding DoIP Entity
-    pub source_address: [u8; 2],
+    pub source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
 
     /// The target address of the requesting DoIP Entity
-    pub target_address: [u8; 2],
+    pub target_address: [u8; DOIP_DIAG_COMMON_TARGET_LEN],
 
     /// The negative acknowledgement code
     pub nack_code: DiagnosticNackCode,

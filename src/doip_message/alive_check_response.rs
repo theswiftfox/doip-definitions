@@ -10,7 +10,7 @@ use crate::{
 #[derive(Copy, Clone, Debug)]
 pub struct AliveCheckResponse {
     /// The source address of the responding DoIP Entity
-    pub source_address: [u8; 2],
+    pub source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
 }
 
 impl DoipPayload for AliveCheckResponse {
