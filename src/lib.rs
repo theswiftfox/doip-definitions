@@ -47,7 +47,7 @@ pub mod message {
     pub use super::doip_message::activation_type::*;
     pub use super::doip_message::diagnostic_ack::*;
     pub use super::doip_message::diagnostic_nack::*;
-    pub use super::doip_message::doip_message::*;
+    pub use super::doip_message::message::*;
     pub use super::doip_message::nack_code::*;
     pub use super::doip_message::node_type::*;
     pub use super::doip_message::power_mode::*;

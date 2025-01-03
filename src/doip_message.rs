@@ -3,7 +3,7 @@ pub mod activation_code;
 pub mod activation_type;
 pub mod diagnostic_ack;
 pub mod diagnostic_nack;
-pub mod doip_message;
+pub mod message;
 pub mod nack_code;
 pub mod node_type;
 pub mod power_mode;
@@ -36,7 +36,7 @@ mod size_tests {
         diagnostic_ack::DiagnosticAckCode, diagnostic_message::DiagnosticMessage,
         diagnostic_message_ack::DiagnosticMessageAck,
         diagnostic_message_nack::DiagnosticMessageNack, diagnostic_nack::DiagnosticNackCode,
-        doip_message::DoipMessage, entity_status_request::EntityStatusRequest,
+        message::DoipMessage, entity_status_request::EntityStatusRequest,
         entity_status_response::EntityStatusResponse, generic_nack::GenericNack,
         nack_code::NackCode, node_type::NodeType,
         power_information_request::PowerInformationRequest,
