@@ -56,12 +56,6 @@ We welcome contributions! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
-
-- Based on the ISO 13400 DoIP specification.
-- Built with the Rust programming language.
-- Special thanks to the open-source community for their support.
-
 ## Contact
 
 For support, questions, or feature requests, please open an issue on the [GitHub repository](https://github.com/yourusername/doip-definitions).
