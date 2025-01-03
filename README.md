@@ -58,5 +58,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For support, questions, or feature requests, please open an issue on the [GitHub repository](https://github.com/yourusername/doip-definitions).
+For support, questions, or feature requests, please open an issue on the [GitHub repository](https://github.com/samp-reston/doip-definitions).
 
