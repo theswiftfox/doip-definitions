@@ -4,10 +4,20 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// A UDS Message to a specific target address.
+///
+/// `DiagnosticMessage` is the most utilised payload type due to the amount of actions
+/// a diagnostic tester can do using the UDS protocol. This crate will not handle the UDS
+/// protocol however, one will be developed to enhance developer tooling.
 #[derive(Clone, Debug)]
 pub struct DiagnosticMessage {
+    /// The source address of the responding DoIP Entity
     pub source_address: [u8; 2],
+
+    /// The target address of the requesting DoIP Entity
     pub target_address: [u8; 2],
+
+    /// Message containing the UDS protocol message
     pub message: Vec<u8>,
 }
 
@@ -71,9 +81,9 @@ impl DoipPayload for DiagnosticMessage {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::diagnostic_message::DiagnosticMessage,
         error::{DiagnosticMessageError, PayloadError},
         header::{DoipPayload, PayloadType},
-        doip_message::diagnostic_message::DiagnosticMessage,
     };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];

@@ -3,6 +3,7 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Requests the status of a DoIP Entity.
 #[derive(Copy, Clone, Debug)]
 pub struct EntityStatusRequest {}
 
@@ -23,8 +24,8 @@ impl DoipPayload for EntityStatusRequest {
 #[cfg(test)]
 mod tests {
     use crate::{
-        header::{DoipPayload, PayloadType},
         doip_message::entity_status_request::EntityStatusRequest,
+        header::{DoipPayload, PayloadType},
     };
 
     #[test]

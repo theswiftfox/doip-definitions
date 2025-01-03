@@ -3,6 +3,10 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Checks the TCP Socket is still alive
+///
+/// Sent with no payload, the `AliveCheckRequest` is utilised to maintain a connection
+/// to a TCP socket or to check the status of one.
 #[derive(Copy, Clone, Debug)]
 pub struct AliveCheckRequest {}
 
@@ -23,8 +27,8 @@ impl DoipPayload for AliveCheckRequest {
 #[cfg(test)]
 mod tests {
     use crate::{
-        header::{DoipPayload, PayloadType},
         doip_message::alive_check_request::AliveCheckRequest,
+        header::{DoipPayload, PayloadType},
     };
 
     #[test]

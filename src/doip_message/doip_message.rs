@@ -24,13 +24,25 @@ use super::{
     vehicle_identification_request_vin::VehicleIdentificationRequestVin,
 };
 
+/// The decoded struct of a DoIP packet.
+///
+/// Each DoIP packet contains a header which describes the message, this is outlined
+/// in `DoipHeader`.
+///
+/// Some Payload Types available in DoIP require a payload which is covered by
+/// `DoipPayload`.
 #[derive(Debug)]
 pub struct DoipMessage {
+    /// Defined by `DoipHeader`, the header supplies the information for programs
+    /// to understand the payload.
     pub header: DoipHeader,
+
+    /// Takes any struct implementing `DoipPayload`.
     pub payload: Box<dyn DoipPayload>,
 }
 
 impl DoipMessage {
+    /// Constructs a new `DoipMessage`.
     pub fn new(protocol_version: DoipVersion, payload: Box<dyn DoipPayload>) -> Self {
         let payload_ref = &*payload;
         Self {
@@ -39,6 +51,7 @@ impl DoipMessage {
         }
     }
 
+    /// Converts the currently `DoipMessage` to a Vec of bytes.
     pub fn to_bytes(&self) -> Vec<u8> {
         let mut bytes: Vec<u8> = Vec::new();
 
@@ -51,6 +64,7 @@ impl DoipMessage {
         bytes
     }
 
+    /// Converts a Vec of bytes into a `DoipMessage`.
     pub fn parse_from_bytes(src: Vec<u8>) -> Result<DoipMessage, ParseError> {
         if src.is_empty() {
             return Err(ParseError::EmptyInput);

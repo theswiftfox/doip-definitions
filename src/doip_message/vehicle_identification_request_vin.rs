@@ -4,8 +4,12 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Requests a `VehicleAnnouncementMessage` from entities with the same VIN
+///
+/// Matches DoIP entities with the same VIN for response to the request.
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleIdentificationRequestVin {
+    /// Vehicle Identification Number
     pub vin: [u8; DOIP_COMMON_VIN_LEN],
 }
 
@@ -46,9 +50,9 @@ impl DoipPayload for VehicleIdentificationRequestVin {
 mod tests {
     use crate::{
         definitions::DOIP_COMMON_VIN_LEN,
+        doip_message::vehicle_identification_request_vin::VehicleIdentificationRequestVin,
         error::{PayloadError, VehicleIdentificationRequestVinError},
         header::{DoipPayload, PayloadType},
-        doip_message::vehicle_identification_request_vin::VehicleIdentificationRequestVin,
     };
 
     const DEFAULT_VIN: [u8; DOIP_COMMON_VIN_LEN] = [

@@ -5,8 +5,14 @@ use crate::{
     message::PowerMode,
 };
 
+/// Expected reponse from `PowerInformationRequest`.
+///
+/// Containing details of the target of the `PowerInformationRequest`, the
+/// `EntityStatusResponse` provides the program with details pertaining to the
+/// active power mode status of the entity.
 #[derive(Copy, Clone, Debug)]
 pub struct PowerInformationResponse {
+    /// Possible power modes available
     pub power_mode: PowerMode,
 }
 
@@ -52,10 +58,10 @@ impl DoipPayload for PowerInformationResponse {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::power_information_response::PowerInformationResponse,
         error::{PayloadError, PowerInformationResponseError},
         header::{DoipPayload, PayloadType},
         message::PowerMode,
-        doip_message::power_information_response::PowerInformationResponse,
     };
 
     const DEFAULT_POWER_MODE: PowerMode = PowerMode::NotReady;

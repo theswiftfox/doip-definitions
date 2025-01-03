@@ -8,10 +8,19 @@ use crate::{
     message::ActivationType,
 };
 
+/// Request for routing activation.
+///
+/// Usually routing activation is required for `DoipMessage` passing to a DoIP server,
+/// the `RoutingActivationRequest` details the activation type required.
 #[derive(Copy, Clone, Debug)]
 pub struct RoutingActivationRequest {
+    /// Source address of the requesting entity
     pub source_address: [u8; 2],
+
+    /// Activation type
     pub activation_type: ActivationType,
+
+    /// ISO reserved buffer, currently left empty
     pub buffer: [u8; 4],
 }
 
@@ -88,10 +97,10 @@ impl DoipPayload for RoutingActivationRequest {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::routing_activation_request::RoutingActivationRequest,
         error::{PayloadError, RoutingActivationRequestError},
         header::{DoipPayload, PayloadType},
         message::ActivationType,
-        doip_message::routing_activation_request::RoutingActivationRequest,
     };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];

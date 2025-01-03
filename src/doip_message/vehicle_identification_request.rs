@@ -3,6 +3,8 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Used to request a `VehicleAnnouncement` from all available DoIP entities
+/// on the network.
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleIdentificationRequest {}
 
@@ -23,8 +25,8 @@ impl DoipPayload for VehicleIdentificationRequest {
 #[cfg(test)]
 mod tests {
     use crate::{
-        header::{DoipPayload, PayloadType},
         doip_message::vehicle_identification_request::VehicleIdentificationRequest,
+        header::{DoipPayload, PayloadType},
     };
 
     #[test]
@@ -49,7 +51,7 @@ mod tests {
 
         assert!(
             request.is_ok(),
-            "Expected VehicleIdentificationRequest, recieved an Error."
+            "Expected VehicleIdentificationRequest, received an Error."
         );
     }
 }

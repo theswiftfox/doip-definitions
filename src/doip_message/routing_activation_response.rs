@@ -9,11 +9,21 @@ use crate::{
     message::ActivationCode,
 };
 
+/// A response to the `RoutingActivationRequest`.
+///
+/// Contains the logical address of the recieved DoIP entity along with the activation code.
 #[derive(Copy, Clone, Debug)]
 pub struct RoutingActivationResponse {
+    /// Logical address of requested entity
     pub logical_address: [u8; 2],
+
+    /// Source address of response entity
     pub source_address: [u8; 2],
+
+    /// Activation Code
     pub activation_code: ActivationCode,
+
+    /// ISO reserved buffer
     pub buffer: [u8; 4],
 }
 
@@ -124,10 +134,10 @@ impl DoipPayload for RoutingActivationResponse {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::routing_activation_response::RoutingActivationResponse,
         error::{PayloadError, RoutingActivationResponseError},
         header::{DoipPayload, PayloadType},
         message::ActivationCode,
-        doip_message::routing_activation_response::RoutingActivationResponse,
     };
 
     const DEFAULT_LOGICAL_ADDRESS: [u8; 2] = [0x01, 0x02];

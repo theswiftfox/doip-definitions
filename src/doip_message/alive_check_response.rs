@@ -4,8 +4,12 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Confirmation of the `AliveCheckRequest`.
+///
+/// The typical response from an `AliveCheckRequest`.
 #[derive(Copy, Clone, Debug)]
 pub struct AliveCheckResponse {
+    /// The source address of the responding DoIP Entity
     pub source_address: [u8; 2],
 }
 
@@ -46,9 +50,9 @@ impl DoipPayload for AliveCheckResponse {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::alive_check_response::{AliveCheckResponse, AliveCheckResponseError},
         error::PayloadError,
         header::{DoipPayload, PayloadType},
-        doip_message::alive_check_response::{AliveCheckResponse, AliveCheckResponseError},
     };
 
     const SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];

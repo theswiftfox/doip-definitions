@@ -8,13 +8,29 @@ use crate::{
     message::{ActionCode, SyncStatus},
 };
 
+/// Announcement from a DoIP entity in response to a
+/// `VehicleIdentificationRequest[EID/VIN]`.
+///
+/// The positive response to a `VehicleIdentificationRequest[EID/VIN]` request
+/// containing the vehicle information from the DoIP entity.
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleAnnouncementMessage {
+    /// Vehicle Identification Number
     pub vin: [u8; DOIP_COMMON_VIN_LEN],
+
+    /// Logical address of responding entity
     pub logical_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
+
+    /// Entity Identification
     pub eid: [u8; DOIP_COMMON_EID_LEN],
+
+    /// Group Identification
     pub gid: [u8; DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN],
+
+    /// Further actions required
     pub further_action: ActionCode,
+
+    /// Status of VIN/GID Synchronisation
     pub vin_gid_sync: Option<SyncStatus>,
 }
 
@@ -125,7 +141,7 @@ impl DoipPayload for VehicleAnnouncementMessage {
         };
 
         let vin_gid_sync: Option<SyncStatus> = match bytes.get(vin_gid_sync_offset) {
-            Some(0x00) => Some(SyncStatus::VinGinSynchronized),
+            Some(0x00) => Some(SyncStatus::VinGidSynchronized),
             Some(0x01) => Some(SyncStatus::ReservedByIso13400_01),
             Some(0x02) => Some(SyncStatus::ReservedByIso13400_02),
             Some(0x03) => Some(SyncStatus::ReservedByIso13400_03),
@@ -141,7 +157,7 @@ impl DoipPayload for VehicleAnnouncementMessage {
             Some(0x0D) => Some(SyncStatus::ReservedByIso13400_0D),
             Some(0x0E) => Some(SyncStatus::ReservedByIso13400_0E),
             Some(0x0F) => Some(SyncStatus::ReservedByIso13400_0F),
-            Some(0x10) => Some(SyncStatus::VinGinNotSynchronised),
+            Some(0x10) => Some(SyncStatus::VinGidNotSynchronised),
             _ => None,
         };
 
@@ -163,10 +179,10 @@ mod tests {
             DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
             DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
         },
+        doip_message::vehicle_announcement_message::VehicleAnnouncementMessage,
         error::{PayloadError, VehicleAnnouncementMessageError},
         header::{DoipPayload, PayloadType},
         message::{ActionCode, SyncStatus},
-        doip_message::vehicle_announcement_message::VehicleAnnouncementMessage,
     };
 
     const DEFAULT_VIN: [u8; DOIP_COMMON_VIN_LEN] = [
@@ -178,7 +194,7 @@ mod tests {
     const DEFAULT_GID: [u8; DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN] =
         [0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f];
     const DEFAULT_FURTHER_ACTION_CODE: ActionCode = ActionCode::NoFurtherActionRequired;
-    const DEFAULT_VIN_GID_SYNC: Option<SyncStatus> = Some(SyncStatus::VinGinSynchronized);
+    const DEFAULT_VIN_GID_SYNC: Option<SyncStatus> = Some(SyncStatus::VinGidSynchronized);
 
     #[test]
     fn test_payload_type() {

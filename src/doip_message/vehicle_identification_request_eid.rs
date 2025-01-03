@@ -4,8 +4,12 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Requests a `VehicleAnnouncementMessage` from entities with the same EID
+///
+/// Matches DoIP entities with the same EID for response to the request.
 #[derive(Copy, Clone, Debug)]
 pub struct VehicleIdentificationRequestEid {
+    /// Entity Identification
     pub eid: [u8; DOIP_COMMON_EID_LEN],
 }
 
@@ -46,9 +50,9 @@ impl DoipPayload for VehicleIdentificationRequestEid {
 mod tests {
     use crate::{
         definitions::DOIP_COMMON_EID_LEN,
+        doip_message::vehicle_identification_request_eid::VehicleIdentificationRequestEid,
         error::{PayloadError, VehicleIdentificationRequestEidError},
         header::{DoipPayload, PayloadType},
-        doip_message::vehicle_identification_request_eid::VehicleIdentificationRequestEid,
     };
 
     const DEFAULT_EID: [u8; DOIP_COMMON_EID_LEN] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05];

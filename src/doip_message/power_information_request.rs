@@ -3,6 +3,7 @@ use crate::{
     header::{DoipPayload, PayloadType},
 };
 
+/// Requests the power mode status of a DoIP Entity.
 #[derive(Copy, Clone, Debug)]
 pub struct PowerInformationRequest {}
 
@@ -23,8 +24,8 @@ impl DoipPayload for PowerInformationRequest {
 #[cfg(test)]
 mod tests {
     use crate::{
-        header::{DoipPayload, PayloadType},
         doip_message::power_information_request::PowerInformationRequest,
+        header::{DoipPayload, PayloadType},
     };
 
     #[test]

@@ -7,10 +7,19 @@ use crate::{
     message::DiagnosticAckCode,
 };
 
+/// Postive acknowledgement of a `DiagnosticMessage`.
+///
+/// Containing the source and target entity addresses, as well as the `DiagnosticAckCode`
+/// for the `DiagnosticMessage` initially sent by the target entity.
 #[derive(Copy, Clone, Debug)]
 pub struct DiagnosticMessageAck {
+    /// The source address of the responding DoIP Entity
     pub source_address: [u8; 2],
+
+    /// The target address of the requesting DoIP Entity
     pub target_address: [u8; 2],
+
+    /// The positive acknowledgement code
     pub ack_code: DiagnosticAckCode,
 }
 
@@ -82,10 +91,10 @@ impl DoipPayload for DiagnosticMessageAck {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::diagnostic_message_ack::DiagnosticMessageAck,
         error::{DiagnosticMessageAckError, PayloadError},
         header::{DoipPayload, PayloadType},
         message::DiagnosticAckCode,
-        doip_message::diagnostic_message_ack::DiagnosticMessageAck,
     };
 
     const DEFAULT_SOURCE_ADDRESS: [u8; 2] = [0x01, 0x02];

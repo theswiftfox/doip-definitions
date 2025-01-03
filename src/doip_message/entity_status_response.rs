@@ -8,11 +8,23 @@ use crate::{
     message::NodeType,
 };
 
+/// Expected reponse from `EntityStatusRequest`.
+///
+/// Containing details of the target of the `EntityStatusRequest`, the
+/// `EntityStatusResponse` provides the program with details pertaining to the
+/// active status of the entity.
 #[derive(Copy, Clone, Debug)]
 pub struct EntityStatusResponse {
+    /// The type of entity, either a `Gateway` or `Node`
     pub node_type: NodeType,
+
+    /// The number of maximum concurrent TCP sockets allowed on this entity
     pub max_concurrent_sockets: [u8; 1],
+
+    /// The number of currently open TCP sockets on the entity
     pub currently_open_sockets: [u8; 1],
+
+    /// The max data size allowed to be sent to the entity
     pub max_data_size: [u8; 4],
 }
 
@@ -103,10 +115,10 @@ impl DoipPayload for EntityStatusResponse {
 #[cfg(test)]
 mod tests {
     use crate::{
+        doip_message::entity_status_response::EntityStatusResponse,
         error::{EntityStatusResponseError, PayloadError},
         header::{DoipPayload, PayloadType},
         message::NodeType,
-        doip_message::entity_status_response::EntityStatusResponse,
     };
 
     const DEFAULT_NODE_TYPE: NodeType = NodeType::DoipNode;
