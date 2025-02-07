@@ -10,7 +10,7 @@ use crate::{
 /// a diagnostic tester can do using the UDS protocol. This crate will not handle the UDS
 /// protocol however, one will be developed to enhance developer tooling.
 #[derive(Clone, Debug)]
-pub struct DiagnosticMessage {
+pub struct DiagnosticMessage<'a> {
     /// The source address of the responding DoIP Entity
     pub source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
 
@@ -18,26 +18,39 @@ pub struct DiagnosticMessage {
     pub target_address: [u8; DOIP_DIAG_COMMON_TARGET_LEN],
 
     /// Message containing the UDS protocol message
-    pub message: Vec<u8>,
+    pub message: &'a [u8],
 }
 
-impl DoipPayload for DiagnosticMessage {
+impl<'a> DoipPayload<'a> for DiagnosticMessage<'a> {
     fn payload_type(&self) -> PayloadType {
         PayloadType::DiagnosticMessage
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let src_len = self.source_address.len();
+        let tgt_len = self.target_address.len();
+        let msg_len = self.message.len();
+        let min_len = src_len + tgt_len + msg_len;
 
-        bytes.extend_from_slice(&self.source_address);
-        bytes.extend_from_slice(&self.target_address);
-        bytes.extend_from_slice(&self.message);
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
 
-        bytes
+        let mut offset = 0;
+
+        buffer[offset..offset + src_len].copy_from_slice(&self.source_address);
+        offset += src_len;
+
+        buffer[offset..offset + tgt_len].copy_from_slice(&self.target_address);
+        offset += tgt_len;
+
+        buffer[offset..offset + msg_len].copy_from_slice(&self.message);
+        offset += msg_len;
+
+        Ok(offset)
     }
 
-    fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
-        // Check that bytes have sufficient length
+    fn from_bytes(bytes: &'a [u8]) -> Result<Self, PayloadError> {
         let min_length = DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN;
 
         if bytes.len() < min_length {
@@ -48,27 +61,19 @@ impl DoipPayload for DiagnosticMessage {
 
         let source_address_offset = DOIP_DIAG_COMMON_SOURCE_LEN;
         let source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN] =
-            match bytes[0..source_address_offset].try_into() {
-                Ok(arr) => arr,
-                Err(_) => {
-                    return Err(PayloadError::DiagnosticMessageError(
-                        DiagnosticMessageError::InvalidIndexRange,
-                    ))
-                }
-            };
+            bytes[0..source_address_offset].try_into().map_err(|_| {
+                PayloadError::DiagnosticMessageError(DiagnosticMessageError::InvalidIndexRange)
+            })?;
 
         let target_address_offset = source_address_offset + DOIP_DIAG_COMMON_TARGET_LEN;
-        let target_address: [u8; DOIP_DIAG_COMMON_TARGET_LEN] =
-            match bytes[source_address_offset..target_address_offset].try_into() {
-                Ok(arr) => arr,
-                Err(_) => {
-                    return Err(PayloadError::DiagnosticMessageError(
-                        DiagnosticMessageError::InvalidIndexRange,
-                    ))
-                }
-            };
+        let target_address: [u8; DOIP_DIAG_COMMON_TARGET_LEN] = bytes
+            [source_address_offset..target_address_offset]
+            .try_into()
+            .map_err(|_| {
+                PayloadError::DiagnosticMessageError(DiagnosticMessageError::InvalidIndexRange)
+            })?;
 
-        let message = bytes[target_address_offset..].to_vec();
+        let message = &bytes[target_address_offset..];
 
         Ok(Self {
             source_address,
@@ -94,7 +99,7 @@ mod tests {
         let request = DiagnosticMessage {
             source_address: DEFAULT_SOURCE_ADDRESS,
             target_address: DEFAULT_TARGET_ADDRESS,
-            message: vec![0x05, 0x06, 0x07, 0x08],
+            message: &[0x05, 0x06, 0x07, 0x08],
         };
         assert_eq!(request.payload_type(), PayloadType::DiagnosticMessage);
     }
@@ -104,17 +109,17 @@ mod tests {
         let request = DiagnosticMessage {
             source_address: DEFAULT_SOURCE_ADDRESS,
             target_address: DEFAULT_TARGET_ADDRESS,
-            message: vec![0x05, 0x06, 0x07, 0x08],
+            message: &[0x05, 0x06, 0x07, 0x08],
         };
-        assert_eq!(
-            request.to_bytes(),
-            vec![0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]
-        );
+
+        let mut buffer = [0; 1024];
+
+        assert_eq!(request.to_bytes(&mut buffer), Ok(8));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![0x01, 0x02, 0x03];
+        let request = [0x01, 0x02, 0x03];
         let from_bytes = DiagnosticMessage::from_bytes(&request);
 
         assert!(
@@ -134,13 +139,15 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = DiagnosticMessage {
             source_address: DEFAULT_SOURCE_ADDRESS,
             target_address: DEFAULT_TARGET_ADDRESS,
-            message: vec![0x05, 0x06, 0x07, 0x08],
+            message: &[0x05, 0x06, 0x07, 0x08],
         }
-        .to_bytes();
-        let from_bytes = DiagnosticMessage::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = DiagnosticMessage::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

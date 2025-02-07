@@ -24,19 +24,32 @@ pub struct RoutingActivationRequest {
     pub buffer: [u8; DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN],
 }
 
-impl DoipPayload for RoutingActivationRequest {
+impl DoipPayload<'_> for RoutingActivationRequest {
     fn payload_type(&self) -> PayloadType {
         PayloadType::RoutingActivationRequest
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let src_len = self.source_address.len();
+        let buff_len = self.buffer.len();
+        let min_len = src_len + buff_len + [self.activation_type as u8].len();
 
-        bytes.extend_from_slice(&self.source_address);
-        bytes.extend_from_slice(&[self.activation_type as u8]);
-        bytes.extend_from_slice(&self.buffer);
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
 
-        bytes
+        let mut offset = 0;
+
+        buffer[offset..offset + src_len].copy_from_slice(&self.source_address);
+        offset += src_len;
+
+        buffer[offset] = self.activation_type as u8;
+        offset += 1;
+
+        buffer[offset..offset + buff_len].copy_from_slice(&self.buffer);
+        offset += buff_len;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -127,15 +140,13 @@ mod tests {
             activation_type: DEFAULT_ACTIVATION_TYPE,
             buffer: DEFAULT_BUFFER,
         };
-        assert_eq!(
-            request.to_bytes(),
-            vec![0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00]
-        );
+        let mut buffer = [0; 1024];
+        assert_eq!(request.to_bytes(&mut buffer), Ok(7));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![0x01, 0x02, 0x03];
+        let request = [0x01, 0x02, 0x03];
         let from_bytes = RoutingActivationRequest::from_bytes(&request);
 
         assert!(
@@ -157,7 +168,7 @@ mod tests {
 
     #[test]
     fn test_from_bytes_invalid_activation_type() {
-        let request = vec![0x01, 0x02, 0x07, 0x01, 0x02, 0x03, 0x04];
+        let request = [0x01, 0x02, 0x07, 0x01, 0x02, 0x03, 0x04];
         let from_bytes = RoutingActivationRequest::from_bytes(&request);
 
         assert!(
@@ -179,13 +190,15 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = RoutingActivationRequest {
             source_address: DEFAULT_SOURCE_ADDRESS,
             activation_type: DEFAULT_ACTIVATION_TYPE,
             buffer: DEFAULT_BUFFER,
         }
-        .to_bytes();
-        let from_bytes = RoutingActivationRequest::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = RoutingActivationRequest::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

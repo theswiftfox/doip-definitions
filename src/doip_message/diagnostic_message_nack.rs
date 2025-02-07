@@ -23,19 +23,32 @@ pub struct DiagnosticMessageNack {
     pub nack_code: DiagnosticNackCode,
 }
 
-impl DoipPayload for DiagnosticMessageNack {
+impl DoipPayload<'_> for DiagnosticMessageNack {
     fn payload_type(&self) -> PayloadType {
         PayloadType::DiagnosticMessageNack
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let src_len = self.source_address.len();
+        let tgt_len = self.target_address.len();
+        let min_len = [self.nack_code as u8].len() + tgt_len + src_len;
 
-        bytes.extend_from_slice(&self.source_address);
-        bytes.extend_from_slice(&self.target_address);
-        bytes.extend_from_slice(&[self.nack_code as u8]);
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
 
-        bytes
+        let mut offset = 0;
+
+        buffer[offset..offset + src_len].copy_from_slice(&self.source_address);
+        offset += src_len;
+
+        buffer[offset..offset + tgt_len].copy_from_slice(&self.target_address);
+        offset += tgt_len;
+
+        buffer[offset] = self.nack_code as u8;
+        offset += 1;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -128,12 +141,14 @@ mod tests {
             target_address: DEFAULT_TARGET_ADDRESS,
             nack_code: DEFAULT_NACK_CODE,
         };
-        assert_eq!(request.to_bytes(), vec![0x01, 0x02, 0x03, 0x04, 0x00]);
+
+        let mut buffer = [0; 1024];
+        assert_eq!(request.to_bytes(&mut buffer), Ok(5));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![0x01, 0x02, 0x03];
+        let request = [0x01, 0x02, 0x03];
         let from_bytes = DiagnosticMessageNack::from_bytes(&request);
 
         assert!(
@@ -154,7 +169,7 @@ mod tests {
     }
     #[test]
     fn test_from_bytes_invalid_nack_code() {
-        let request = vec![0x01, 0x02, 0x03, 0x04, 0x09];
+        let request = [0x01, 0x02, 0x03, 0x04, 0x09];
         let from_bytes = DiagnosticMessageNack::from_bytes(&request);
 
         assert!(
@@ -176,13 +191,15 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = DiagnosticMessageNack {
             source_address: DEFAULT_SOURCE_ADDRESS,
             target_address: DEFAULT_TARGET_ADDRESS,
             nack_code: DEFAULT_NACK_CODE,
         }
-        .to_bytes();
-        let from_bytes = DiagnosticMessageNack::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = DiagnosticMessageNack::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

@@ -13,13 +13,25 @@ pub struct VehicleIdentificationRequestEid {
     pub eid: [u8; DOIP_COMMON_EID_LEN],
 }
 
-impl DoipPayload for VehicleIdentificationRequestEid {
+impl DoipPayload<'_> for VehicleIdentificationRequestEid {
     fn payload_type(&self) -> PayloadType {
         PayloadType::VehicleIdentificationRequestEid
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        self.eid.to_vec()
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let eid_len = self.eid.len();
+        let min_len = eid_len;
+
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
+
+        let mut offset = 0;
+
+        buffer[offset..offset + eid_len].copy_from_slice(&self.eid);
+        offset += eid_len;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -68,8 +80,9 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        let mut buffer = [0; 1024];
         let request = VehicleIdentificationRequestEid { eid: DEFAULT_EID };
-        assert_eq!(request.to_bytes(), DEFAULT_EID.to_vec());
+        assert_eq!(request.to_bytes(&mut buffer), Ok(DEFAULT_EID.len()));
     }
 
     #[test]
@@ -96,8 +109,11 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
-        let bytes = VehicleIdentificationRequestEid { eid: DEFAULT_EID }.to_bytes();
-        let request = VehicleIdentificationRequestEid::from_bytes(&bytes);
+        let mut buffer = [0; 1024];
+        let bytes = VehicleIdentificationRequestEid { eid: DEFAULT_EID }
+            .to_bytes(&mut buffer)
+            .unwrap();
+        let request = VehicleIdentificationRequestEid::from_bytes(&buffer[..bytes]);
 
         assert!(
             request.is_ok(),

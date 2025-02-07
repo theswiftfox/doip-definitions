@@ -15,17 +15,24 @@ pub struct GenericNack {
     pub nack_code: NackCode,
 }
 
-impl DoipPayload for GenericNack {
+impl DoipPayload<'_> for GenericNack {
     fn payload_type(&self) -> PayloadType {
         PayloadType::GenericNack
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
-        let nc = [(self.nack_code as u8)];
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let min_len = [self.nack_code as u8].len();
 
-        bytes.extend_from_slice(&nc);
-        bytes
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
+
+        let mut offset = 0;
+
+        buffer[offset] = self.nack_code as u8;
+        offset += 1;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -77,15 +84,17 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        let mut buffer = [0; 1024];
+
         let request = GenericNack {
             nack_code: DEFAULT_NACK_CODE,
         };
-        assert_eq!(request.to_bytes(), vec![0x00]);
+        assert_eq!(request.to_bytes(&mut buffer), Ok(0));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![];
+        let request = [];
         let from_bytes = GenericNack::from_bytes(&request);
 
         assert!(
@@ -105,7 +114,7 @@ mod tests {
 
     #[test]
     fn test_from_bytes_invalid_nack_code() {
-        let request = vec![0x05];
+        let request = [0x05];
         let from_bytes = GenericNack::from_bytes(&request);
 
         assert!(
@@ -125,11 +134,13 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = GenericNack {
             nack_code: DEFAULT_NACK_CODE,
         }
-        .to_bytes();
-        let from_bytes = GenericNack::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = GenericNack::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

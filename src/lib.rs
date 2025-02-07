@@ -1,22 +1,25 @@
+#![no_std]
+#![warn(clippy::pedantic)]
 #![warn(missing_docs)]
+#![warn(missing_debug_implementations)]
 //! Diagnostics over Internet Protocol definition library
 //!
 //! This crate is built to act a definitive source for defintions of ISO-13400
-//! and DoIP protocol development. Using all the data structures provided one
+//! and `DoIP` protocol development. Using all the data structures provided one
 //! should be able to develop applications with certainty that they are abiding
 //! by regulatory standards.
 //!
-//! Each DoIP message contains a minimum length of 8 bytes of which is the
+//! Each `DoIP` message contains a minimum length of 8 bytes of which is the
 //! [`header`], within this the header contains the length of the [`message`]
 //! and what type of payload the message is.
 //!
-//! Due to DoIP being a networking protocol types such as LogicalAddress have been
+//! Due to `DoIP` being a networking protocol types such as `LogicalAddress` have been
 //! kept to `[u8; 2]` rather than `u16`, this is to remain as close as possible
 //! to real situations of on-wire communication.
 
 /// Contains header related logic and data structures.
 ///
-/// The DoIP header contains 4 items:
+/// The `DoIP` header contains 4 items:
 /// - Protocol Version
 /// - Inverse Protocol Version
 /// - Payload Type
@@ -74,7 +77,7 @@ pub mod message {
 /// Contains all constants used in ISO-13400.
 ///
 /// The definitions found here are originally from Wireshark's repository. Wireshark
-/// is a packet sniffing tool with an already supported DoIP and UDS packet disassembly
+/// is a packet sniffing tool with an already supported `DoIP` and UDS packet disassembly
 /// and so their definitions were lifted so to support this crate.
 pub mod definitions;
 

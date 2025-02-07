@@ -1,5 +1,3 @@
-use std::fmt;
-
 /// Used in `GenericNack`, `NackCode` provides the possible errors causing the
 /// NACK.
 ///
@@ -20,17 +18,4 @@ pub enum NackCode {
 
     /// Invalid Payload Length
     InvalidPayloadLength = 0x04,
-}
-
-impl fmt::Display for NackCode {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let nack_string = match self {
-            NackCode::IncorrectPatternFormat => "Incorrect pattern format",
-            NackCode::UnknownPayloadType => "Unknown payload type",
-            NackCode::MessageTooLarge => "Message too large",
-            NackCode::OutOfMemory => "Out of memory",
-            NackCode::InvalidPayloadLength => "Invalid payload length",
-        };
-        write!(f, "{}", nack_string)
-    }
 }

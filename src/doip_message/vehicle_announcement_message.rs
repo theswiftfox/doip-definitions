@@ -34,25 +34,41 @@ pub struct VehicleAnnouncementMessage {
     pub vin_gid_sync: Option<SyncStatus>,
 }
 
-impl DoipPayload for VehicleAnnouncementMessage {
+impl DoipPayload<'_> for VehicleAnnouncementMessage {
     fn payload_type(&self) -> PayloadType {
         PayloadType::VehicleAnnouncementMessage
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let vin_len = self.vin.len();
+        let log_len = self.logical_address.len();
+        let eid_len = self.eid.len();
+        let gid_len = self.gid.len();
+        let fa_len = [self.further_action as u8].len();
+        let min_len = vin_len + log_len + eid_len + gid_len + fa_len;
 
-        bytes.extend_from_slice(&self.vin);
-        bytes.extend_from_slice(&self.logical_address);
-        bytes.extend_from_slice(&self.eid);
-        bytes.extend_from_slice(&self.gid);
-        bytes.extend_from_slice(&[self.further_action as u8]);
-
-        if let Some(sync_status) = self.vin_gid_sync {
-            bytes.push(sync_status as u8);
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
         }
 
-        bytes
+        let mut offset = 0;
+
+        buffer[offset..offset + vin_len].copy_from_slice(&self.vin);
+        offset += vin_len;
+
+        buffer[offset..offset + log_len].copy_from_slice(&self.logical_address);
+        offset += log_len;
+
+        buffer[offset..offset + eid_len].copy_from_slice(&self.eid);
+        offset += eid_len;
+
+        buffer[offset..offset + gid_len].copy_from_slice(&self.gid);
+        offset += gid_len;
+
+        buffer[offset] = self.further_action as u8;
+        offset += 1;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -222,19 +238,13 @@ mod tests {
             further_action: DEFAULT_FURTHER_ACTION_CODE,
             vin_gid_sync: DEFAULT_VIN_GID_SYNC,
         };
-        assert_eq!(
-            request.to_bytes(),
-            vec![
-                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-                0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
-                0x1d, 0x1e, 0x1f, 0x00, 0x00
-            ]
-        );
+        let mut buffer = [0; 1024];
+        assert_eq!(request.to_bytes(&mut buffer), Ok(33));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![0x01, 0x02, 0x03];
+        let request = [0x01, 0x02, 0x03];
         let from_bytes = VehicleAnnouncementMessage::from_bytes(&request);
 
         assert!(
@@ -256,7 +266,7 @@ mod tests {
 
     #[test]
     fn test_from_bytes_invalid_action_code() {
-        let request = vec![
+        let request = [
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
             0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
             0x1d, 0x1e, 0x1f, 0x11, 0x00,
@@ -282,6 +292,7 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = VehicleAnnouncementMessage {
             vin: DEFAULT_VIN,
             logical_address: DEFAULT_LOGICAL_ADDRESS,
@@ -290,8 +301,9 @@ mod tests {
             further_action: DEFAULT_FURTHER_ACTION_CODE,
             vin_gid_sync: DEFAULT_VIN_GID_SYNC,
         }
-        .to_bytes();
-        let from_bytes = VehicleAnnouncementMessage::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = VehicleAnnouncementMessage::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

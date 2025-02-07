@@ -92,6 +92,26 @@ pub enum PayloadError {
     /// Urecognised payload type in buffer.
     #[error("invalid payload type")]
     InvalidPayloadType,
+
+    /// Invalid protocol version.
+    #[error("invalid protocol version")]
+    InvalidProtocolVersion,
+
+    /// Buffer too small.
+    #[error("buffer too small")]
+    BufferTooSmall,
+
+    /// Incomplete payload.
+    #[error("payload is incomplete")]
+    IncompletePayload,
+
+    /// Input is empty.
+    #[error("input is empty")]
+    EmptyInput,
+
+    /// Failed protocol check.
+    #[error("failed protocol check")]
+    FailedProtocolCheck
 }
 
 /// Parse error for Alive Check Response payload type.

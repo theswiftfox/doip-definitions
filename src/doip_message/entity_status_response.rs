@@ -28,20 +28,37 @@ pub struct EntityStatusResponse {
     pub max_data_size: [u8; DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN],
 }
 
-impl DoipPayload for EntityStatusResponse {
+impl DoipPayload<'_> for EntityStatusResponse {
     fn payload_type(&self) -> PayloadType {
         PayloadType::EntityStatusResponse
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let max_con_sock_len = self.max_concurrent_sockets.len();
+        let cur_open_sock_len = self.currently_open_sockets.len();
+        let max_dat_size = self.max_data_size.len();
+        let min_len =
+            max_con_sock_len + cur_open_sock_len + max_dat_size + [self.node_type as u8].len();
 
-        bytes.extend_from_slice(&[self.node_type as u8]);
-        bytes.extend_from_slice(&self.max_concurrent_sockets);
-        bytes.extend_from_slice(&self.currently_open_sockets);
-        bytes.extend_from_slice(&self.max_data_size);
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
 
-        bytes
+        let mut offset = 0;
+
+        buffer[offset..offset + max_con_sock_len].copy_from_slice(&self.max_concurrent_sockets);
+        offset += max_con_sock_len;
+
+        buffer[offset..offset + cur_open_sock_len].copy_from_slice(&self.currently_open_sockets);
+        offset += cur_open_sock_len;
+
+        buffer[offset..offset + max_dat_size].copy_from_slice(&self.max_data_size);
+        offset += max_dat_size;
+
+        buffer[offset] = self.node_type as u8;
+        offset += 1;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -139,21 +156,19 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        let mut buffer = [0; 1024];
         let request = EntityStatusResponse {
             node_type: DEFAULT_NODE_TYPE,
             max_concurrent_sockets: DEFAULT_MAX_CONCURRENT_SOCKETS,
             currently_open_sockets: DEFAULT_CURRENTLY_OPEN_SOCKETS,
             max_data_size: DEFAULT_MAX_DATA_SIZE,
         };
-        assert_eq!(
-            request.to_bytes(),
-            vec![0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]
-        );
+        assert_eq!(request.to_bytes(&mut buffer), Ok(7));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![0x01, 0x02, 0x03];
+        let request = [0x01, 0x02, 0x03];
         let from_bytes = EntityStatusResponse::from_bytes(&request);
 
         assert!(
@@ -173,7 +188,7 @@ mod tests {
 
     #[test]
     fn test_from_bytes_invalid_node_type() {
-        let request = vec![0x03, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07];
+        let request = [0x03, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07];
         let from_bytes = EntityStatusResponse::from_bytes(&request);
 
         assert!(
@@ -193,14 +208,16 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = EntityStatusResponse {
             node_type: DEFAULT_NODE_TYPE,
             max_concurrent_sockets: DEFAULT_MAX_CONCURRENT_SOCKETS,
             currently_open_sockets: DEFAULT_CURRENTLY_OPEN_SOCKETS,
             max_data_size: DEFAULT_MAX_DATA_SIZE,
         }
-        .to_bytes();
-        let from_bytes = EntityStatusResponse::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = EntityStatusResponse::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

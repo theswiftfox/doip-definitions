@@ -7,13 +7,14 @@ use crate::{
 #[derive(Copy, Clone, Debug)]
 pub struct PowerInformationRequest {}
 
-impl DoipPayload for PowerInformationRequest {
+impl DoipPayload<'_> for PowerInformationRequest {
     fn payload_type(&self) -> PayloadType {
         PayloadType::PowerInformationRequest
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        vec![]
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let _ = buffer;
+        Ok(0)
     }
 
     fn from_bytes(_bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -36,14 +37,16 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        let mut buffer = [0; 1024];
         let request = PowerInformationRequest {};
-        assert_eq!(request.to_bytes(), vec![]);
+        assert_eq!(request.to_bytes(&mut buffer), Ok(0));
     }
 
     #[test]
     fn test_from_bytes_ok() {
-        let bytes = PowerInformationRequest {}.to_bytes();
-        let request = PowerInformationRequest::from_bytes(&bytes);
+        let mut buffer = [0; 1024];
+        let bytes = PowerInformationRequest {}.to_bytes(&mut buffer).unwrap();
+        let request = PowerInformationRequest::from_bytes(&buffer[..bytes]);
 
         assert!(
             request.is_ok(),

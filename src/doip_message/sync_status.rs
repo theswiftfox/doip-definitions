@@ -1,5 +1,3 @@
-use std::fmt;
-
 /// The synchronisation status of the VIN and the GID for the entity
 ///
 /// This gives the status that all DoIP entities have synchronised their information
@@ -56,29 +54,4 @@ pub enum SyncStatus {
 
     /// VVIN/GID Not Synchronised
     VinGidNotSynchronised = 0x10,
-}
-
-impl fmt::Display for SyncStatus {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let sync_strings = match self {
-            SyncStatus::VinGidSynchronized => "VIN and/or GID are synchronized",
-            SyncStatus::ReservedByIso13400_01 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_02 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_03 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_04 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_05 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_06 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_07 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_08 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_09 => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_0A => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_0B => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_0C => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_0D => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_0E => "Reserved by ISO 13400",
-            SyncStatus::ReservedByIso13400_0F => "Reserved by ISO 13400",
-            SyncStatus::VinGidNotSynchronised => "Incomplete: VIN and GID are NOT synchronized",
-        };
-        write!(f, "{}", sync_strings)
-    }
 }

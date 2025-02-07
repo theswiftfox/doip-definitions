@@ -16,17 +16,24 @@ pub struct PowerInformationResponse {
     pub power_mode: PowerMode,
 }
 
-impl DoipPayload for PowerInformationResponse {
+impl DoipPayload<'_> for PowerInformationResponse {
     fn payload_type(&self) -> PayloadType {
         PayloadType::PowerInformationResponse
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = Vec::new();
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let min_len = [self.power_mode as u8].len();
 
-        bytes.extend_from_slice(&[self.power_mode as u8]);
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
 
-        bytes
+        let mut offset = 0;
+
+        buffer[offset] = self.power_mode as u8;
+        offset += 1;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -79,15 +86,16 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        let mut buffer = [0; 1024];
         let request = PowerInformationResponse {
             power_mode: DEFAULT_POWER_MODE,
         };
-        assert_eq!(request.to_bytes(), vec![0x00]);
+        assert_eq!(request.to_bytes(&mut buffer), Ok(1));
     }
 
     #[test]
     fn test_from_bytes_too_short() {
-        let request = vec![];
+        let request = [];
         let from_bytes = PowerInformationResponse::from_bytes(&request);
 
         assert!(
@@ -109,7 +117,7 @@ mod tests {
 
     #[test]
     fn test_from_bytes_invalid_power_mode() {
-        let request = vec![0x03];
+        let request = [0x03];
         let from_bytes = PowerInformationResponse::from_bytes(&request);
 
         assert!(
@@ -131,11 +139,13 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
+        let mut buffer = [0; 1024];
         let request = PowerInformationResponse {
             power_mode: DEFAULT_POWER_MODE,
         }
-        .to_bytes();
-        let from_bytes = PowerInformationResponse::from_bytes(&request);
+        .to_bytes(&mut buffer)
+        .unwrap();
+        let from_bytes = PowerInformationResponse::from_bytes(&buffer[..request]);
 
         assert!(
             from_bytes.is_ok(),

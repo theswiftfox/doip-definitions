@@ -13,13 +13,19 @@ pub struct AliveCheckResponse {
     pub source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
 }
 
-impl DoipPayload for AliveCheckResponse {
+impl DoipPayload<'_> for AliveCheckResponse {
     fn payload_type(&self) -> PayloadType {
         PayloadType::AliveCheckResponse
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        self.source_address.to_vec()
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        if buffer.len() < 4 {
+            return Err(PayloadError::BufferTooSmall);
+        }
+
+        buffer[..4].copy_from_slice(&self.source_address);
+
+        Ok(self.source_address.len())
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -71,7 +77,8 @@ mod tests {
         let request = AliveCheckResponse {
             source_address: SOURCE_ADDRESS,
         };
-        assert_eq!(request.to_bytes(), SOURCE_ADDRESS.to_vec());
+        let mut buffer = [0; 1024];
+        assert_eq!(request.to_bytes(&mut buffer), Ok(SOURCE_ADDRESS.len()));
     }
 
     #[test]
@@ -96,12 +103,9 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
-        let bytes = AliveCheckResponse {
-            source_address: SOURCE_ADDRESS,
-        }
-        .to_bytes();
+        let buffer = [0; 1024];
 
-        let request = AliveCheckResponse::from_bytes(&bytes);
+        let request = AliveCheckResponse::from_bytes(&buffer);
 
         assert!(
             request.is_ok(),

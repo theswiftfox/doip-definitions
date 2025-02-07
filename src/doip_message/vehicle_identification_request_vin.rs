@@ -13,13 +13,25 @@ pub struct VehicleIdentificationRequestVin {
     pub vin: [u8; DOIP_COMMON_VIN_LEN],
 }
 
-impl DoipPayload for VehicleIdentificationRequestVin {
+impl DoipPayload<'_> for VehicleIdentificationRequestVin {
     fn payload_type(&self) -> PayloadType {
         PayloadType::VehicleIdentificationRequestVin
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        self.vin.to_vec()
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        let vin_len = self.vin.len();
+        let min_len = vin_len;
+
+        if buffer.len() < min_len {
+            return Err(PayloadError::BufferTooSmall);
+        }
+
+        let mut offset = 0;
+
+        buffer[offset..offset + vin_len].copy_from_slice(&self.vin);
+        offset += vin_len;
+
+        Ok(offset)
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError> {
@@ -71,8 +83,9 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        let mut buffer = [0; 1024];
         let request = VehicleIdentificationRequestVin { vin: DEFAULT_VIN };
-        assert_eq!(request.to_bytes(), DEFAULT_VIN.to_vec());
+        assert_eq!(request.to_bytes(&mut buffer), Ok(DEFAULT_VIN.len()));
     }
 
     #[test]
@@ -99,8 +112,11 @@ mod tests {
 
     #[test]
     fn test_from_bytes_ok() {
-        let bytes = VehicleIdentificationRequestVin { vin: DEFAULT_VIN }.to_bytes();
-        let request = VehicleIdentificationRequestVin::from_bytes(&bytes);
+        let mut buffer = [0; 1024];
+        let bytes = VehicleIdentificationRequestVin { vin: DEFAULT_VIN }
+            .to_bytes(&mut buffer)
+            .unwrap();
+        let request = VehicleIdentificationRequestVin::from_bytes(&buffer[..bytes]);
 
         assert!(
             request.is_ok(),

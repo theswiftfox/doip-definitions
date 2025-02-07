@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 use crate::{
     definitions::{
         DOIP_ALIVE_CHECK_REQUEST, DOIP_ALIVE_CHECK_RESPONSE, DOIP_DIAGNOSTIC_MESSAGE,
@@ -18,15 +16,15 @@ use crate::{
 /// `DoipPayload` is implemented across all the DoIP Payload Types for the
 /// purpose of consistent encoding and decoding as well as identification within
 /// a buffer.
-pub trait DoipPayload: Debug + Send {
+pub trait DoipPayload<'a>: Send {
     /// Used to identify the payload self for `DoipHeader` construction.
     fn payload_type(&self) -> PayloadType;
 
     /// Used to convert the payload into bytes.
-    fn to_bytes(&self) -> Vec<u8>;
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError>;
 
     /// Used to convert the payload from bytes.
-    fn from_bytes(bytes: &[u8]) -> Result<Self, PayloadError>
+    fn from_bytes(bytes: &'a [u8]) -> Result<Self, PayloadError>
     where
         Self: Sized;
 }
@@ -87,14 +85,20 @@ pub enum PayloadType {
     DiagnosticMessageNack = DOIP_DIAGNOSTIC_MESSAGE_NACK,
 }
 
-impl DoipPayload for PayloadType {
+impl DoipPayload<'_> for PayloadType {
     fn payload_type(&self) -> PayloadType {
         *self
     }
 
-    fn to_bytes(&self) -> Vec<u8> {
-        let value = *self as u16;
-        value.to_be_bytes().to_vec()
+    fn to_bytes(&self, buffer: &mut [u8]) -> Result<usize, PayloadError> {
+        if buffer.len() < 2 {
+            return Err(PayloadError::BufferTooSmall);
+        }
+
+        let value = (*self as u16).to_be_bytes();
+        buffer[..2].copy_from_slice(&value);
+
+        Ok(value.len())
     }
 
     fn from_bytes(bytes: &[u8]) -> Result<PayloadType, PayloadError> {

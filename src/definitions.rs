@@ -1,6 +1,6 @@
-/// Default DoIP Port for UDP and TCP connections.
+/// Default `DoIP` Port for UDP and TCP connections.
 pub const DOIP_PORT: usize = 13400;
-/// Default DoIP Port for TLS.
+/// Default `DoIP` Port for TLS.
 pub const DOIP_TLS_PORT: usize = 3496;
 
 /// Payload Type: Generic Negative Acknowledge
@@ -37,23 +37,23 @@ pub const DOIP_DIAGNOSTIC_MESSAGE_ACK: u16 = 0x8002;
 pub const DOIP_DIAGNOSTIC_MESSAGE_NACK: u16 = 0x8003;
 
 // DoIP Header //
-/// DoIP Header: DoIP Version Offset
+/// `DoIP` Header: DoIP Version Offset
 pub const DOIP_VERSION_OFFSET: usize = 0;
-/// DoIP Header: DoIP Version Length
+/// `DoIP` Header: DoIP Version Length
 pub const DOIP_VERSION_LEN: usize = 1;
-/// DoIP Header: DoIP Inverse Version Offset
+/// `DoIP` Header: DoIP Inverse Version Offset
 pub const DOIP_INV_VERSION_OFFSET: usize = DOIP_VERSION_OFFSET + DOIP_VERSION_LEN;
-/// DoIP Header: DoIP Inverse Version Length
+/// `DoIP` Header: DoIP Inverse Version Length
 pub const DOIP_INV_VERSION_LEN: usize = 1;
-/// DoIP Header: Payload Type Offset
+/// `DoIP` Header: Payload Type Offset
 pub const DOIP_TYPE_OFFSET: usize = DOIP_INV_VERSION_OFFSET + DOIP_INV_VERSION_LEN;
-/// DoIP Header: Payload Type Length
+/// `DoIP` Header: Payload Type Length
 pub const DOIP_TYPE_LEN: usize = 2;
-/// DoIP Header: Payload Length Offset
+/// `DoIP` Header: Payload Length Offset
 pub const DOIP_LENGTH_OFFSET: usize = DOIP_TYPE_OFFSET + DOIP_TYPE_LEN;
-/// DoIP Header: Payload Length Length
+/// `DoIP` Header: Payload Length Length
 pub const DOIP_LENGTH_LEN: usize = 4;
-/// DoIP Header: Header Length
+/// `DoIP` Header: Header Length
 pub const DOIP_HEADER_LEN: usize = DOIP_LENGTH_OFFSET + DOIP_LENGTH_LEN;
 
 // DoIP Payload Version //
