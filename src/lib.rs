@@ -44,7 +44,7 @@ pub mod header {
 }
 
 /// Contains message data structures and internal payload type dependant structures.
-pub mod message {
+pub mod payload {
     pub use super::doip_payload::action_code::*;
     pub use super::doip_payload::activation_code::*;
     pub use super::doip_payload::activation_type::*;

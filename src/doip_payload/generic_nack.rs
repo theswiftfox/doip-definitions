@@ -1,6 +1,6 @@
 use crate::{
     header::{DoipPayload, PayloadType},
-    message::NackCode,
+    payload::NackCode,
 };
 
 /// The generic negative acknowledgement of a bad request.

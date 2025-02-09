@@ -4,7 +4,7 @@ use crate::{
         DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN,
     },
     header::{DoipPayload, PayloadType},
-    message::ActivationCode,
+    payload::ActivationCode,
 };
 
 /// A response to the `RoutingActivationRequest`.

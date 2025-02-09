@@ -4,7 +4,7 @@ use crate::{
         DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
     },
     header::{DoipPayload, PayloadType},
-    message::{ActionCode, SyncStatus},
+    payload::{ActionCode, SyncStatus},
 };
 
 /// Announcement from a `DoIP` entity in response to a

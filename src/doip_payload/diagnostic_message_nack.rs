@@ -1,7 +1,7 @@
 use crate::{
     definitions::{DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN},
     header::{DoipPayload, PayloadType},
-    message::DiagnosticNackCode,
+    payload::DiagnosticNackCode,
 };
 
 /// Negative acknowledgement of a `DiagnosticMessage`.

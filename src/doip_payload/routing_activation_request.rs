@@ -3,7 +3,7 @@ use crate::{
         DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN,
     },
     header::{DoipPayload, PayloadType},
-    message::ActivationType,
+    payload::ActivationType,
 };
 
 /// Request for routing activation.

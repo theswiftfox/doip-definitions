@@ -1,6 +1,6 @@
 use crate::{
     header::{DoipPayload, PayloadType},
-    message::PowerMode,
+    payload::PowerMode,
 };
 
 /// Expected reponse from `PowerInformationRequest`.
