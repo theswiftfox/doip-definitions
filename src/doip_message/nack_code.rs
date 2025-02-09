@@ -1,7 +1,7 @@
 /// Used in `GenericNack`, `NackCode` provides the possible errors causing the
 /// NACK.
 ///
-/// Used to understand the result of a DoIP packet.
+/// Used to understand the result of a `DoIP` packet.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NackCode {
     /// Incorrect Pattern Format

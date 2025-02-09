@@ -1,5 +1,5 @@
 /// Used in `PowerInformationResponse`, `PowerMode` provides the power mode that
-/// the DoIP entity can be.
+/// the `DoIP` entity can be.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum PowerMode {
     /// Not Ready

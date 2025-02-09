@@ -1,6 +1,6 @@
 /// The synchronisation status of the VIN and the GID for the entity
 ///
-/// This gives the status that all DoIP entities have synchronised their information
+/// This gives the status that all `DoIP` entities have synchronised their information
 /// about the VIN or GID of the vehicle.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SyncStatus {

@@ -23,7 +23,7 @@ pub enum ActivationCode {
     /// Denied Rejected Confirmation
     DeniedRejectedConfirmation = 0x05,
 
-    /// Denied Unsupported Routing ActivationType
+    /// Denied Unsupported Routing `ActivationType`
     DeniedUnsupportedRoutingActivationType = 0x06,
 
     /// Denied Request Encrypted TLS Connection

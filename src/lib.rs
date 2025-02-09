@@ -81,13 +81,5 @@ pub mod message {
 /// and so their definitions were lifted so to support this crate.
 pub mod definitions;
 
-/// Contains errors which may occur during operation of methods.
-///
-/// The errors here provide more descriptive errors for easier debugging and logging
-/// during development. During testing it is easy to see an error without understanding
-/// which structure it came from parsing, therefore a more explicit error system
-/// was decided upon.
-pub mod error;
-
 mod doip_header;
 mod doip_message;

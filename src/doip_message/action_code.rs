@@ -1,7 +1,7 @@
 /// Used in Vehicle Announcement Messages to give next steps.
 ///
 /// Used to inform the client of further actions which need to be taken on a
-/// DoIP server.
+/// `DoIP` server.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ActionCode {
     /// No Further Action Required
