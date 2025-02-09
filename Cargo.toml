@@ -1,17 +1,14 @@
 [package]
 name = "doip-definitions"
-version = "1.0.3"
+version = "2.0.0"
 authors = ["Samuel Preston <samp.reston@outlook.com>"]
 edition = "2021"
 description = "A Diagnostics over Internet Protocol (DoIP) definition library for use in DoIP applications."
 readme = "README.md"
 repository = "https://github.com/samp-reston/doip-definitions"
 license = "MIT"
-keywords = ["doip", "diagnostics", "vehicle", "codec"]
+keywords = ["doip", "diagnostics", "vehicle", "standards"]
 categories = ["development-tools", "network-programming"]
-
-[dependencies]
-thiserror = "2.0.9"
 
 [profile.release]
 strip = true      # Automatically strip symbols from the binary.

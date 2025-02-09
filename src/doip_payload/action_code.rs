@@ -1,9 +1,7 @@
-use std::fmt;
-
 /// Used in Vehicle Announcement Messages to give next steps.
 ///
 /// Used to inform the client of further actions which need to be taken on a
-/// DoIP server.
+/// `DoIP` server.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ActionCode {
     /// No Further Action Required
@@ -56,30 +54,4 @@ pub enum ActionCode {
 
     /// Routing Activation Required
     RoutingActivationRequired = 0x10,
-}
-impl fmt::Display for ActionCode {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let action_code_strings = match self {
-            ActionCode::NoFurtherActionRequired => "No further action required",
-            ActionCode::ReservedByIso13400_01 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_02 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_03 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_04 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_05 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_06 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_07 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_08 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_09 => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_0A => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_0B => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_0C => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_0D => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_0E => "Reserved by ISO 13400",
-            ActionCode::ReservedByIso13400_0F => "Reserved by ISO 13400",
-            ActionCode::RoutingActivationRequired => {
-                "Routing activation required to initiate central security"
-            }
-        };
-        write!(f, "{}", action_code_strings)
-    }
 }

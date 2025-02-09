@@ -1,22 +1,25 @@
+#![no_std]
+#![warn(clippy::pedantic)]
 #![warn(missing_docs)]
+#![warn(missing_debug_implementations)]
 //! Diagnostics over Internet Protocol definition library
 //!
 //! This crate is built to act a definitive source for defintions of ISO-13400
-//! and DoIP protocol development. Using all the data structures provided one
+//! and `DoIP` protocol development. Using all the data structures provided one
 //! should be able to develop applications with certainty that they are abiding
 //! by regulatory standards.
 //!
-//! Each DoIP message contains a minimum length of 8 bytes of which is the
+//! Each `DoIP` message contains a minimum length of 8 bytes of which is the
 //! [`header`], within this the header contains the length of the [`message`]
 //! and what type of payload the message is.
 //!
-//! Due to DoIP being a networking protocol types such as LogicalAddress have been
+//! Due to `DoIP` being a networking protocol types such as `LogicalAddress` have been
 //! kept to `[u8; 2]` rather than `u16`, this is to remain as close as possible
 //! to real situations of on-wire communication.
 
 /// Contains header related logic and data structures.
 ///
-/// The DoIP header contains 4 items:
+/// The `DoIP` header contains 4 items:
 /// - Protocol Version
 /// - Inverse Protocol Version
 /// - Payload Type
@@ -41,50 +44,42 @@ pub mod header {
 }
 
 /// Contains message data structures and internal payload type dependant structures.
-pub mod message {
-    pub use super::doip_message::action_code::*;
-    pub use super::doip_message::activation_code::*;
-    pub use super::doip_message::activation_type::*;
-    pub use super::doip_message::diagnostic_ack::*;
-    pub use super::doip_message::diagnostic_nack::*;
-    pub use super::doip_message::message::*;
-    pub use super::doip_message::nack_code::*;
-    pub use super::doip_message::node_type::*;
-    pub use super::doip_message::power_mode::*;
-    pub use super::doip_message::sync_status::*;
+pub mod payload {
+    pub use super::doip_payload::action_code::*;
+    pub use super::doip_payload::activation_code::*;
+    pub use super::doip_payload::activation_type::*;
+    pub use super::doip_payload::diagnostic_ack::*;
+    pub use super::doip_payload::diagnostic_nack::*;
+    pub use super::doip_payload::message::*;
+    pub use super::doip_payload::nack_code::*;
+    pub use super::doip_payload::node_type::*;
+    pub use super::doip_payload::power_mode::*;
+    pub use super::doip_payload::sync_status::*;
 
-    pub use super::doip_message::alive_check_request::*;
-    pub use super::doip_message::alive_check_response::*;
-    pub use super::doip_message::diagnostic_message::*;
-    pub use super::doip_message::diagnostic_message_ack::*;
-    pub use super::doip_message::diagnostic_message_nack::*;
-    pub use super::doip_message::entity_status_request::*;
-    pub use super::doip_message::entity_status_response::*;
-    pub use super::doip_message::generic_nack::*;
-    pub use super::doip_message::power_information_request::*;
-    pub use super::doip_message::power_information_response::*;
-    pub use super::doip_message::routing_activation_request::*;
-    pub use super::doip_message::routing_activation_response::*;
-    pub use super::doip_message::vehicle_announcement_message::*;
-    pub use super::doip_message::vehicle_identification_request::*;
-    pub use super::doip_message::vehicle_identification_request_eid::*;
-    pub use super::doip_message::vehicle_identification_request_vin::*;
+    pub use super::doip_payload::alive_check_request::*;
+    pub use super::doip_payload::alive_check_response::*;
+    pub use super::doip_payload::diagnostic_message::*;
+    pub use super::doip_payload::diagnostic_message_ack::*;
+    pub use super::doip_payload::diagnostic_message_nack::*;
+    pub use super::doip_payload::entity_status_request::*;
+    pub use super::doip_payload::entity_status_response::*;
+    pub use super::doip_payload::generic_nack::*;
+    pub use super::doip_payload::power_information_request::*;
+    pub use super::doip_payload::power_information_response::*;
+    pub use super::doip_payload::routing_activation_request::*;
+    pub use super::doip_payload::routing_activation_response::*;
+    pub use super::doip_payload::vehicle_announcement_message::*;
+    pub use super::doip_payload::vehicle_identification_request::*;
+    pub use super::doip_payload::vehicle_identification_request_eid::*;
+    pub use super::doip_payload::vehicle_identification_request_vin::*;
 }
 
 /// Contains all constants used in ISO-13400.
 ///
 /// The definitions found here are originally from Wireshark's repository. Wireshark
-/// is a packet sniffing tool with an already supported DoIP and UDS packet disassembly
+/// is a packet sniffing tool with an already supported `DoIP` and UDS packet disassembly
 /// and so their definitions were lifted so to support this crate.
 pub mod definitions;
 
-/// Contains errors which may occur during operation of methods.
-///
-/// The errors here provide more descriptive errors for easier debugging and logging
-/// during development. During testing it is easy to see an error without understanding
-/// which structure it came from parsing, therefore a more explicit error system
-/// was decided upon.
-pub mod error;
-
 mod doip_header;
-mod doip_message;
+mod doip_payload;

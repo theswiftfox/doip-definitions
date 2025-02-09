@@ -1,6 +1,6 @@
-/// Default DoIP Port for UDP and TCP connections.
+/// Default `DoIP` Port for UDP and TCP connections.
 pub const DOIP_PORT: usize = 13400;
-/// Default DoIP Port for TLS.
+/// Default `DoIP` Port for TLS.
 pub const DOIP_TLS_PORT: usize = 3496;
 
 /// Payload Type: Generic Negative Acknowledge
@@ -37,37 +37,37 @@ pub const DOIP_DIAGNOSTIC_MESSAGE_ACK: u16 = 0x8002;
 pub const DOIP_DIAGNOSTIC_MESSAGE_NACK: u16 = 0x8003;
 
 // DoIP Header //
-/// DoIP Header: DoIP Version Offset
+/// `DoIP` Header: `DoIP` Version Offset
 pub const DOIP_VERSION_OFFSET: usize = 0;
-/// DoIP Header: DoIP Version Length
+/// `DoIP` Header: `DoIP` Version Length
 pub const DOIP_VERSION_LEN: usize = 1;
-/// DoIP Header: DoIP Inverse Version Offset
+/// `DoIP` Header: `DoIP` Inverse Version Offset
 pub const DOIP_INV_VERSION_OFFSET: usize = DOIP_VERSION_OFFSET + DOIP_VERSION_LEN;
-/// DoIP Header: DoIP Inverse Version Length
+/// `DoIP` Header: `DoIP` Inverse Version Length
 pub const DOIP_INV_VERSION_LEN: usize = 1;
-/// DoIP Header: Payload Type Offset
+/// `DoIP` Header: Payload Type Offset
 pub const DOIP_TYPE_OFFSET: usize = DOIP_INV_VERSION_OFFSET + DOIP_INV_VERSION_LEN;
-/// DoIP Header: Payload Type Length
+/// `DoIP` Header: Payload Type Length
 pub const DOIP_TYPE_LEN: usize = 2;
-/// DoIP Header: Payload Length Offset
+/// `DoIP` Header: Payload Length Offset
 pub const DOIP_LENGTH_OFFSET: usize = DOIP_TYPE_OFFSET + DOIP_TYPE_LEN;
-/// DoIP Header: Payload Length Length
+/// `DoIP` Header: Payload Length Length
 pub const DOIP_LENGTH_LEN: usize = 4;
-/// DoIP Header: Header Length
+/// `DoIP` Header: Header Length
 pub const DOIP_HEADER_LEN: usize = DOIP_LENGTH_OFFSET + DOIP_LENGTH_LEN;
 
 // DoIP Payload Version //
-/// DoIP Payload Version: Reserved Version
+/// `DoIP` Payload Version: Reserved Version
 pub const RESERVED_VER: u8 = 0x00;
-/// DoIP Payload Version: ISO-13400 2010 Version
+/// `DoIP` Payload Version: ISO-13400 2010 Version
 pub const ISO13400_2010: u8 = 0x01;
-/// DoIP Payload Version: ISO-13400 2012 Version
+/// `DoIP` Payload Version: ISO-13400 2012 Version
 pub const ISO13400_2012: u8 = 0x02;
-/// DoIP Payload Version: ISO-13400 2019 Version
+/// `DoIP` Payload Version: ISO-13400 2019 Version
 pub const ISO13400_2019: u8 = 0x03;
-/// DoIP Payload Version: ISO-13400 2019_AMD1 Version
+/// `DoIP` Payload Version: ISO-13400 `2019_AMD1` Version
 pub const ISO13400_2019_AMD1: u8 = 0x04;
-/// DoIP Payload Version: Default Version
+/// `DoIP` Payload Version: Default Version
 pub const DEFAULT_VALUE: u8 = 0xFF;
 
 // Generic NACK //
@@ -77,9 +77,9 @@ pub const DOIP_GENERIC_NACK_OFFSET: usize = DOIP_HEADER_LEN;
 pub const DOIP_GENERIC_NACK_LEN: usize = 1;
 
 // Common //
-/// DoIP Generic: Vehicle Identification Number (VIN) Length
+/// `DoIP` Generic: Vehicle Identification Number (VIN) Length
 pub const DOIP_COMMON_VIN_LEN: usize = 17;
-/// DoIP Generic: Entity Identification (EID) Length
+/// `DoIP` Generic: Entity Identification (EID) Length
 pub const DOIP_COMMON_EID_LEN: usize = 6;
 
 // Vehicle identification request //
@@ -204,14 +204,14 @@ pub const DOIP_POWER_MODE_OFFSET: usize = DOIP_HEADER_LEN;
 pub const DOIP_POWER_MODE_LEN: usize = 1;
 
 // Common //
-/// DoIP Common: Source Offset
+/// `DoIP` Common: Source Offset
 pub const DOIP_DIAG_COMMON_SOURCE_OFFSET: usize = DOIP_HEADER_LEN;
-/// DoIP Common: Source Length
+/// `DoIP` Common: Source Length
 pub const DOIP_DIAG_COMMON_SOURCE_LEN: usize = 2;
-/// DoIP Common: Target Offset
+/// `DoIP` Common: Target Offset
 pub const DOIP_DIAG_COMMON_TARGET_OFFSET: usize =
     DOIP_DIAG_COMMON_SOURCE_OFFSET + DOIP_DIAG_COMMON_SOURCE_LEN;
-/// DoIP Common: Target Length
+/// `DoIP` Common: Target Length
 pub const DOIP_DIAG_COMMON_TARGET_LEN: usize = 2;
 
 // Diagnostic message //
