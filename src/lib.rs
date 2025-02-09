@@ -45,33 +45,33 @@ pub mod header {
 
 /// Contains message data structures and internal payload type dependant structures.
 pub mod message {
-    pub use super::doip_message::action_code::*;
-    pub use super::doip_message::activation_code::*;
-    pub use super::doip_message::activation_type::*;
-    pub use super::doip_message::diagnostic_ack::*;
-    pub use super::doip_message::diagnostic_nack::*;
-    pub use super::doip_message::message::*;
-    pub use super::doip_message::nack_code::*;
-    pub use super::doip_message::node_type::*;
-    pub use super::doip_message::power_mode::*;
-    pub use super::doip_message::sync_status::*;
+    pub use super::doip_payload::action_code::*;
+    pub use super::doip_payload::activation_code::*;
+    pub use super::doip_payload::activation_type::*;
+    pub use super::doip_payload::diagnostic_ack::*;
+    pub use super::doip_payload::diagnostic_nack::*;
+    pub use super::doip_payload::message::*;
+    pub use super::doip_payload::nack_code::*;
+    pub use super::doip_payload::node_type::*;
+    pub use super::doip_payload::power_mode::*;
+    pub use super::doip_payload::sync_status::*;
 
-    pub use super::doip_message::alive_check_request::*;
-    pub use super::doip_message::alive_check_response::*;
-    pub use super::doip_message::diagnostic_message::*;
-    pub use super::doip_message::diagnostic_message_ack::*;
-    pub use super::doip_message::diagnostic_message_nack::*;
-    pub use super::doip_message::entity_status_request::*;
-    pub use super::doip_message::entity_status_response::*;
-    pub use super::doip_message::generic_nack::*;
-    pub use super::doip_message::power_information_request::*;
-    pub use super::doip_message::power_information_response::*;
-    pub use super::doip_message::routing_activation_request::*;
-    pub use super::doip_message::routing_activation_response::*;
-    pub use super::doip_message::vehicle_announcement_message::*;
-    pub use super::doip_message::vehicle_identification_request::*;
-    pub use super::doip_message::vehicle_identification_request_eid::*;
-    pub use super::doip_message::vehicle_identification_request_vin::*;
+    pub use super::doip_payload::alive_check_request::*;
+    pub use super::doip_payload::alive_check_response::*;
+    pub use super::doip_payload::diagnostic_message::*;
+    pub use super::doip_payload::diagnostic_message_ack::*;
+    pub use super::doip_payload::diagnostic_message_nack::*;
+    pub use super::doip_payload::entity_status_request::*;
+    pub use super::doip_payload::entity_status_response::*;
+    pub use super::doip_payload::generic_nack::*;
+    pub use super::doip_payload::power_information_request::*;
+    pub use super::doip_payload::power_information_response::*;
+    pub use super::doip_payload::routing_activation_request::*;
+    pub use super::doip_payload::routing_activation_response::*;
+    pub use super::doip_payload::vehicle_announcement_message::*;
+    pub use super::doip_payload::vehicle_identification_request::*;
+    pub use super::doip_payload::vehicle_identification_request_eid::*;
+    pub use super::doip_payload::vehicle_identification_request_vin::*;
 }
 
 /// Contains all constants used in ISO-13400.
@@ -82,4 +82,4 @@ pub mod message {
 pub mod definitions;
 
 mod doip_header;
-mod doip_message;
+mod doip_payload;

@@ -27,23 +27,3 @@ pub enum DoipVersion {
     /// `DoIP` Payload Version: Default Version
     DefaultValue = DEFAULT_VALUE,
 }
-
-impl DoipVersion {
-    /// Convert `DoipVersion` value to u8.
-    #[must_use] pub fn to_u8(self) -> u8 {
-        self as u8
-    }
-
-    /// Convert `DoipVersion` value from u8.
-    #[must_use] pub fn from_u8(value: u8) -> Option<Self> {
-        match value {
-            RESERVED_VER => Some(DoipVersion::ReservedVer),
-            ISO13400_2010 => Some(DoipVersion::Iso13400_2010),
-            ISO13400_2012 => Some(DoipVersion::Iso13400_2012),
-            ISO13400_2019 => Some(DoipVersion::Iso13400_2019),
-            ISO13400_2019_AMD1 => Some(DoipVersion::Iso13400_2019Amd1),
-            DEFAULT_VALUE => Some(DoipVersion::DefaultValue),
-            _ => None,
-        }
-    }
-}
