@@ -8,11 +8,11 @@ use crate::header::{DoipHeader, DoipPayload};
 /// Some Payload Types available in `DoIP` require a payload which is covered by
 /// `DoipPayload`.
 #[derive(Debug)]
-pub struct DoipMessage {
+pub struct DoipMessage<'a> {
     /// Defined by `DoipHeader`, the header supplies the information for programs
     /// to understand the payload.
     pub header: DoipHeader,
 
     /// Takes any struct implementing `DoipPayload`.
-    pub payload: dyn DoipPayload,
+    pub payload: &'a dyn DoipPayload,
 }

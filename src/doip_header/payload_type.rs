@@ -14,7 +14,7 @@ use core::fmt::Debug;
 /// `DoipPayload` is implemented across all the `DoIP` Payload Types for the
 /// purpose of consistent encoding and decoding as well as identification within
 /// a buffer.
-pub trait DoipPayload: Debug {
+pub trait DoipPayload: Debug + Send {
     /// Used to identify the payload self for `DoipHeader` construction.
     fn payload_type(&self) -> PayloadType;
 }
