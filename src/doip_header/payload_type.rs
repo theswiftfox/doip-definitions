@@ -7,13 +7,14 @@ use crate::definitions::{
     DOIP_VEHICLE_IDENTIFICATION_REQ, DOIP_VEHICLE_IDENTIFICATION_REQ_EID,
     DOIP_VEHICLE_IDENTIFICATION_REQ_VIN,
 };
+use core::fmt::Debug;
 
 /// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
 ///
 /// `DoipPayload` is implemented across all the `DoIP` Payload Types for the
 /// purpose of consistent encoding and decoding as well as identification within
 /// a buffer.
-pub trait DoipPayload {
+pub trait DoipPayload: Debug {
     /// Used to identify the payload self for `DoipHeader` construction.
     fn payload_type(&self) -> PayloadType;
 }

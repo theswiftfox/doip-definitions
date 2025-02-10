@@ -17,6 +17,8 @@
 //! kept to `[u8; 2]` rather than `u16`, this is to remain as close as possible
 //! to real situations of on-wire communication.
 
+use payload::DoipMessage;
+
 /// Contains header related logic and data structures.
 ///
 /// The `DoIP` header contains 4 items:
