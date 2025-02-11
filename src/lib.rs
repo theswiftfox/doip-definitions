@@ -2,6 +2,7 @@
 #![warn(clippy::pedantic)]
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
+
 //! Diagnostics over Internet Protocol definition library
 //!
 //! This crate is built to act a definitive source for defintions of ISO-13400
@@ -72,6 +73,16 @@ pub mod payload {
     pub use super::doip_payload::vehicle_identification_request::*;
     pub use super::doip_payload::vehicle_identification_request_eid::*;
     pub use super::doip_payload::vehicle_identification_request_vin::*;
+}
+
+/// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
+///
+/// `DoipPayload` is implemented across all the `DoIP` Payload Types for the
+/// purpose of consistent encoding and decoding as well as identification within
+/// a buffer.
+pub trait DoipPayload: core::fmt::Debug + Send {
+    /// Used to identify the payload self for `DoipHeader` construction.
+    fn payload_type(&self) -> header::PayloadType;
 }
 
 /// Contains all constants used in ISO-13400.

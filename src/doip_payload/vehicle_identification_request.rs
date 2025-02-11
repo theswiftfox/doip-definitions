@@ -1,4 +1,4 @@
-use crate::header::{DoipPayload, PayloadType};
+use crate::{header::PayloadType, DoipPayload};
 
 /// Used to request a `VehicleAnnouncement` from all available `DoIP` entities
 /// on the network.

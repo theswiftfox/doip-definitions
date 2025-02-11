@@ -1,4 +1,4 @@
-use crate::header::{DoipPayload, PayloadType};
+use crate::{header::PayloadType, DoipPayload};
 
 /// Requests the power mode status of a `DoIP` Entity.
 #[derive(Copy, Clone, Debug)]

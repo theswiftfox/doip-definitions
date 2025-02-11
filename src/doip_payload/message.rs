@@ -1,4 +1,4 @@
-use crate::header::{DoipHeader, DoipPayload};
+use crate::{header::DoipHeader, DoipPayload};
 
 /// The decoded struct of a `DoIP` packet.
 ///

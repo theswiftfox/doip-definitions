@@ -1,9 +1,8 @@
 use crate::{
-    definitions::{
-        DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN,
-    },
-    header::{DoipPayload, PayloadType},
+    definitions::{DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN},
+    header::PayloadType,
     payload::ActivationType,
+    DoipPayload,
 };
 
 /// Request for routing activation.

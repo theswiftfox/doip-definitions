@@ -3,8 +3,9 @@ use crate::{
         DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
         DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
     },
-    header::{DoipPayload, PayloadType},
+    header::PayloadType,
     payload::{ActionCode, SyncStatus},
+    DoipPayload,
 };
 
 /// Announcement from a `DoIP` entity in response to a

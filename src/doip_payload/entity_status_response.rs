@@ -3,8 +3,9 @@ use crate::{
         DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN, DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN,
         DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN,
     },
-    header::{DoipPayload, PayloadType},
+    header::PayloadType,
     payload::NodeType,
+    DoipPayload,
 };
 
 /// Expected reponse from `EntityStatusRequest`.

@@ -3,8 +3,9 @@ use crate::{
         DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
         DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN,
     },
-    header::{DoipPayload, PayloadType},
+    header::PayloadType,
     payload::ActivationCode,
+    DoipPayload,
 };
 
 /// A response to the `RoutingActivationRequest`.

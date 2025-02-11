@@ -1,7 +1,4 @@
-use crate::{
-    definitions::DOIP_COMMON_VIN_LEN,
-    header::{DoipPayload, PayloadType},
-};
+use crate::{definitions::DOIP_COMMON_VIN_LEN, header::PayloadType, DoipPayload};
 
 /// Requests a `VehicleAnnouncementMessage` from entities with the same VIN
 ///

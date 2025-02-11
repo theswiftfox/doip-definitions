@@ -1,23 +1,15 @@
-use crate::definitions::{
-    DOIP_ALIVE_CHECK_REQUEST, DOIP_ALIVE_CHECK_RESPONSE, DOIP_DIAGNOSTIC_MESSAGE,
-    DOIP_DIAGNOSTIC_MESSAGE_ACK, DOIP_DIAGNOSTIC_MESSAGE_NACK, DOIP_ENTITY_STATUS_REQUEST,
-    DOIP_ENTITY_STATUS_RESPONSE, DOIP_GENERIC_NACK, DOIP_POWER_INFORMATION_REQUEST,
-    DOIP_POWER_INFORMATION_RESPONSE, DOIP_ROUTING_ACTIVATION_REQUEST,
-    DOIP_ROUTING_ACTIVATION_RESPONSE, DOIP_VEHICLE_ANNOUNCEMENT_MESSAGE,
-    DOIP_VEHICLE_IDENTIFICATION_REQ, DOIP_VEHICLE_IDENTIFICATION_REQ_EID,
-    DOIP_VEHICLE_IDENTIFICATION_REQ_VIN,
+use crate::{
+    definitions::{
+        DOIP_ALIVE_CHECK_REQUEST, DOIP_ALIVE_CHECK_RESPONSE, DOIP_DIAGNOSTIC_MESSAGE,
+        DOIP_DIAGNOSTIC_MESSAGE_ACK, DOIP_DIAGNOSTIC_MESSAGE_NACK, DOIP_ENTITY_STATUS_REQUEST,
+        DOIP_ENTITY_STATUS_RESPONSE, DOIP_GENERIC_NACK, DOIP_POWER_INFORMATION_REQUEST,
+        DOIP_POWER_INFORMATION_RESPONSE, DOIP_ROUTING_ACTIVATION_REQUEST,
+        DOIP_ROUTING_ACTIVATION_RESPONSE, DOIP_VEHICLE_ANNOUNCEMENT_MESSAGE,
+        DOIP_VEHICLE_IDENTIFICATION_REQ, DOIP_VEHICLE_IDENTIFICATION_REQ_EID,
+        DOIP_VEHICLE_IDENTIFICATION_REQ_VIN,
+    },
+    DoipPayload,
 };
-use core::fmt::Debug;
-
-/// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
-///
-/// `DoipPayload` is implemented across all the `DoIP` Payload Types for the
-/// purpose of consistent encoding and decoding as well as identification within
-/// a buffer.
-pub trait DoipPayload: Debug + Send {
-    /// Used to identify the payload self for `DoipHeader` construction.
-    fn payload_type(&self) -> PayloadType;
-}
 
 /// Defines the variants of payloads available to `DoIP`.
 ///

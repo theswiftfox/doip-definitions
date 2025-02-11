@@ -1,7 +1,4 @@
-use crate::{
-    header::{DoipPayload, PayloadType},
-    payload::PowerMode,
-};
+use crate::{header::PayloadType, payload::PowerMode, DoipPayload};
 
 /// Expected reponse from `PowerInformationRequest`.
 ///

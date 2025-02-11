@@ -27,3 +27,25 @@ pub enum DoipVersion {
     /// `DoIP` Payload Version: Default Version
     DefaultValue = DEFAULT_VALUE,
 }
+
+impl From<DoipVersion> for u8 {
+    fn from(version: DoipVersion) -> Self {
+        version as u8
+    }
+}
+
+impl TryFrom<u8> for DoipVersion {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            RESERVED_VER => Ok(DoipVersion::ReservedVer),
+            ISO13400_2010 => Ok(DoipVersion::Iso13400_2010),
+            ISO13400_2012 => Ok(DoipVersion::Iso13400_2012),
+            ISO13400_2019 => Ok(DoipVersion::Iso13400_2019),
+            ISO13400_2019_AMD1 => Ok(DoipVersion::Iso13400_2019Amd1),
+            DEFAULT_VALUE => Ok(DoipVersion::DefaultValue),
+            _ => Err(()),
+        }
+    }
+}

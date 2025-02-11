@@ -1,4 +1,4 @@
-use crate::header::{DoipPayload, PayloadType};
+use crate::{header::PayloadType, DoipPayload};
 
 /// Checks the TCP Socket is still alive
 ///
