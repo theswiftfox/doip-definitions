@@ -14,10 +14,6 @@
 //! Each `DoIP` message contains a minimum length of 8 bytes of which is the
 //! [`header`], within this the header contains the length of the [`message`]
 //! and what type of payload the message is.
-//!
-//! Due to `DoIP` being a networking protocol types such as `LogicalAddress` have been
-//! kept to `[u8; 2]` rather than `u16`, this is to remain as close as possible
-//! to real situations of on-wire communication.
 
 use definitions::{
     DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
