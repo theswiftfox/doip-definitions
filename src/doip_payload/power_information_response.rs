@@ -1,4 +1,4 @@
-use crate::{header::PayloadType, payload::PowerMode, DoipPayload};
+use crate::payload::PowerMode;
 
 /// Expected reponse from `PowerInformationRequest`.
 ///
@@ -11,8 +11,17 @@ pub struct PowerInformationResponse {
     pub power_mode: PowerMode,
 }
 
-impl DoipPayload for PowerInformationResponse {
-    fn payload_type(&self) -> PayloadType {
-        PayloadType::PowerInformationResponse
+impl From<PowerInformationResponse> for [u8; 1] {
+    fn from(power_information_response: PowerInformationResponse) -> Self {
+        [power_information_response.power_mode as u8]
+    }
+}
+
+impl TryFrom<[u8; 1]> for PowerInformationResponse {
+    type Error = &'static str;
+
+    fn try_from(value: [u8; 1]) -> Result<Self, Self::Error> {
+        let power_mode = PowerMode::try_from(value[0])?;
+        Ok(PowerInformationResponse { power_mode })
     }
 }

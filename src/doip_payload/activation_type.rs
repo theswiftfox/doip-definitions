@@ -13,3 +13,22 @@ pub enum ActivationType {
     /// Central Security
     CentralSecurity = 0x02,
 }
+
+impl From<ActivationType> for u8 {
+    fn from(activation_type: ActivationType) -> Self {
+        activation_type as u8
+    }
+}
+
+impl TryFrom<u8> for ActivationType {
+    type Error = &'static str;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x00 => Ok(ActivationType::Default),
+            0x01 => Ok(ActivationType::WwhObd),
+            0x02 => Ok(ActivationType::CentralSecurity),
+            _ => Err("Invalid ActivationType."),
+        }
+    }
+}

@@ -59,3 +59,37 @@ pub enum ActivationCode {
     /// Activated Confirmation Required
     ActivatedConfirmationRequired = 0x11,
 }
+
+impl From<ActivationCode> for u8 {
+    fn from(activation_code: ActivationCode) -> Self {
+        activation_code as u8
+    }
+}
+
+impl TryFrom<u8> for ActivationCode {
+    type Error = &'static str;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x00 => Ok(ActivationCode::DeniedUnknownSourceAddress),
+            0x01 => Ok(ActivationCode::DeniedTCPSocketsFull),
+            0x02 => Ok(ActivationCode::DeniedTCPSocketAlreadyConnected),
+            0x03 => Ok(ActivationCode::DeniedSourceIsAlreadyActive),
+            0x04 => Ok(ActivationCode::DeniedMissingAuthentication),
+            0x05 => Ok(ActivationCode::DeniedRejectedConfirmation),
+            0x06 => Ok(ActivationCode::DeniedUnsupportedRoutingActivationType),
+            0x07 => Ok(ActivationCode::DeniedRequestEncryptedTLSConnection),
+            0x08 => Ok(ActivationCode::ReservedByIso13400_08),
+            0x09 => Ok(ActivationCode::ReservedByIso13400_09),
+            0x0A => Ok(ActivationCode::ReservedByIso13400_0A),
+            0x0B => Ok(ActivationCode::ReservedByIso13400_0B),
+            0x0C => Ok(ActivationCode::ReservedByIso13400_0C),
+            0x0D => Ok(ActivationCode::ReservedByIso13400_0D),
+            0x0E => Ok(ActivationCode::ReservedByIso13400_0E),
+            0x0F => Ok(ActivationCode::ReservedByIso13400_0F),
+            0x10 => Ok(ActivationCode::SuccessfullyActivated),
+            0x11 => Ok(ActivationCode::ActivatedConfirmationRequired),
+            _ => Err("Invalid ActivationCode."),
+        }
+    }
+}

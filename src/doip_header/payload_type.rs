@@ -1,14 +1,11 @@
-use crate::{
-    definitions::{
-        DOIP_ALIVE_CHECK_REQUEST, DOIP_ALIVE_CHECK_RESPONSE, DOIP_DIAGNOSTIC_MESSAGE,
-        DOIP_DIAGNOSTIC_MESSAGE_ACK, DOIP_DIAGNOSTIC_MESSAGE_NACK, DOIP_ENTITY_STATUS_REQUEST,
-        DOIP_ENTITY_STATUS_RESPONSE, DOIP_GENERIC_NACK, DOIP_POWER_INFORMATION_REQUEST,
-        DOIP_POWER_INFORMATION_RESPONSE, DOIP_ROUTING_ACTIVATION_REQUEST,
-        DOIP_ROUTING_ACTIVATION_RESPONSE, DOIP_VEHICLE_ANNOUNCEMENT_MESSAGE,
-        DOIP_VEHICLE_IDENTIFICATION_REQ, DOIP_VEHICLE_IDENTIFICATION_REQ_EID,
-        DOIP_VEHICLE_IDENTIFICATION_REQ_VIN,
-    },
-    DoipPayload,
+use crate::definitions::{
+    DOIP_ALIVE_CHECK_REQUEST, DOIP_ALIVE_CHECK_RESPONSE, DOIP_DIAGNOSTIC_MESSAGE,
+    DOIP_DIAGNOSTIC_MESSAGE_ACK, DOIP_DIAGNOSTIC_MESSAGE_NACK, DOIP_ENTITY_STATUS_REQUEST,
+    DOIP_ENTITY_STATUS_RESPONSE, DOIP_GENERIC_NACK, DOIP_POWER_INFORMATION_REQUEST,
+    DOIP_POWER_INFORMATION_RESPONSE, DOIP_ROUTING_ACTIVATION_REQUEST,
+    DOIP_ROUTING_ACTIVATION_RESPONSE, DOIP_TYPE_LEN, DOIP_VEHICLE_ANNOUNCEMENT_MESSAGE,
+    DOIP_VEHICLE_IDENTIFICATION_REQ, DOIP_VEHICLE_IDENTIFICATION_REQ_EID,
+    DOIP_VEHICLE_IDENTIFICATION_REQ_VIN,
 };
 
 /// Defines the variants of payloads available to `DoIP`.
@@ -67,8 +64,36 @@ pub enum PayloadType {
     DiagnosticMessageNack = DOIP_DIAGNOSTIC_MESSAGE_NACK,
 }
 
-impl DoipPayload for PayloadType {
-    fn payload_type(&self) -> PayloadType {
-        *self
+impl From<PayloadType> for [u8; DOIP_TYPE_LEN] {
+    fn from(payload_type: PayloadType) -> Self {
+        (payload_type as u16).to_be_bytes()
+    }
+}
+
+impl TryFrom<[u8; DOIP_TYPE_LEN]> for PayloadType {
+    type Error = &'static str;
+
+    fn try_from(value: [u8; DOIP_TYPE_LEN]) -> Result<Self, Self::Error> {
+        let val: u16 = ((value[0] as u16) << 8) | value[1] as u16;
+
+        match val {
+            DOIP_GENERIC_NACK => Ok(PayloadType::GenericNack),
+            DOIP_VEHICLE_IDENTIFICATION_REQ => Ok(PayloadType::VehicleIdentificationRequest),
+            DOIP_VEHICLE_IDENTIFICATION_REQ_EID => Ok(PayloadType::VehicleIdentificationRequestEid),
+            DOIP_VEHICLE_IDENTIFICATION_REQ_VIN => Ok(PayloadType::VehicleIdentificationRequestVin),
+            DOIP_VEHICLE_ANNOUNCEMENT_MESSAGE => Ok(PayloadType::VehicleAnnouncementMessage),
+            DOIP_ROUTING_ACTIVATION_REQUEST => Ok(PayloadType::RoutingActivationRequest),
+            DOIP_ROUTING_ACTIVATION_RESPONSE => Ok(PayloadType::RoutingActivationResponse),
+            DOIP_ALIVE_CHECK_REQUEST => Ok(PayloadType::AliveCheckRequest),
+            DOIP_ALIVE_CHECK_RESPONSE => Ok(PayloadType::AliveCheckResponse),
+            DOIP_ENTITY_STATUS_REQUEST => Ok(PayloadType::EntityStatusRequest),
+            DOIP_ENTITY_STATUS_RESPONSE => Ok(PayloadType::EntityStatusResponse),
+            DOIP_POWER_INFORMATION_REQUEST => Ok(PayloadType::PowerInformationRequest),
+            DOIP_POWER_INFORMATION_RESPONSE => Ok(PayloadType::PowerInformationResponse),
+            DOIP_DIAGNOSTIC_MESSAGE => Ok(PayloadType::DiagnosticMessage),
+            DOIP_DIAGNOSTIC_MESSAGE_ACK => Ok(PayloadType::DiagnosticMessageAck),
+            DOIP_DIAGNOSTIC_MESSAGE_NACK => Ok(PayloadType::DiagnosticMessageNack),
+            _ => Err("Invalid PayloadType."),
+        }
     }
 }

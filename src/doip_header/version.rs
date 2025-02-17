@@ -8,7 +8,7 @@ use crate::definitions::{
 /// crates and ISO-13400.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
-pub enum DoipVersion {
+pub enum ProtocolVersion {
     /// Reserved Version
     ReservedVer = RESERVED_VER,
 
@@ -28,24 +28,32 @@ pub enum DoipVersion {
     DefaultValue = DEFAULT_VALUE,
 }
 
-impl From<DoipVersion> for u8 {
-    fn from(version: DoipVersion) -> Self {
+impl ProtocolVersion {
+    /// Validates the inverse byte provided by the incoming/outgoing DoipHeader
+    pub fn validate_inverse_byte(&self, inverse_byte: &u8) -> bool {
+        let version_byte = self.clone() as u8;
+        !inverse_byte == version_byte
+    }
+}
+
+impl From<ProtocolVersion> for u8 {
+    fn from(version: ProtocolVersion) -> Self {
         version as u8
     }
 }
 
-impl TryFrom<u8> for DoipVersion {
-    type Error = ();
+impl TryFrom<u8> for ProtocolVersion {
+    type Error = &'static str;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            RESERVED_VER => Ok(DoipVersion::ReservedVer),
-            ISO13400_2010 => Ok(DoipVersion::Iso13400_2010),
-            ISO13400_2012 => Ok(DoipVersion::Iso13400_2012),
-            ISO13400_2019 => Ok(DoipVersion::Iso13400_2019),
-            ISO13400_2019_AMD1 => Ok(DoipVersion::Iso13400_2019Amd1),
-            DEFAULT_VALUE => Ok(DoipVersion::DefaultValue),
-            _ => Err(()),
+            RESERVED_VER => Ok(ProtocolVersion::ReservedVer),
+            ISO13400_2010 => Ok(ProtocolVersion::Iso13400_2010),
+            ISO13400_2012 => Ok(ProtocolVersion::Iso13400_2012),
+            ISO13400_2019 => Ok(ProtocolVersion::Iso13400_2019),
+            ISO13400_2019_AMD1 => Ok(ProtocolVersion::Iso13400_2019Amd1),
+            DEFAULT_VALUE => Ok(ProtocolVersion::DefaultValue),
+            _ => Err("Invalid DoipVersion."),
         }
     }
 }

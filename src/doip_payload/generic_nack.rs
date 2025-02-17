@@ -1,4 +1,4 @@
-use crate::{header::PayloadType, payload::NackCode, DoipPayload};
+use crate::payload::NackCode;
 
 /// The generic negative acknowledgement of a bad request.
 ///
@@ -10,8 +10,17 @@ pub struct GenericNack {
     pub nack_code: NackCode,
 }
 
-impl DoipPayload for GenericNack {
-    fn payload_type(&self) -> PayloadType {
-        PayloadType::GenericNack
+impl From<GenericNack> for [u8; 1] {
+    fn from(generic_nack: GenericNack) -> Self {
+        [generic_nack.nack_code as u8]
+    }
+}
+
+impl TryFrom<[u8; 1]> for GenericNack {
+    type Error = &'static str;
+
+    fn try_from(value: [u8; 1]) -> Result<Self, Self::Error> {
+        let nack_code = NackCode::try_from(value[0])?;
+        Ok(GenericNack { nack_code })
     }
 }

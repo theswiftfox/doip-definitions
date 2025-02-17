@@ -1,7 +1,7 @@
 #![no_std]
 #![warn(clippy::pedantic)]
-#![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
+#![warn(missing_docs)]
 
 //! Diagnostics over Internet Protocol definition library
 //!
@@ -17,6 +17,17 @@
 //! Due to `DoIP` being a networking protocol types such as `LogicalAddress` have been
 //! kept to `[u8; 2]` rather than `u16`, this is to remain as close as possible
 //! to real situations of on-wire communication.
+
+use definitions::{
+    DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
+    DOIP_DIAG_COMMON_TARGET_LEN, DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN,
+    DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN, DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN, DOIP_HEADER_LEN,
+    DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN,
+    DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
+    DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN, DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
+};
+use header::DoipHeader;
+use payload::DoipPayload;
 
 /// Contains header related logic and data structures.
 ///
@@ -51,11 +62,11 @@ pub mod payload {
     pub use super::doip_payload::activation_type::*;
     pub use super::doip_payload::diagnostic_ack::*;
     pub use super::doip_payload::diagnostic_nack::*;
-    pub use super::doip_payload::message::*;
     pub use super::doip_payload::nack_code::*;
     pub use super::doip_payload::node_type::*;
     pub use super::doip_payload::power_mode::*;
     pub use super::doip_payload::sync_status::*;
+    pub use super::doip_payload::DoipPayload;
 
     pub use super::doip_payload::alive_check_request::*;
     pub use super::doip_payload::alive_check_response::*;
@@ -75,16 +86,6 @@ pub mod payload {
     pub use super::doip_payload::vehicle_identification_request_vin::*;
 }
 
-/// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
-///
-/// `DoipPayload` is implemented across all the `DoIP` Payload Types for the
-/// purpose of consistent encoding and decoding as well as identification within
-/// a buffer.
-pub trait DoipPayload: core::fmt::Debug + Send {
-    /// Used to identify the payload self for `DoipHeader` construction.
-    fn payload_type(&self) -> header::PayloadType;
-}
-
 /// Contains all constants used in ISO-13400.
 ///
 /// The definitions found here are originally from Wireshark's repository. Wireshark
@@ -94,3 +95,177 @@ pub mod definitions;
 
 mod doip_header;
 mod doip_payload;
+
+/// The decoded struct of a `DoIP` packet.
+///
+/// Each `DoIP` packet contains a header which describes the message, this is outlined
+/// in `DoipHeader`.
+///
+/// Some Payload Types available in `DoIP` require a payload which is covered by
+/// `DoipPayload`.
+#[derive(Debug)]
+pub struct DoipMessage<'a> {
+    /// Defined by `DoipHeader`, the header supplies the information for programs
+    /// to understand the payload.
+    pub header: DoipHeader,
+
+    /// Takes any struct implementing `DoipPayload`.
+    pub payload: DoipPayload<'a>,
+}
+
+impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
+    fn from(value: DoipMessage<'a>) -> Self {
+        let header = <[u8; DOIP_HEADER_LEN]>::from(value.header);
+
+        let mut buffer = [0u8; N];
+        let mut offset = 0;
+
+        buffer[offset..offset + DOIP_HEADER_LEN].copy_from_slice(&header);
+        offset += DOIP_HEADER_LEN;
+
+        // Match on the payload and convert each variant to the appropriate byte slice
+        match value.payload {
+            DoipPayload::GenericNack(generic_nack) => {
+                let bytes = <[u8; 1]>::from(generic_nack);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::VehicleIdentificationRequest(vehicle_identification_request) => {
+                let bytes = <[u8; 0]>::from(vehicle_identification_request);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::VehicleIdentificationRequestEid(vehicle_identification_request_eid) => {
+                let bytes = <[u8; DOIP_COMMON_EID_LEN]>::from(vehicle_identification_request_eid);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::VehicleIdentificationRequestVin(vehicle_identification_request_vin) => {
+                let bytes = <[u8; DOIP_COMMON_VIN_LEN]>::from(vehicle_identification_request_vin);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::VehicleAnnouncementMessage(vehicle_announcement_message) => {
+                let bytes = <[u8; DOIP_COMMON_VIN_LEN
+                    + DOIP_DIAG_COMMON_SOURCE_LEN
+                    + DOIP_COMMON_EID_LEN
+                    + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
+                    + 1
+                    + 1]>::from(vehicle_announcement_message);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::RoutingActivationRequest(routing_activation_request) => {
+                let bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN
+                    + 1
+                    + DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN]>::from(
+                    routing_activation_request
+                );
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::RoutingActivationResponse(routing_activation_response) => {
+                let bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
+                    + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
+                    + 1
+                    + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN]>::from(
+                    routing_activation_response
+                );
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::AliveCheckRequest(alive_chec_request) => {
+                let bytes = <[u8; 0]>::from(alive_chec_request);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::AliveCheckResponse(alive_chec_response) => {
+                let bytes = <[u8; DOIP_DIAG_COMMON_SOURCE_LEN]>::from(alive_chec_response);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::EntityStatusRequest(entity_status_request) => {
+                let bytes = <[u8; 0]>::from(entity_status_request);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::EntityStatusResponse(entity_status_response) => {
+                let bytes = <[u8; 1
+                    + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
+                    + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
+                    + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN]>::from(
+                    entity_status_response
+                );
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::PowerInformationRequest(power_information_request) => {
+                let bytes = <[u8; 0]>::from(power_information_request);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::PowerInformationResponse(power_information_response) => {
+                let bytes = <[u8; 1]>::from(power_information_response);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::DiagnosticMessage(diagnostic_message) => {
+                let bytes = <[u8; N]>::from(diagnostic_message);
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::DiagnosticMessageAck(diagnostic_message_ack) => {
+                let bytes =
+                    <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(
+                        diagnostic_message_ack,
+                    );
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+            DoipPayload::DiagnosticMessageNack(diagnostic_message_nack) => {
+                let bytes =
+                    <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(
+                        diagnostic_message_nack,
+                    );
+                buffer[offset..].copy_from_slice(&bytes);
+
+                buffer
+            }
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a [u8]> for DoipMessage<'a> {
+    type Error = &'static str;
+
+    fn try_from(value: &'a [u8]) -> Result<Self, Self::Error> {
+        let (header_slice, rest) = value.split_at(DOIP_HEADER_LEN);
+
+        let header_bytes: &[u8; DOIP_HEADER_LEN] = header_slice
+            .try_into()
+            .map_err(|_| "Invalid header length")?;
+
+        let header: DoipHeader = DoipHeader::try_from(*header_bytes)?;
+
+        let (payload_slice, _) = rest.split_at(header.payload_length as usize);
+
+        let payload = DoipPayload::try_from((&header, payload_slice))?;
+
+        Ok(DoipMessage { header, payload })
+    }
+}

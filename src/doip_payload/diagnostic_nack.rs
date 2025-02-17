@@ -30,3 +30,28 @@ pub enum DiagnosticNackCode {
     /// Transport Protocol Error
     TransportProtocolError = 0x08,
 }
+
+impl From<DiagnosticNackCode> for u8 {
+    fn from(diagnostic_nack_code: DiagnosticNackCode) -> Self {
+        diagnostic_nack_code as u8
+    }
+}
+
+impl TryFrom<u8> for DiagnosticNackCode {
+    type Error = &'static str;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x00 => Ok(DiagnosticNackCode::ReservedByIso13400_00),
+            0x01 => Ok(DiagnosticNackCode::ReservedByIso13400_01),
+            0x02 => Ok(DiagnosticNackCode::InvalidSourceAddress),
+            0x03 => Ok(DiagnosticNackCode::UnknownTargetAddress),
+            0x04 => Ok(DiagnosticNackCode::DiagnosticMessageTooLarge),
+            0x05 => Ok(DiagnosticNackCode::OutOfMemory),
+            0x06 => Ok(DiagnosticNackCode::TargetUnreachable),
+            0x07 => Ok(DiagnosticNackCode::UnknownNetwork),
+            0x08 => Ok(DiagnosticNackCode::TransportProtocolError),
+            _ => Err("Invalid DiagnosticNackCode."),
+        }
+    }
+}
