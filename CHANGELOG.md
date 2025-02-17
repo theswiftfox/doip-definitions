@@ -21,12 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - removed all std-based impl, removed all bytes transitioning code to move to codec
 - make non-std changes
 
-## [3.0.0](https://github.com/samp-reston/doip-definitions/compare/v2.0.0...v3.0.0) - 2025-02-10
-
-### Other
-
-- change generic into dyn
-
 ## [2.0.0](https://github.com/samp-reston/doip-definitions/compare/v1.0.3...v2.0.0) - 2025-02-09
 
 ### Other
