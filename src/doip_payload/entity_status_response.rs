@@ -1,7 +1,8 @@
 use crate::{
     definitions::{
-        DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN, DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN,
-        DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN,
+        DOIP_ENTITY_STATUS_RESPONSE_LEN, DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN,
+        DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN, DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN,
+        DOIP_ENTITY_STATUS_RESPONSE_NODE_LEN,
     },
     payload::NodeType,
 };
@@ -26,33 +27,23 @@ pub struct EntityStatusResponse {
     pub max_data_size: [u8; DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN],
 }
 
-impl From<EntityStatusResponse>
-    for [u8; 1
-        + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
-        + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
-        + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN]
-{
+impl From<EntityStatusResponse> for [u8; DOIP_ENTITY_STATUS_RESPONSE_LEN] {
     fn from(entity_status_request: EntityStatusResponse) -> Self {
         let node_type = [u8::from(entity_status_request.node_type)];
         let max_concurrent_sockets = entity_status_request.max_concurrent_sockets;
         let currently_open_sockets = entity_status_request.currently_open_sockets;
         let max_data_size = entity_status_request.max_data_size;
 
-        let mut buffer = [0; 1
-            + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
-            + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
-            + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN];
+        let mut buffer = [0; DOIP_ENTITY_STATUS_RESPONSE_LEN];
         let mut offset = 0;
 
         buffer[offset] = node_type[0];
-        offset += 1;
+        offset += DOIP_ENTITY_STATUS_RESPONSE_NODE_LEN;
 
-        buffer[offset..=offset]
-            .copy_from_slice(&max_concurrent_sockets);
+        buffer[offset..=offset].copy_from_slice(&max_concurrent_sockets);
         offset += DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN;
 
-        buffer[offset..=offset]
-            .copy_from_slice(&currently_open_sockets);
+        buffer[offset..=offset].copy_from_slice(&currently_open_sockets);
         offset += DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN;
 
         buffer[offset..offset + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN]
@@ -62,23 +53,11 @@ impl From<EntityStatusResponse>
     }
 }
 
-impl
-    TryFrom<
-        [u8; 1
-            + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
-            + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
-            + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN],
-    > for EntityStatusResponse
-{
+impl TryFrom<[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]> for EntityStatusResponse {
     type Error = &'static str;
 
-    fn try_from(
-        value: [u8; 1
-            + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
-            + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
-            + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN],
-    ) -> Result<Self, Self::Error> {
-        let (node_slice, rest) = value.split_at(1);
+    fn try_from(value: [u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]) -> Result<Self, Self::Error> {
+        let (node_slice, rest) = value.split_at(DOIP_ENTITY_STATUS_RESPONSE_NODE_LEN);
 
         let (max_concurrent_sockets_slice, rest) =
             rest.split_at(DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN);

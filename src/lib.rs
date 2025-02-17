@@ -20,11 +20,9 @@
 
 use definitions::{
     DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
-    DOIP_DIAG_COMMON_TARGET_LEN, DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN,
-    DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN, DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN, DOIP_HEADER_LEN,
-    DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN,
-    DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
-    DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN, DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
+    DOIP_DIAG_COMMON_TARGET_LEN, DOIP_ENTITY_STATUS_RESPONSE_LEN, DOIP_HEADER_LEN,
+    DOIP_ROUTING_ACTIVATION_REQ_LEN, DOIP_ROUTING_ACTIVATION_RES_LEN,
+    DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG,
 };
 use header::DoipHeader;
 use payload::DoipPayload;
@@ -150,33 +148,22 @@ impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
                 buffer
             }
             DoipPayload::VehicleAnnouncementMessage(vehicle_announcement_message) => {
-                let bytes = <[u8; DOIP_COMMON_VIN_LEN
-                    + DOIP_DIAG_COMMON_SOURCE_LEN
-                    + DOIP_COMMON_EID_LEN
-                    + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-                    + 1
-                    + 1]>::from(vehicle_announcement_message);
+                let bytes =
+                    <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(vehicle_announcement_message);
                 buffer[offset..].copy_from_slice(&bytes);
 
                 buffer
             }
             DoipPayload::RoutingActivationRequest(routing_activation_request) => {
-                let bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN
-                    + 1
-                    + DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN]>::from(
-                    routing_activation_request
-                );
+                let bytes =
+                    <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::from(routing_activation_request);
                 buffer[offset..].copy_from_slice(&bytes);
 
                 buffer
             }
             DoipPayload::RoutingActivationResponse(routing_activation_response) => {
-                let bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
-                    + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
-                    + 1
-                    + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN]>::from(
-                    routing_activation_response
-                );
+                let bytes =
+                    <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(routing_activation_response);
                 buffer[offset..].copy_from_slice(&bytes);
 
                 buffer
@@ -200,12 +187,7 @@ impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
                 buffer
             }
             DoipPayload::EntityStatusResponse(entity_status_response) => {
-                let bytes = <[u8; 1
-                    + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
-                    + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
-                    + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN]>::from(
-                    entity_status_response
-                );
+                let bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(entity_status_response);
                 buffer[offset..].copy_from_slice(&bytes);
 
                 buffer

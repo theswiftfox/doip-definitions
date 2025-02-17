@@ -74,9 +74,10 @@ impl TryFrom<[u8; DOIP_HEADER_LEN]> for DoipHeader {
         let protocol_version = ProtocolVersion::try_from(protocol_version_slice[0])?;
 
         let inverse_protocol_version =
-            match protocol_version.validate_inverse_byte(&inverse_protocol_version_slice[0]) {
-                true => inverse_protocol_version_slice[0],
-                false => return Err("Inverse protocol version validation failed."),
+            if protocol_version.validate_inverse_byte(&inverse_protocol_version_slice[0]) {
+                inverse_protocol_version_slice[0]
+            } else {
+                return Err("Inverse protocol version validation failed.");
             };
 
         let payload_type_bytes: [u8; DOIP_TYPE_LEN] = payload_type_slice

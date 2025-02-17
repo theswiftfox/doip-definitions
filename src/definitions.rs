@@ -116,6 +116,10 @@ pub const DOIP_ROUTING_ACTIVATION_REQ_OEM_OFFSET_V2: usize =
     DOIP_ROUTING_ACTIVATION_REQ_ISO_OFFSET_V2 + DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN;
 /// Routing Activation Request: OEM Length
 pub const DOIP_ROUTING_ACTIVATION_REQ_OEM_LEN: usize = 4;
+/// Routing Activation Request: Length
+pub const DOIP_ROUTING_ACTIVATION_REQ_LEN: usize = DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN
+    + DOIP_ROUTING_ACTIVATION_REQ_TYPE_LEN_V2
+    + DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN;
 
 // Routing activation response //
 /// Routing Activation Response: Tester Offset
@@ -142,6 +146,11 @@ pub const DOIP_ROUTING_ACTIVATION_RES_OEM_OFFSET: usize =
     DOIP_ROUTING_ACTIVATION_RES_ISO_OFFSET + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN;
 /// Routing Activation Response: OEM Length
 pub const DOIP_ROUTING_ACTIVATION_RES_OEM_LEN: usize = 4;
+/// Routing Activation Response: Length
+pub const DOIP_ROUTING_ACTIVATION_RES_LEN: usize = DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
+    + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
+    + DOIP_ROUTING_ACTIVATION_RES_CODE_LEN
+    + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN;
 
 // Vehicle announcement message //
 /// Vehicle Announcement Message: VIN Offset
@@ -169,6 +178,12 @@ pub const DOIP_VEHICLE_ANNOUNCEMENT_SYNC_OFFSET: usize =
     DOIP_VEHICLE_ANNOUNCEMENT_ACTION_OFFSET + DOIP_VEHICLE_ANNOUNCEMENT_ACTION_LEN;
 /// Vehicle Announcement Message: Sync Length
 pub const DOIP_VEHICLE_ANNOUNCEMENT_SYNC_LEN: usize = 1;
+/// Vehicle Announcement Message: Length - Short
+pub const DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT: usize =
+    DOIP_VEHICLE_ANNOUNCEMENT_SYNC_OFFSET - DOIP_HEADER_LEN;
+/// Vehicle Announcement Message: Length - Long
+pub const DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG: usize =
+    DOIP_VEHICLE_ANNOUNCEMENT_SYNC_OFFSET + DOIP_VEHICLE_ANNOUNCEMENT_SYNC_LEN - DOIP_HEADER_LEN;
 
 // Alive check response //
 /// Alive Check Response: Source Offset
@@ -196,6 +211,11 @@ pub const DOIP_ENTITY_STATUS_RESPONSE_MDS_OFFSET: usize =
     DOIP_ENTITY_STATUS_RESPONSE_NCTS_OFFSET + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN;
 /// Entity Status Response: Max Data Size Length
 pub const DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN: usize = 4;
+/// Entity Status Response: Length
+pub const DOIP_ENTITY_STATUS_RESPONSE_LEN: usize = DOIP_ENTITY_STATUS_RESPONSE_NODE_LEN
+    + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
+    + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
+    + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN;
 
 // Diagnostic power mode information response //
 /// Power Mode Response: Power Mode Offset

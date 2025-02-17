@@ -1,6 +1,7 @@
 use crate::{
     definitions::{
-        DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
+        DOIP_ROUTING_ACTIVATION_RES_CODE_LEN, DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN,
+        DOIP_ROUTING_ACTIVATION_RES_ISO_LEN, DOIP_ROUTING_ACTIVATION_RES_LEN,
         DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN,
     },
     payload::ActivationCode,
@@ -24,22 +25,14 @@ pub struct RoutingActivationResponse {
     pub buffer: [u8; DOIP_ROUTING_ACTIVATION_RES_ISO_LEN],
 }
 
-impl From<RoutingActivationResponse>
-    for [u8; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
-        + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
-        + 1
-        + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN]
-{
+impl From<RoutingActivationResponse> for [u8; DOIP_ROUTING_ACTIVATION_RES_LEN] {
     fn from(routing_activation_response: RoutingActivationResponse) -> Self {
         let logical_address = routing_activation_response.logical_address;
         let source_address = routing_activation_response.source_address;
         let activation_code = [u8::from(routing_activation_response.activation_code)];
         let res_buffer = routing_activation_response.buffer;
 
-        let mut buffer = [0; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
-            + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
-            + 1
-            + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN];
+        let mut buffer = [0; DOIP_ROUTING_ACTIVATION_RES_LEN];
         let mut offset = 0;
 
         buffer[offset..offset + DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN]
@@ -51,7 +44,7 @@ impl From<RoutingActivationResponse>
         offset += DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN;
 
         buffer[offset] = activation_code[0];
-        offset += 1;
+        offset += DOIP_ROUTING_ACTIVATION_RES_CODE_LEN;
 
         buffer[offset..offset + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN].copy_from_slice(&res_buffer);
 
@@ -59,25 +52,13 @@ impl From<RoutingActivationResponse>
     }
 }
 
-impl
-    TryFrom<
-        [u8; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
-            + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
-            + 1
-            + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN],
-    > for RoutingActivationResponse
-{
+impl TryFrom<[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]> for RoutingActivationResponse {
     type Error = &'static str;
 
-    fn try_from(
-        value: [u8; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
-            + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
-            + 1
-            + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN],
-    ) -> Result<Self, Self::Error> {
+    fn try_from(value: [u8; DOIP_ROUTING_ACTIVATION_RES_LEN]) -> Result<Self, Self::Error> {
         let (logical_address_slice, rest) = value.split_at(DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN);
         let (source_address_slice, rest) = rest.split_at(DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN);
-        let (activation_code_slice, rest) = rest.split_at(1);
+        let (activation_code_slice, rest) = rest.split_at(DOIP_ROUTING_ACTIVATION_RES_CODE_LEN);
         let (buffer_slice, _) = rest.split_at(DOIP_ROUTING_ACTIVATION_RES_ISO_LEN);
 
         let logical_address: [u8; DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN] = logical_address_slice

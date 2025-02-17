@@ -1,7 +1,8 @@
 use crate::{
     definitions::{
         DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
-        DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
+        DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN, DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG,
+        DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT,
     },
     payload::{ActionCode, SyncStatus},
 };
@@ -32,14 +33,7 @@ pub struct VehicleAnnouncementMessage {
     pub vin_gid_sync: Option<SyncStatus>,
 }
 
-impl From<VehicleAnnouncementMessage>
-    for [u8; DOIP_COMMON_VIN_LEN
-        + DOIP_DIAG_COMMON_SOURCE_LEN
-        + DOIP_COMMON_EID_LEN
-        + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-        + 1
-        + 1]
-{
+impl From<VehicleAnnouncementMessage> for [u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG] {
     fn from(vehicle_announcement_message: VehicleAnnouncementMessage) -> Self {
         let vin = vehicle_announcement_message.vin;
         let logical_address = vehicle_announcement_message.logical_address;
@@ -52,12 +46,7 @@ impl From<VehicleAnnouncementMessage>
             None => [0],
         };
 
-        let mut buffer = [0; DOIP_COMMON_VIN_LEN
-            + DOIP_DIAG_COMMON_SOURCE_LEN
-            + DOIP_COMMON_EID_LEN
-            + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-            + 1
-            + 1];
+        let mut buffer = [0; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG];
         let mut offset = 0;
 
         buffer[offset..offset + DOIP_COMMON_VIN_LEN].copy_from_slice(&vin);
@@ -81,26 +70,10 @@ impl From<VehicleAnnouncementMessage>
     }
 }
 
-impl
-    TryFrom<
-        [u8; DOIP_COMMON_VIN_LEN
-            + DOIP_DIAG_COMMON_SOURCE_LEN
-            + DOIP_COMMON_EID_LEN
-            + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-            + 1
-            + 1],
-    > for VehicleAnnouncementMessage
-{
+impl TryFrom<[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]> for VehicleAnnouncementMessage {
     type Error = &'static str;
 
-    fn try_from(
-        value: [u8; DOIP_COMMON_VIN_LEN
-            + DOIP_DIAG_COMMON_SOURCE_LEN
-            + DOIP_COMMON_EID_LEN
-            + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-            + 1
-            + 1],
-    ) -> Result<Self, Self::Error> {
+    fn try_from(value: [u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]) -> Result<Self, Self::Error> {
         let (vin_slice, rest) = value.split_at(DOIP_COMMON_VIN_LEN);
         let (logical_address_slice, rest) = rest.split_at(DOIP_DIAG_COMMON_SOURCE_LEN);
         let (eid_slice, rest) = rest.split_at(DOIP_COMMON_EID_LEN);
@@ -137,24 +110,10 @@ impl
     }
 }
 
-impl
-    TryFrom<
-        [u8; DOIP_COMMON_VIN_LEN
-            + DOIP_DIAG_COMMON_SOURCE_LEN
-            + DOIP_COMMON_EID_LEN
-            + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-            + 1],
-    > for VehicleAnnouncementMessage
-{
+impl TryFrom<[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]> for VehicleAnnouncementMessage {
     type Error = &'static str;
 
-    fn try_from(
-        value: [u8; DOIP_COMMON_VIN_LEN
-            + DOIP_DIAG_COMMON_SOURCE_LEN
-            + DOIP_COMMON_EID_LEN
-            + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
-            + 1],
-    ) -> Result<Self, Self::Error> {
+    fn try_from(value: [u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]) -> Result<Self, Self::Error> {
         let (vin_slice, rest) = value.split_at(DOIP_COMMON_VIN_LEN);
         let (logical_address_slice, rest) = rest.split_at(DOIP_DIAG_COMMON_SOURCE_LEN);
         let (eid_slice, rest) = rest.split_at(DOIP_COMMON_EID_LEN);
