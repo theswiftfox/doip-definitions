@@ -2,6 +2,7 @@
 #![warn(clippy::pedantic)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
+#![allow(clippy::module_name_repetitions)]
 
 //! Diagnostics over Internet Protocol definition library
 //!
