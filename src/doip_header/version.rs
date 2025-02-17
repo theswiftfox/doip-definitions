@@ -29,9 +29,9 @@ pub enum ProtocolVersion {
 }
 
 impl ProtocolVersion {
-    /// Validates the inverse byte provided by the incoming/outgoing DoipHeader
-    pub fn validate_inverse_byte(&self, inverse_byte: &u8) -> bool {
-        let version_byte = self.clone() as u8;
+    /// Validates the inverse byte provided by the incoming/outgoing `DoipHeader`
+    #[must_use] pub fn validate_inverse_byte(&self, inverse_byte: &u8) -> bool {
+        let version_byte = *self as u8;
         !inverse_byte == version_byte
     }
 }

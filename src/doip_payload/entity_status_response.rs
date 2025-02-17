@@ -47,11 +47,11 @@ impl From<EntityStatusResponse>
         buffer[offset] = node_type[0];
         offset += 1;
 
-        buffer[offset..offset + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN]
+        buffer[offset..=offset]
             .copy_from_slice(&max_concurrent_sockets);
         offset += DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN;
 
-        buffer[offset..offset + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN]
+        buffer[offset..=offset]
             .copy_from_slice(&currently_open_sockets);
         offset += DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN;
 

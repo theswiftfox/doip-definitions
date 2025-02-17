@@ -61,52 +61,52 @@ pub mod vehicle_identification_request_vin;
 /// a buffer.
 #[derive(Debug)]
 pub enum DoipPayload<'a> {
-    /// GenericNack variant to hold GenericNack struct
+    /// `GenericNack` variant to hold `GenericNack` struct
     GenericNack(GenericNack),
 
-    /// VehicleIdentificationRequest variant to hold VehicleIdentificationRequest struct
+    /// `VehicleIdentificationRequest` variant to hold `VehicleIdentificationRequest` struct
     VehicleIdentificationRequest(VehicleIdentificationRequest),
 
-    /// VehicleIdentificationRequestEid variant to hold VehicleIdentificationRequestEid struct
+    /// `VehicleIdentificationRequestEid` variant to hold `VehicleIdentificationRequestEid` struct
     VehicleIdentificationRequestEid(VehicleIdentificationRequestEid),
 
-    /// VehicleIdentificationRequestVin variant to hold VehicleIdentificationRequestVin struct
+    /// `VehicleIdentificationRequestVin` variant to hold `VehicleIdentificationRequestVin` struct
     VehicleIdentificationRequestVin(VehicleIdentificationRequestVin),
 
-    /// VehicleAnnouncementMessage variant to hold VehicleAnnouncementMessage struct
+    /// `VehicleAnnouncementMessage` variant to hold `VehicleAnnouncementMessage` struct
     VehicleAnnouncementMessage(VehicleAnnouncementMessage),
 
-    /// RoutingActivationRequest variant to hold RoutingActivationRequest struct
+    /// `RoutingActivationRequest` variant to hold `RoutingActivationRequest` struct
     RoutingActivationRequest(RoutingActivationRequest),
 
-    /// RoutingActivationResponse variant to hold RoutingActivationResponse struct
+    /// `RoutingActivationResponse` variant to hold `RoutingActivationResponse` struct
     RoutingActivationResponse(RoutingActivationResponse),
 
-    /// AliveCheckRequest variant to hold AliveCheckRequest struct
+    /// `AliveCheckRequest` variant to hold `AliveCheckRequest` struct
     AliveCheckRequest(AliveCheckRequest),
 
-    /// AliveCheckResponse variant to hold AliveCheckResponse struct
+    /// `AliveCheckResponse` variant to hold `AliveCheckResponse` struct
     AliveCheckResponse(AliveCheckResponse),
 
-    /// EntityStatusRequest variant to hold EntityStatusRequest struct
+    /// `EntityStatusRequest` variant to hold `EntityStatusRequest` struct
     EntityStatusRequest(EntityStatusRequest),
 
-    /// EntityStatusResponse variant to hold EntityStatusResponse struct
+    /// `EntityStatusResponse` variant to hold `EntityStatusResponse` struct
     EntityStatusResponse(EntityStatusResponse),
 
-    /// PowerInformationRequest variant to hold PowerInformationRequest struct
+    /// `PowerInformationRequest` variant to hold `PowerInformationRequest` struct
     PowerInformationRequest(PowerInformationRequest),
 
-    /// PowerInformationResponse variant to hold PowerInformationResponse struct
+    /// `PowerInformationResponse` variant to hold `PowerInformationResponse` struct
     PowerInformationResponse(PowerInformationResponse),
 
-    /// DiagnosticMessage variant to hold DiagnosticMessage struct
+    /// `DiagnosticMessage` variant to hold `DiagnosticMessage` struct
     DiagnosticMessage(DiagnosticMessage<'a>),
 
-    /// DiagnosticMessageAck variant to hold DiagnosticMessageAck struct
+    /// `DiagnosticMessageAck` variant to hold `DiagnosticMessageAck` struct
     DiagnosticMessageAck(DiagnosticMessageAck),
 
-    /// DiagnosticMessageNack variant to hold DiagnosticMessageNack struct
+    /// `DiagnosticMessageNack` variant to hold `DiagnosticMessageNack` struct
     DiagnosticMessageNack(DiagnosticMessageNack),
 }
 
@@ -272,6 +272,6 @@ impl<'a> TryFrom<(&DoipHeader, &'a [u8])> for DoipPayload<'a> {
             }
         };
 
-        Ok(payload?)
+        payload
     }
 }

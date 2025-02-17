@@ -74,7 +74,7 @@ impl TryFrom<[u8; DOIP_TYPE_LEN]> for PayloadType {
     type Error = &'static str;
 
     fn try_from(value: [u8; DOIP_TYPE_LEN]) -> Result<Self, Self::Error> {
-        let val: u16 = ((value[0] as u16) << 8) | value[1] as u16;
+        let val: u16 = (u16::from(value[0]) << 8) | u16::from(value[1]);
 
         match val {
             DOIP_GENERIC_NACK => Ok(PayloadType::GenericNack),

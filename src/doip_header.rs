@@ -47,10 +47,10 @@ impl From<DoipHeader> for [u8; DOIP_HEADER_LEN] {
         let mut buffer = [0; DOIP_HEADER_LEN];
         let mut offset = 0;
 
-        buffer[offset..offset + DOIP_VERSION_LEN].copy_from_slice(&protocol_version);
+        buffer[offset..=offset].copy_from_slice(&protocol_version);
         offset += DOIP_VERSION_LEN;
 
-        buffer[offset..offset + DOIP_INV_VERSION_LEN].copy_from_slice(&inverse_protocol_version);
+        buffer[offset..=offset].copy_from_slice(&inverse_protocol_version);
         offset += DOIP_INV_VERSION_LEN;
 
         buffer[offset..offset + DOIP_TYPE_LEN].copy_from_slice(&payload_type);
