@@ -25,6 +25,7 @@ use crate::{
         DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
         DOIP_ROUTING_ACTIVATION_RES_LEN, DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN,
         DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN, DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG,
+        DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT,
     },
     header::{DoipHeader, PayloadType},
 };
@@ -158,84 +159,148 @@ impl<'a, const N: usize> TryFrom<DoipPayload<'a>> for [u8; N] {
         match payload {
             DoipPayload::GenericNack(gen_nack) => {
                 let bytes = <[u8; 1]>::from(gen_nack);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::VehicleIdentificationRequest(veh_id_req) => {
                 let bytes = <[u8; 0]>::from(veh_id_req);
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::VehicleIdentificationRequestEid(veh_id_req_eid) => {
                 let bytes = <[u8; DOIP_COMMON_EID_LEN]>::from(veh_id_req_eid);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::VehicleIdentificationRequestVin(veh_id_req_vin) => {
                 let bytes = <[u8; DOIP_COMMON_VIN_LEN]>::from(veh_id_req_vin);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::VehicleAnnouncementMessage(veh_ann_msg) => {
-                let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(veh_ann_msg);
-                buffer.copy_from_slice(&bytes);
-                Ok(buffer)
+                match veh_ann_msg.vin_gid_sync {
+                    Some(_) => {
+                        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(veh_ann_msg);
+
+                        if bytes.len() > N {
+                            return Err("Buffer is too small");
+                        }
+
+                        buffer.copy_from_slice(&bytes);
+                        Ok(buffer)
+                    }
+                    None => {
+                        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::from(veh_ann_msg);
+
+                        if bytes.len() > N {
+                            return Err("Buffer is too small");
+                        }
+
+                        buffer.copy_from_slice(&bytes);
+                        Ok(buffer)
+                    }
+                }
             }
 
             DoipPayload::RoutingActivationRequest(routing_act_req) => {
                 let bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::from(routing_act_req);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::RoutingActivationResponse(routing_act_res) => {
                 let bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(routing_act_res);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::AliveCheckRequest(alive_check_req) => {
                 let bytes = <[u8; 0]>::from(alive_check_req);
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::AliveCheckResponse(alive_check_res) => {
                 let bytes = <[u8; DOIP_DIAG_COMMON_SOURCE_LEN]>::from(alive_check_res);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::EntityStatusRequest(ent_status_req) => {
                 let bytes = <[u8; 0]>::from(ent_status_req);
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::EntityStatusResponse(ent_status_res) => {
                 let bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(ent_status_res);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::PowerInformationRequest(power_info_req) => {
                 let bytes = <[u8; 0]>::from(power_info_req);
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::PowerInformationResponse(power_info_res) => {
                 let bytes = <[u8; 1]>::from(power_info_res);
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
 
             DoipPayload::DiagnosticMessage(diag_msg) => {
                 let bytes = <[u8; N]>::try_from(diag_msg)?;
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
@@ -245,6 +310,11 @@ impl<'a, const N: usize> TryFrom<DoipPayload<'a>> for [u8; N] {
                     <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(
                         diag_msg_ack,
                     );
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
@@ -254,6 +324,11 @@ impl<'a, const N: usize> TryFrom<DoipPayload<'a>> for [u8; N] {
                     <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(
                         diag_msg_nack,
                     );
+
+                if bytes.len() > N {
+                    return Err("Buffer is too small");
+                }
+
                 buffer.copy_from_slice(&bytes);
                 Ok(buffer)
             }
@@ -470,19 +545,472 @@ mod tests {
     use super::DoipPayload;
 
     #[test]
+    fn test_try_from_generic_nack_to_bytes() {
+        let gen_nack = GenericNack {
+            nack_code: NackCode::IncorrectPatternFormat,
+        };
+
+        let bytes = <[u8; 1]>::from(gen_nack);
+
+        let payload = DoipPayload::GenericNack(gen_nack);
+
+        let payload_bytes = <[u8; 1]>::try_from(payload);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_vehicle_id_req_to_bytes() {
+        let payload = VehicleIdentificationRequest {};
+
+        let bytes = <[u8; 0]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleIdentificationRequest(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_vehicle_id_req_eid_to_bytes() {
+        let payload = VehicleIdentificationRequestEid {
+            eid: [0u8; DOIP_COMMON_EID_LEN],
+        };
+
+        let bytes = <[u8; DOIP_COMMON_EID_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleIdentificationRequestEid(payload);
+
+        let payload_bytes = <[u8; DOIP_COMMON_EID_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_vehicle_id_req_vin_to_bytes() {
+        let payload = VehicleIdentificationRequestVin {
+            vin: [0u8; DOIP_COMMON_VIN_LEN],
+        };
+
+        let bytes = <[u8; DOIP_COMMON_VIN_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleIdentificationRequestVin(payload);
+
+        let payload_bytes = <[u8; DOIP_COMMON_VIN_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_vehicle_announce_msg_short_to_bytes() {
+        let payload = VehicleAnnouncementMessage {
+            vin: [0u8; DOIP_COMMON_VIN_LEN],
+            logical_address: [0x01, 0x02],
+            eid: [0u8; DOIP_COMMON_EID_LEN],
+            gid: [0u8; DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN],
+            further_action: ActionCode::NoFurtherActionRequired,
+            vin_gid_sync: None,
+        };
+
+        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleAnnouncementMessage(payload);
+
+        let payload_bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_vehicle_announce_msg_long_to_bytes() {
+        let payload = VehicleAnnouncementMessage {
+            vin: [0u8; DOIP_COMMON_VIN_LEN],
+            logical_address: [0x01, 0x02],
+            eid: [0u8; DOIP_COMMON_EID_LEN],
+            gid: [0u8; DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN],
+            further_action: ActionCode::NoFurtherActionRequired,
+            vin_gid_sync: Some(SyncStatus::VinGidSynchronized),
+        };
+
+        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleAnnouncementMessage(payload);
+
+        let payload_bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_routing_act_req_to_bytes() {
+        let payload = RoutingActivationRequest {
+            source_address: [0x01, 0x02],
+            activation_type: ActivationType::Default,
+            buffer: [0x01, 0x02, 0x03, 0x04],
+        };
+
+        let bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::RoutingActivationRequest(payload);
+
+        let payload_bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_routing_act_res_to_bytes() {
+        let payload = RoutingActivationResponse {
+            logical_address: [0x01, 0x02],
+            source_address: [0x01, 0x02],
+            activation_code: ActivationCode::ActivatedConfirmationRequired,
+            buffer: [0x01, 0x02, 0x03, 0x04],
+        };
+
+        let bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::RoutingActivationResponse(payload);
+
+        let payload_bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_alive_check_req_to_bytes() {
+        let payload = AliveCheckRequest {};
+
+        let bytes = <[u8; 0]>::from(payload);
+
+        let payload_enum = DoipPayload::AliveCheckRequest(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_alive_check_res_to_bytes() {
+        let payload = AliveCheckResponse {
+            source_address: [0x01, 0x02],
+        };
+
+        let bytes = <[u8; DOIP_ALIVE_CHECK_RESPONSE_SOURCE_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::AliveCheckResponse(payload);
+
+        let payload_bytes = <[u8; DOIP_ALIVE_CHECK_RESPONSE_SOURCE_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_entity_status_req_to_bytes() {
+        let payload = EntityStatusRequest {};
+
+        let bytes = <[u8; 0]>::from(payload);
+
+        let payload_enum = DoipPayload::EntityStatusRequest(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_entity_status_res_to_bytes() {
+        let payload = EntityStatusResponse {
+            node_type: NodeType::DoipGateway,
+            max_concurrent_sockets: [0x01],
+            currently_open_sockets: [0x02],
+            max_data_size: [0x03, 0x04, 0x05, 0x06],
+        };
+
+        let bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::EntityStatusResponse(payload);
+
+        let payload_bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_power_info_req_to_bytes() {
+        let payload = PowerInformationRequest {};
+
+        let bytes = <[u8; 0]>::from(payload);
+
+        let payload_enum = DoipPayload::PowerInformationRequest(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_power_info_res_to_bytes() {
+        let payload = PowerInformationResponse {
+            power_mode: PowerMode::Ready,
+        };
+
+        let bytes = <[u8; DOIP_POWER_MODE_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::PowerInformationResponse(payload);
+
+        let payload_bytes = <[u8; DOIP_POWER_MODE_LEN]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_diag_msg_to_bytes() {
+        let payload = DiagnosticMessage {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            message: &[0x03],
+        };
+
+        let bytes = <[u8; 5]>::try_from(payload);
+
+        let payload_enum = DoipPayload::DiagnosticMessage(payload);
+
+        let payload_bytes = <[u8; 5]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap(), bytes.unwrap());
+    }
+    #[test]
+    fn test_try_from_diag_msg_ack_to_bytes() {
+        let payload = DiagnosticMessageAck {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            ack_code: DiagnosticAckCode::Acknowledged,
+        };
+
+        let bytes =
+            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(payload);
+
+        let payload_enum = DoipPayload::DiagnosticMessageAck(payload);
+
+        let payload_bytes =
+            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::try_from(
+                payload_enum,
+            );
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+    #[test]
+    fn test_try_from_diag_msg_nack_to_bytes() {
+        let payload = DiagnosticMessageNack {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            nack_code: DiagnosticNackCode::OutOfMemory,
+        };
+
+        let bytes =
+            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(payload);
+
+        let payload_enum = DoipPayload::DiagnosticMessageNack(payload);
+
+        let payload_bytes =
+            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::try_from(
+                payload_enum,
+            );
+
+        assert_eq!(payload_bytes.unwrap(), bytes);
+    }
+
+    #[test]
+    fn test_try_from_generic_nack_to_bytes_invalid_buffer() {
+        let payload = GenericNack {
+            nack_code: NackCode::IncorrectPatternFormat,
+        };
+
+        let bytes = <[u8; 1]>::from(payload);
+
+        let payload_enum = DoipPayload::GenericNack(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_vehicle_id_req_eid_to_bytes_invalid_buffer() {
+        let payload = VehicleIdentificationRequestEid {
+            eid: [0u8; DOIP_COMMON_EID_LEN],
+        };
+
+        let bytes = <[u8; DOIP_COMMON_EID_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleIdentificationRequestEid(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_vehicle_id_req_vin_to_bytes_invalid_buffer() {
+        let payload = VehicleIdentificationRequestVin {
+            vin: [0u8; DOIP_COMMON_VIN_LEN],
+        };
+
+        let bytes = <[u8; DOIP_COMMON_VIN_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleIdentificationRequestVin(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_vehicle_announce_msg_short_to_bytes_invalid_buffer() {
+        let payload = VehicleAnnouncementMessage {
+            vin: [0u8; DOIP_COMMON_VIN_LEN],
+            logical_address: [0x01, 0x02],
+            eid: [0u8; DOIP_COMMON_EID_LEN],
+            gid: [0u8; DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN],
+            further_action: ActionCode::NoFurtherActionRequired,
+            vin_gid_sync: None,
+        };
+
+        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleAnnouncementMessage(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_vehicle_announce_msg_long_to_bytes_invalid_buffer() {
+        let payload = VehicleAnnouncementMessage {
+            vin: [0u8; DOIP_COMMON_VIN_LEN],
+            logical_address: [0x01, 0x02],
+            eid: [0u8; DOIP_COMMON_EID_LEN],
+            gid: [0u8; DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN],
+            further_action: ActionCode::NoFurtherActionRequired,
+            vin_gid_sync: Some(SyncStatus::VinGidSynchronized),
+        };
+
+        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(payload);
+
+        let payload_enum = DoipPayload::VehicleAnnouncementMessage(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_routing_act_req_to_bytes_invalid_buffer() {
+        let payload = RoutingActivationRequest {
+            source_address: [0x01, 0x02],
+            activation_type: ActivationType::Default,
+            buffer: [0x01, 0x02, 0x03, 0x04],
+        };
+
+        let bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::RoutingActivationRequest(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_routing_act_res_to_bytes_invalid_buffer() {
+        let payload = RoutingActivationResponse {
+            logical_address: [0x01, 0x02],
+            source_address: [0x01, 0x02],
+            activation_code: ActivationCode::ActivatedConfirmationRequired,
+            buffer: [0x01, 0x02, 0x03, 0x04],
+        };
+
+        let bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::RoutingActivationResponse(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_alive_check_res_to_bytes_invalid_buffer() {
+        let payload = AliveCheckResponse {
+            source_address: [0x01, 0x02],
+        };
+
+        let bytes = <[u8; DOIP_ALIVE_CHECK_RESPONSE_SOURCE_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::AliveCheckResponse(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_entity_status_res_to_bytes_invalid_buffer() {
+        let payload = EntityStatusResponse {
+            node_type: NodeType::DoipGateway,
+            max_concurrent_sockets: [0x01],
+            currently_open_sockets: [0x02],
+            max_data_size: [0x03, 0x04, 0x05, 0x06],
+        };
+
+        let bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::EntityStatusResponse(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_power_info_res_to_bytes_invalid_buffer() {
+        let payload = PowerInformationResponse {
+            power_mode: PowerMode::Ready,
+        };
+
+        let bytes = <[u8; DOIP_POWER_MODE_LEN]>::from(payload);
+
+        let payload_enum = DoipPayload::PowerInformationResponse(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_diag_msg_ack_to_bytes_invalid_buffer() {
+        let payload = DiagnosticMessageAck {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            ack_code: DiagnosticAckCode::Acknowledged,
+        };
+
+        let payload_enum = DoipPayload::DiagnosticMessageAck(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+    #[test]
+    fn test_try_from_diag_msg_nack_to_bytes_invalid_buffer() {
+        let payload = DiagnosticMessageNack {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            nack_code: DiagnosticNackCode::OutOfMemory,
+        };
+
+        let bytes =
+            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(payload);
+
+        let payload_enum = DoipPayload::DiagnosticMessageNack(payload);
+
+        let payload_bytes = <[u8; 0]>::try_from(payload_enum);
+
+        assert_eq!(payload_bytes.unwrap_err(), "Buffer is too small");
+    }
+
+    #[test]
     fn test_try_from_bytes_generic_nack() {
+        let payload = GenericNack {
+            nack_code: NackCode::IncorrectPatternFormat,
+        };
+
+        let payload_bytes: &[u8] = &<[u8; 1]>::from(payload);
+
         let header = DoipHeader {
             protocol_version: ProtocolVersion::Iso13400_2012,
             inverse_protocol_version: 0xfd,
             payload_type: PayloadType::GenericNack,
             payload_length: 0x00000001,
         };
-
-        let payload = GenericNack {
-            nack_code: NackCode::IncorrectPatternFormat,
-        };
-
-        let payload_bytes: &[u8] = &<[u8; 1]>::from(payload);
 
         let bytes = DoipPayload::try_from((&header, payload_bytes));
 
@@ -635,6 +1163,252 @@ mod tests {
             bytes.unwrap(),
             DoipPayload::RoutingActivationRequest(payload)
         )
+    }
+
+    #[test]
+    fn test_try_from_bytes_routing_act_res() {
+        let payload = RoutingActivationResponse {
+            logical_address: [0x01, 0x02],
+            source_address: [0x01, 0x02],
+            activation_code: ActivationCode::ActivatedConfirmationRequired,
+            buffer: [0x01, 0x02, 0x03, 0x04],
+        };
+
+        let payload_bytes: &[u8] = &<[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::RoutingActivationResponse,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(
+            bytes.unwrap(),
+            DoipPayload::RoutingActivationResponse(payload)
+        )
+    }
+
+    #[test]
+    fn test_try_from_bytes_alive_check_req() {
+        let payload = AliveCheckRequest {};
+
+        let payload_bytes: &[u8] = &<[u8; 0]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::AliveCheckRequest,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(bytes.unwrap(), DoipPayload::AliveCheckRequest(payload))
+    }
+
+    #[test]
+    fn test_try_from_bytes_alive_check_res() {
+        let payload = AliveCheckResponse {
+            source_address: [0x01, 0x02],
+        };
+
+        let payload_bytes: &[u8] = &<[u8; DOIP_ALIVE_CHECK_RESPONSE_SOURCE_LEN]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::AliveCheckResponse,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(bytes.unwrap(), DoipPayload::AliveCheckResponse(payload))
+    }
+
+    #[test]
+    fn test_try_from_bytes_entity_status_req() {
+        let payload = EntityStatusRequest {};
+
+        let payload_bytes: &[u8] = &<[u8; 0]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::EntityStatusRequest,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(bytes.unwrap(), DoipPayload::EntityStatusRequest(payload))
+    }
+
+    #[test]
+    fn test_try_from_bytes_entity_status_res() {
+        let payload = EntityStatusResponse {
+            node_type: NodeType::DoipGateway,
+            max_concurrent_sockets: [0x01],
+            currently_open_sockets: [0x02],
+            max_data_size: [0x03, 0x04, 0x05, 0x06],
+        };
+
+        let payload_bytes: &[u8] = &<[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::EntityStatusResponse,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(bytes.unwrap(), DoipPayload::EntityStatusResponse(payload))
+    }
+
+    #[test]
+    fn test_try_from_bytes_power_info_req() {
+        let payload = PowerInformationRequest {};
+
+        let payload_bytes: &[u8] = &<[u8; 0]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::PowerInformationRequest,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(
+            bytes.unwrap(),
+            DoipPayload::PowerInformationRequest(payload)
+        )
+    }
+
+    #[test]
+    fn test_try_from_bytes_power_info_res() {
+        let payload = PowerInformationResponse {
+            power_mode: PowerMode::Ready,
+        };
+
+        let payload_bytes: &[u8] = &<[u8; DOIP_POWER_MODE_LEN]>::from(payload);
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::PowerInformationResponse,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(
+            bytes.unwrap(),
+            DoipPayload::PowerInformationResponse(payload)
+        )
+    }
+
+    #[test]
+    fn test_try_from_bytes_diag_msg() {
+        let payload = DiagnosticMessage {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            message: &[0x03],
+        };
+
+        let payload_bytes: &[u8] = &<[u8; 5]>::try_from(payload).unwrap();
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::DiagnosticMessage,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(
+            bytes.unwrap(),
+            DoipPayload::DiagnosticMessage(payload.clone())
+        )
+    }
+
+    #[test]
+    fn test_try_from_bytes_diag_msg_ack() {
+        let payload = DiagnosticMessageAck {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            ack_code: DiagnosticAckCode::Acknowledged,
+        };
+
+        let payload_bytes: &[u8] = &<[u8; DOIP_DIAG_COMMON_SOURCE_LEN
+            + DOIP_DIAG_COMMON_TARGET_LEN
+            + 1]>::try_from(payload)
+        .unwrap();
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::DiagnosticMessageAck,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(
+            bytes.unwrap(),
+            DoipPayload::DiagnosticMessageAck(payload.clone())
+        )
+    }
+
+    #[test]
+    fn test_try_from_bytes_diag_msg_nack() {
+        let payload = DiagnosticMessageNack {
+            source_address: [0x01, 0x02],
+            target_address: [0x01, 0x02],
+            nack_code: DiagnosticNackCode::OutOfMemory,
+        };
+
+        let payload_bytes: &[u8] = &<[u8; DOIP_DIAG_COMMON_SOURCE_LEN
+            + DOIP_DIAG_COMMON_TARGET_LEN
+            + 1]>::try_from(payload)
+        .unwrap();
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::DiagnosticMessageNack,
+            payload_length: payload_bytes.len() as u32,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(
+            bytes.unwrap(),
+            DoipPayload::DiagnosticMessageNack(payload.clone())
+        )
+    }
+
+    #[test]
+    fn test_try_from_bytes_too_short() {
+        let payload_bytes: &[u8] = &[0u8; 2];
+
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::DiagnosticMessageNack,
+            payload_length: 0x01,
+        };
+
+        let bytes = DoipPayload::try_from((&header, payload_bytes));
+
+        assert_eq!(bytes.unwrap_err(), "Slice does not match payload length.")
     }
 
     #[test]
