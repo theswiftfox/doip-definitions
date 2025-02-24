@@ -153,6 +153,8 @@ impl<'a> TryFrom<(&DoipHeader, &'a [u8])> for DoipPayload<'a> {
 impl<'a, const N: usize> TryFrom<DoipPayload<'a>> for [u8; N] {
     type Error = &'static str;
 
+    #[allow(clippy::too_many_lines)]
+    /// Allowed due to large match statement
     fn try_from(payload: DoipPayload<'a>) -> Result<Self, Self::Error> {
         let mut buffer = [0u8; N];
 
@@ -198,7 +200,7 @@ impl<'a, const N: usize> TryFrom<DoipPayload<'a>> for [u8; N] {
             }
 
             DoipPayload::VehicleAnnouncementMessage(veh_ann_msg) => {
-                if let Some(_) = veh_ann_msg.vin_gid_sync {
+                if veh_ann_msg.vin_gid_sync.is_some() {
                     let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(veh_ann_msg);
 
                     if bytes.len() > N {
@@ -810,8 +812,6 @@ mod tests {
             nack_code: NackCode::IncorrectPatternFormat,
         };
 
-        let bytes = <[u8; 1]>::from(payload);
-
         let payload_enum = DoipPayload::GenericNack(payload);
 
         let payload_bytes = <[u8; 0]>::try_from(payload_enum);
@@ -824,8 +824,6 @@ mod tests {
             eid: [0u8; DOIP_COMMON_EID_LEN],
         };
 
-        let bytes = <[u8; DOIP_COMMON_EID_LEN]>::from(payload);
-
         let payload_enum = DoipPayload::VehicleIdentificationRequestEid(payload);
 
         let payload_bytes = <[u8; 0]>::try_from(payload_enum);
@@ -837,8 +835,6 @@ mod tests {
         let payload = VehicleIdentificationRequestVin {
             vin: [0u8; DOIP_COMMON_VIN_LEN],
         };
-
-        let bytes = <[u8; DOIP_COMMON_VIN_LEN]>::from(payload);
 
         let payload_enum = DoipPayload::VehicleIdentificationRequestVin(payload);
 
@@ -857,8 +853,6 @@ mod tests {
             vin_gid_sync: None,
         };
 
-        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::from(payload);
-
         let payload_enum = DoipPayload::VehicleAnnouncementMessage(payload);
 
         let payload_bytes = <[u8; 0]>::try_from(payload_enum);
@@ -876,8 +870,6 @@ mod tests {
             vin_gid_sync: Some(SyncStatus::VinGidSynchronized),
         };
 
-        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(payload);
-
         let payload_enum = DoipPayload::VehicleAnnouncementMessage(payload);
 
         let payload_bytes = <[u8; 0]>::try_from(payload_enum);
@@ -891,8 +883,6 @@ mod tests {
             activation_type: ActivationType::Default,
             buffer: [0x01, 0x02, 0x03, 0x04],
         };
-
-        let bytes = <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::from(payload);
 
         let payload_enum = DoipPayload::RoutingActivationRequest(payload);
 
@@ -909,8 +899,6 @@ mod tests {
             buffer: [0x01, 0x02, 0x03, 0x04],
         };
 
-        let bytes = <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(payload);
-
         let payload_enum = DoipPayload::RoutingActivationResponse(payload);
 
         let payload_bytes = <[u8; 0]>::try_from(payload_enum);
@@ -922,8 +910,6 @@ mod tests {
         let payload = AliveCheckResponse {
             source_address: [0x01, 0x02],
         };
-
-        let bytes = <[u8; DOIP_ALIVE_CHECK_RESPONSE_SOURCE_LEN]>::from(payload);
 
         let payload_enum = DoipPayload::AliveCheckResponse(payload);
 
@@ -940,8 +926,6 @@ mod tests {
             max_data_size: [0x03, 0x04, 0x05, 0x06],
         };
 
-        let bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(payload);
-
         let payload_enum = DoipPayload::EntityStatusResponse(payload);
 
         let payload_bytes = <[u8; 0]>::try_from(payload_enum);
@@ -953,8 +937,6 @@ mod tests {
         let payload = PowerInformationResponse {
             power_mode: PowerMode::Ready,
         };
-
-        let bytes = <[u8; DOIP_POWER_MODE_LEN]>::from(payload);
 
         let payload_enum = DoipPayload::PowerInformationResponse(payload);
 
@@ -983,9 +965,6 @@ mod tests {
             target_address: [0x01, 0x02],
             nack_code: DiagnosticNackCode::OutOfMemory,
         };
-
-        let bytes =
-            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(payload);
 
         let payload_enum = DoipPayload::DiagnosticMessageNack(payload);
 
