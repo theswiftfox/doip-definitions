@@ -198,27 +198,24 @@ impl<'a, const N: usize> TryFrom<DoipPayload<'a>> for [u8; N] {
             }
 
             DoipPayload::VehicleAnnouncementMessage(veh_ann_msg) => {
-                match veh_ann_msg.vin_gid_sync {
-                    Some(_) => {
-                        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(veh_ann_msg);
+                if let Some(_) = veh_ann_msg.vin_gid_sync {
+                    let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(veh_ann_msg);
 
-                        if bytes.len() > N {
-                            return Err("Buffer is too small");
-                        }
-
-                        buffer.copy_from_slice(&bytes);
-                        Ok(buffer)
+                    if bytes.len() > N {
+                        return Err("Buffer is too small");
                     }
-                    None => {
-                        let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::from(veh_ann_msg);
 
-                        if bytes.len() > N {
-                            return Err("Buffer is too small");
-                        }
+                    buffer.copy_from_slice(&bytes);
+                    Ok(buffer)
+                } else {
+                    let bytes = <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_SHORT]>::from(veh_ann_msg);
 
-                        buffer.copy_from_slice(&bytes);
-                        Ok(buffer)
+                    if bytes.len() > N {
+                        return Err("Buffer is too small");
                     }
+
+                    buffer.copy_from_slice(&bytes);
+                    Ok(buffer)
                 }
             }
 
