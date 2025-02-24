@@ -32,3 +32,32 @@ impl TryFrom<u8> for ActivationType {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::ActivationType;
+
+    #[test]
+    fn test_try_from_bytes() {
+        for n in u8::MIN..u8::MAX {
+            let activation_type = ActivationType::try_from(n);
+
+            match n {
+                0x00 => assert_eq!(activation_type.unwrap(), ActivationType::Default),
+                0x01 => assert_eq!(activation_type.unwrap(), ActivationType::WwhObd),
+                0x02 => assert_eq!(activation_type.unwrap(), ActivationType::CentralSecurity),
+                _ => assert_eq!(activation_type.unwrap_err(), "Invalid ActivationType."),
+            };
+        }
+    }
+
+    #[test]
+    fn test_from_acivation_type() {
+        let u = u8::from(ActivationType::Default);
+        assert_eq!(u, 0x00);
+        let u = u8::from(ActivationType::WwhObd);
+        assert_eq!(u, 0x01);
+        let u = u8::from(ActivationType::CentralSecurity);
+        assert_eq!(u, 0x02);
+    }
+}

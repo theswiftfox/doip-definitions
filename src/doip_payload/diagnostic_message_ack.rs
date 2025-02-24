@@ -7,7 +7,7 @@ use crate::{
 ///
 /// Containing the source and target entity addresses, as well as the `DiagnosticAckCode`
 /// for the `DiagnosticMessage` initially sent by the target entity.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct DiagnosticMessageAck {
     /// The source address of the responding `DoIP` Entity
     pub source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN],
@@ -53,13 +53,11 @@ impl TryFrom<[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]
         let (source_slice, rest) = value.split_at(DOIP_DIAG_COMMON_SOURCE_LEN);
         let (target_slice, ack_bytes) = rest.split_at(DOIP_DIAG_COMMON_TARGET_LEN);
 
-        let source_address: [u8; DOIP_DIAG_COMMON_SOURCE_LEN] = source_slice
-            .try_into()
-            .map_err(|_| "Invalid source address length")?;
+        let mut source_address = [0u8; DOIP_DIAG_COMMON_SOURCE_LEN];
+        source_address.copy_from_slice(source_slice);
 
-        let target_address: [u8; DOIP_DIAG_COMMON_TARGET_LEN] = target_slice
-            .try_into()
-            .map_err(|_| "Invalid target address length")?;
+        let mut target_address = [0u8; DOIP_DIAG_COMMON_TARGET_LEN];
+        target_address.copy_from_slice(target_slice);
 
         let ack_code = DiagnosticAckCode::try_from(ack_bytes[0])?;
 
@@ -68,5 +66,56 @@ impl TryFrom<[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]
             target_address,
             ack_code,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        definitions::{DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN},
+        payload::DiagnosticAckCode,
+    };
+
+    use super::DiagnosticMessageAck;
+
+    #[test]
+    fn test_try_from_bytes() {
+        for a in u8::MIN..=u8::MAX {
+            let message_ack = DiagnosticMessageAck::try_from([0x12, 0x34, 0x56, 0x78, a]);
+
+            match a {
+                0x00 => assert_eq!(
+                    message_ack.unwrap(),
+                    DiagnosticMessageAck {
+                        source_address: [0x12, 0x34],
+                        target_address: [0x56, 0x78],
+                        ack_code: DiagnosticAckCode::Acknowledged
+                    }
+                ),
+                _ => assert_eq!(message_ack.unwrap_err(), "Invalid DiagnosticAckCode."),
+            };
+        }
+    }
+
+    #[test]
+    fn test_from_message_ack() {
+        let a: u32 = 0x01234567;
+        let bytes = a.to_be_bytes();
+        let ack_code: u8 = 0x00;
+        let message_ack = DiagnosticMessageAck {
+            source_address: [bytes[0], bytes[1]],
+            target_address: [bytes[2], bytes[3]],
+            ack_code: DiagnosticAckCode::try_from(ack_code).unwrap(),
+        };
+
+        let message_ack_bytes =
+            <[u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1]>::from(
+                message_ack,
+            );
+
+        assert_eq!(
+            message_ack_bytes,
+            [bytes[0], bytes[1], bytes[2], bytes[3], ack_code]
+        );
     }
 }

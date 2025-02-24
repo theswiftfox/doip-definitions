@@ -55,3 +55,55 @@ impl TryFrom<u8> for DiagnosticNackCode {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::DiagnosticNackCode;
+
+    #[test]
+    fn test_exhaustive() {
+        for n in u8::MIN..u8::MAX {
+            let negative_ack_code = DiagnosticNackCode::try_from(n);
+
+            match n {
+                0x00 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::ReservedByIso13400_00
+                ),
+                0x01 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::ReservedByIso13400_01
+                ),
+                0x02 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::InvalidSourceAddress
+                ),
+                0x03 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::UnknownTargetAddress
+                ),
+                0x04 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::DiagnosticMessageTooLarge
+                ),
+                0x05 => assert_eq!(negative_ack_code.unwrap(), DiagnosticNackCode::OutOfMemory),
+                0x06 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::TargetUnreachable
+                ),
+                0x07 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::UnknownNetwork
+                ),
+                0x08 => assert_eq!(
+                    negative_ack_code.unwrap(),
+                    DiagnosticNackCode::TransportProtocolError
+                ),
+                _ => assert_eq!(
+                    negative_ack_code.unwrap_err(),
+                    "Invalid DiagnosticNackCode."
+                ),
+            };
+        }
+    }
+}

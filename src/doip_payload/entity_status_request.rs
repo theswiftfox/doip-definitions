@@ -1,5 +1,5 @@
 /// Requests the status of a `DoIP` Entity.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct EntityStatusRequest {}
 
 impl From<EntityStatusRequest> for [u8; 0] {
@@ -14,5 +14,22 @@ impl From<[u8; 0]> for EntityStatusRequest {
         match value {
             [] => EntityStatusRequest {},
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::EntityStatusRequest;
+
+    #[test]
+    fn test_from_bytes() {
+        let n = [];
+        let entity_status_request = EntityStatusRequest::from(n);
+        assert_eq!(entity_status_request, EntityStatusRequest {})
+    }
+    #[test]
+    fn test_from_entity_status_req() {
+        let u = <[u8; 0]>::from(EntityStatusRequest {});
+        assert_eq!(u, []);
     }
 }

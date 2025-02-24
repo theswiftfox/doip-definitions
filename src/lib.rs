@@ -108,8 +108,10 @@ pub struct DoipMessage<'a> {
     pub payload: DoipPayload<'a>,
 }
 
-impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
-    fn from(value: DoipMessage<'a>) -> Self {
+impl<'a, const N: usize> TryFrom<DoipMessage<'a>> for [u8; N] {
+    type Error = &'static str;
+
+    fn try_from(value: DoipMessage<'a>) -> Result<Self, Self::Error> {
         let header = <[u8; DOIP_HEADER_LEN]>::from(value.header);
 
         let mut buffer = [0u8; N];
@@ -124,88 +126,88 @@ impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
                 let bytes = <[u8; 1]>::from(generic_nack);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::VehicleIdentificationRequest(vehicle_identification_request) => {
                 let bytes = <[u8; 0]>::from(vehicle_identification_request);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::VehicleIdentificationRequestEid(vehicle_identification_request_eid) => {
                 let bytes = <[u8; DOIP_COMMON_EID_LEN]>::from(vehicle_identification_request_eid);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::VehicleIdentificationRequestVin(vehicle_identification_request_vin) => {
                 let bytes = <[u8; DOIP_COMMON_VIN_LEN]>::from(vehicle_identification_request_vin);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::VehicleAnnouncementMessage(vehicle_announcement_message) => {
                 let bytes =
                     <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(vehicle_announcement_message);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::RoutingActivationRequest(routing_activation_request) => {
                 let bytes =
                     <[u8; DOIP_ROUTING_ACTIVATION_REQ_LEN]>::from(routing_activation_request);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::RoutingActivationResponse(routing_activation_response) => {
                 let bytes =
                     <[u8; DOIP_ROUTING_ACTIVATION_RES_LEN]>::from(routing_activation_response);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::AliveCheckRequest(alive_chec_request) => {
                 let bytes = <[u8; 0]>::from(alive_chec_request);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::AliveCheckResponse(alive_chec_response) => {
                 let bytes = <[u8; DOIP_DIAG_COMMON_SOURCE_LEN]>::from(alive_chec_response);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::EntityStatusRequest(entity_status_request) => {
                 let bytes = <[u8; 0]>::from(entity_status_request);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::EntityStatusResponse(entity_status_response) => {
                 let bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(entity_status_response);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::PowerInformationRequest(power_information_request) => {
                 let bytes = <[u8; 0]>::from(power_information_request);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::PowerInformationResponse(power_information_response) => {
                 let bytes = <[u8; 1]>::from(power_information_response);
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::DiagnosticMessage(diagnostic_message) => {
-                let bytes = <[u8; N]>::from(diagnostic_message);
+                let bytes = <[u8; N]>::try_from(diagnostic_message)?;
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::DiagnosticMessageAck(diagnostic_message_ack) => {
                 let bytes =
@@ -214,7 +216,7 @@ impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
                     );
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
             DoipPayload::DiagnosticMessageNack(diagnostic_message_nack) => {
                 let bytes =
@@ -223,7 +225,7 @@ impl<'a, const N: usize> From<DoipMessage<'a>> for [u8; N] {
                     );
                 buffer[offset..].copy_from_slice(&bytes);
 
-                buffer
+                Ok(buffer)
             }
         }
     }
@@ -248,3 +250,6 @@ impl<'a> TryFrom<&'a [u8]> for DoipMessage<'a> {
         Ok(DoipMessage { header, payload })
     }
 }
+
+// TODO: Tests
+// TODO: Error Handling

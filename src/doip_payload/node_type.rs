@@ -25,7 +25,7 @@ impl TryFrom<u8> for NodeType {
         match value {
             0x00 => Ok(NodeType::DoipGateway),
             0x01 => Ok(NodeType::DoipNode),
-            _ => Err("Invalid node type."),
+            _ => Err("Invalid NodeType."),
         }
     }
 }

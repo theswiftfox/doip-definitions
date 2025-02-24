@@ -12,7 +12,7 @@ use crate::{
 /// Containing details of the target of the `EntityStatusRequest`, the
 /// `EntityStatusResponse` provides the program with details pertaining to the
 /// active status of the entity.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct EntityStatusResponse {
     /// The type of entity, either a `Gateway` or `Node`
     pub node_type: NodeType,
@@ -69,19 +69,14 @@ impl TryFrom<[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]> for EntityStatusResponse {
 
         let node_type = NodeType::try_from(node_slice[0])?;
 
-        let max_concurrent_sockets: [u8; DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN] =
-            max_concurrent_sockets_slice
-                .try_into()
-                .map_err(|_| "Invalid max concurrent sockets length")?;
+        let mut max_concurrent_sockets = [0u8; DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN];
+        max_concurrent_sockets.copy_from_slice(max_concurrent_sockets_slice);
 
-        let currently_open_sockets: [u8; DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN] =
-            currently_open_sockets_slice
-                .try_into()
-                .map_err(|_| "Invalid max concurrent sockets length")?;
+        let mut currently_open_sockets = [0u8; DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN];
+        currently_open_sockets.copy_from_slice(currently_open_sockets_slice);
 
-        let max_data_size: [u8; DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN] = max_data_size_slice
-            .try_into()
-            .map_err(|_| "Invalid max concurrent sockets length")?;
+        let mut max_data_size = [0u8; DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN];
+        max_data_size.copy_from_slice(max_data_size_slice);
 
         Ok(EntityStatusResponse {
             node_type,
@@ -89,5 +84,55 @@ impl TryFrom<[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]> for EntityStatusResponse {
             currently_open_sockets,
             max_data_size,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{definitions::DOIP_ENTITY_STATUS_RESPONSE_LEN, payload::NodeType};
+
+    use super::EntityStatusResponse;
+
+    #[test]
+    fn test_try_from_bytes() {
+        for a in u8::MIN..u8::MAX {
+            let ent_res = EntityStatusResponse::try_from([a, 0x12, 0x34, 0x56, 0x78, 0x90, 0x09]);
+
+            match a {
+                0x00 => assert_eq!(
+                    ent_res.unwrap(),
+                    EntityStatusResponse {
+                        node_type: NodeType::DoipGateway,
+                        max_concurrent_sockets: [0x12],
+                        currently_open_sockets: [0x34],
+                        max_data_size: [0x56, 0x78, 0x90, 0x09]
+                    }
+                ),
+                0x01 => assert_eq!(
+                    ent_res.unwrap(),
+                    EntityStatusResponse {
+                        node_type: NodeType::DoipNode,
+                        max_concurrent_sockets: [0x12],
+                        currently_open_sockets: [0x34],
+                        max_data_size: [0x56, 0x78, 0x90, 0x09]
+                    }
+                ),
+                _ => assert_eq!(ent_res.unwrap_err(), "Invalid NodeType."),
+            };
+        }
+    }
+
+    #[test]
+    fn test_from_entity_status_res() {
+        let ent_res = EntityStatusResponse {
+            node_type: NodeType::DoipGateway,
+            max_concurrent_sockets: [0x01],
+            currently_open_sockets: [0x02],
+            max_data_size: [0x03, 0x04, 0x05, 0x06],
+        };
+
+        let ent_res_bytes = <[u8; DOIP_ENTITY_STATUS_RESPONSE_LEN]>::from(ent_res);
+
+        assert_eq!(ent_res_bytes, [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06])
     }
 }

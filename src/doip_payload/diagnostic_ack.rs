@@ -23,3 +23,26 @@ impl TryFrom<u8> for DiagnosticAckCode {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::DiagnosticAckCode;
+
+    #[test]
+    fn test_try_from_bytes() {
+        for n in u8::MIN..u8::MAX {
+            let acknowledge_code = DiagnosticAckCode::try_from(n);
+
+            match n {
+                0x00 => assert_eq!(acknowledge_code.unwrap(), DiagnosticAckCode::Acknowledged),
+                _ => assert_eq!(acknowledge_code.unwrap_err(), "Invalid DiagnosticAckCode."),
+            };
+        }
+    }
+
+    #[test]
+    fn test_from_diagnostic_ack_code() {
+        let u = u8::from(DiagnosticAckCode::Acknowledged);
+        assert_eq!(u, 0x00);
+    }
+}

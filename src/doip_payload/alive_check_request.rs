@@ -2,7 +2,7 @@
 ///
 /// Sent with no payload, the `AliveCheckRequest` is utilised to maintain a connection
 /// to a TCP socket or to check the status of one.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct AliveCheckRequest {}
 
 impl From<AliveCheckRequest> for [u8; 0] {
@@ -17,5 +17,22 @@ impl From<[u8; 0]> for AliveCheckRequest {
         match value {
             [] => AliveCheckRequest {},
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::AliveCheckRequest;
+
+    #[test]
+    fn test_from_bytes() {
+        let n = [];
+        let alive_check_req = AliveCheckRequest::from(n);
+        assert_eq!(alive_check_req, AliveCheckRequest {})
+    }
+    #[test]
+    fn test_from_alive_check_req() {
+        let u = <[u8; 0]>::from(AliveCheckRequest {});
+        assert_eq!(u, []);
     }
 }

@@ -80,17 +80,15 @@ impl TryFrom<[u8; DOIP_HEADER_LEN]> for DoipHeader {
                 return Err("Inverse protocol version validation failed.");
             };
 
-        let payload_type_bytes: [u8; DOIP_TYPE_LEN] = payload_type_slice
-            .try_into()
-            .map_err(|_| "Invalid payload type length")?;
+        let mut payload_type_bytes = [0u8; DOIP_TYPE_LEN];
+        payload_type_bytes.copy_from_slice(payload_type_slice);
 
         let payload_type = PayloadType::try_from(payload_type_bytes)?;
 
-        let payload_length_bytes: &[u8; DOIP_LENGTH_LEN] = payload_length_slice
-            .try_into()
-            .map_err(|_| "Invalid payload length length")?;
+        let mut payload_length_bytes = [0u8; DOIP_LENGTH_LEN];
+        payload_length_bytes.copy_from_slice(payload_length_slice);
 
-        let payload_length = u32::from_be_bytes(*payload_length_bytes);
+        let payload_length = u32::from_be_bytes(payload_length_bytes);
 
         Ok(DoipHeader {
             protocol_version,
@@ -98,5 +96,76 @@ impl TryFrom<[u8; DOIP_HEADER_LEN]> for DoipHeader {
             payload_type,
             payload_length,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        definitions::DOIP_HEADER_LEN,
+        header::{PayloadType, ProtocolVersion},
+    };
+
+    use super::DoipHeader;
+
+    #[test]
+    fn test_try_from_bytes() {
+        let bytes: [u8; DOIP_HEADER_LEN] = [0x02, 0xfd, 0x00, 0x00, 0x01, 0x23, 0x45, 0x67];
+
+        let header = DoipHeader::try_from(bytes);
+
+        assert_eq!(
+            header.unwrap(),
+            DoipHeader {
+                protocol_version: ProtocolVersion::Iso13400_2012,
+                inverse_protocol_version: 0xfd,
+                payload_type: PayloadType::GenericNack,
+                payload_length: 0x01234567,
+            }
+        );
+    }
+
+    #[test]
+    fn test_try_from_bytes_fail_validation() {
+        let bytes: [u8; DOIP_HEADER_LEN] = [0x02, 0xff, 0x00, 0x00, 0x01, 0x23, 0x45, 0x67];
+
+        let header = DoipHeader::try_from(bytes);
+
+        assert_eq!(
+            header.unwrap_err(),
+            "Inverse protocol version validation failed."
+        );
+    }
+
+    #[test]
+    fn test_try_from_bytes_fail_payload_type() {
+        let bytes: [u8; DOIP_HEADER_LEN] = [0x02, 0xfd, 0x90, 0x00, 0x01, 0x23, 0x45, 0x67];
+
+        let header = DoipHeader::try_from(bytes);
+
+        assert_eq!(header.unwrap_err(), "Invalid PayloadType.");
+    }
+
+    #[test]
+    fn test_try_from_bytes_fail_protocol_version() {
+        let bytes: [u8; DOIP_HEADER_LEN] = [0x09, 0xfd, 0x00, 0x00, 0x01, 0x23, 0x45, 0x67];
+
+        let header = DoipHeader::try_from(bytes);
+
+        assert_eq!(header.unwrap_err(), "Invalid ProtocolVersion.");
+    }
+
+    #[test]
+    fn test_from_header() {
+        let header = DoipHeader {
+            protocol_version: ProtocolVersion::Iso13400_2012,
+            inverse_protocol_version: 0xfd,
+            payload_type: PayloadType::GenericNack,
+            payload_length: 0x01234567,
+        };
+
+        let bytes = <[u8; DOIP_HEADER_LEN]>::from(header);
+
+        assert_eq!(bytes, [0x02, 0xfd, 0x00, 0x00, 0x01, 0x23, 0x45, 0x67])
     }
 }
