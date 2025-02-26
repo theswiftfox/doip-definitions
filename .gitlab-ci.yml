@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - docs
 
 # Cache dependencies to speed up subsequent runs
 cache:
@@ -25,3 +26,17 @@ test:
   image: rust:latest
   script:
     - cargo test
+
+# Generate documentation
+docs:
+  stage: docs
+  image: rust:latest
+  script:
+    - cargo doc --no-deps
+    - mkdir -p public
+    - cp -r target/doc/* public/
+  artifacts:
+    paths:
+      - target/doc
+  only:
+    - main # Only generate docs for the master branch (optional, you can change this)
