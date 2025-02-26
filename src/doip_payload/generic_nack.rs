@@ -1,4 +1,4 @@
-use crate::{definitions::DOIP_GENERIC_NACK_LEN, payload::NackCode};
+use crate::payload::NackCode;
 
 /// The generic negative acknowledgement of a bad request.
 ///
