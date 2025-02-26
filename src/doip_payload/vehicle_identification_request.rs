@@ -9,31 +9,3 @@ impl From<VehicleIdentificationRequest> for [u8; 0] {
         []
     }
 }
-
-impl From<[u8; 0]> for VehicleIdentificationRequest {
-    fn from(value: [u8; 0]) -> Self {
-        match value {
-            [] => VehicleIdentificationRequest {},
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::VehicleIdentificationRequest;
-
-    #[test]
-    fn test_from_bytes() {
-        let n = [];
-        let vehicle_identification_request = VehicleIdentificationRequest::from(n);
-        assert_eq!(
-            vehicle_identification_request,
-            VehicleIdentificationRequest {}
-        )
-    }
-    #[test]
-    fn test_from_vehicle_id_req() {
-        let u = <[u8; 0]>::from(VehicleIdentificationRequest {});
-        assert_eq!(u, []);
-    }
-}
