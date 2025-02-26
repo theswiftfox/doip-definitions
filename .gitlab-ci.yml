@@ -34,7 +34,7 @@ docs:
   script:
     - cargo doc --no-deps
     - mv target/doc public
-    - echo '<meta http-equiv="refresh" content="0; url={{ LIBRARY NAME }}">' > public/index.html
+    - echo "<meta http-equiv=refresh content=0; url=doip_definitions/index.html>"" > public/index.html
   artifacts:
     paths:
       # The folder that contains the files to be exposed at the Page URL
