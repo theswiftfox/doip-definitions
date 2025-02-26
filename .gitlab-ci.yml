@@ -1,0 +1,27 @@
+stages:
+  - build
+  - test
+
+# Cache dependencies to speed up subsequent runs
+cache:
+  key: "$CI_COMMIT_REF_NAME"
+  paths:
+    - target
+    - .cargo
+
+# Build the Rust project
+build:
+  stage: build
+  image: rust:latest
+  script:
+    - cargo build --release
+  artifacts:
+    paths:
+      - target/release
+
+# Run tests for the Rust project
+test:
+  stage: test
+  image: rust:latest
+  script:
+    - cargo test
