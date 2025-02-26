@@ -1,4 +1,4 @@
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![warn(clippy::pedantic)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
@@ -81,6 +81,26 @@ pub mod payload {
     pub use super::doip_payload::vehicle_identification_request_vin::*;
 }
 
+mod utils;
+mod util {
+    pub use super::utils::alive_check_request::*;
+    pub use super::utils::alive_check_response::*;
+    pub use super::utils::diagnostic_message::*;
+    pub use super::utils::diagnostic_message_ack::*;
+    pub use super::utils::diagnostic_message_nack::*;
+    pub use super::utils::entity_status_request::*;
+    pub use super::utils::entity_status_response::*;
+    pub use super::utils::generic_nack::*;
+    pub use super::utils::power_information_request::*;
+    pub use super::utils::power_information_response::*;
+    pub use super::utils::routing_activation_request::*;
+    pub use super::utils::routing_activation_response::*;
+    pub use super::utils::vehicle_announcement_message::*;
+    pub use super::utils::vehicle_identification_request::*;
+    pub use super::utils::vehicle_identification_request_eid::*;
+    pub use super::utils::vehicle_identification_request_vin::*;
+}
+
 /// Contains all constants used in ISO-13400.
 ///
 /// The definitions found here are originally from Wireshark's repository. Wireshark
@@ -123,7 +143,7 @@ impl<'a, const N: usize> TryFrom<DoipMessage<'a>> for [u8; N] {
         // Match on the payload and convert each variant to the appropriate byte slice
         match value.payload {
             DoipPayload::GenericNack(generic_nack) => {
-                let bytes = <[u8; 1]>::from(generic_nack);
+                let bytes = <[u8; 1]>::try_from(generic_nack)?;
                 buffer[offset..].copy_from_slice(&bytes);
 
                 Ok(buffer)
@@ -147,8 +167,7 @@ impl<'a, const N: usize> TryFrom<DoipMessage<'a>> for [u8; N] {
                 Ok(buffer)
             }
             DoipPayload::VehicleAnnouncementMessage(vehicle_announcement_message) => {
-                let bytes =
-                    <[u8; DOIP_VEHICLE_ANNOUNCEMENT_LEN_LONG]>::from(vehicle_announcement_message);
+                let bytes = <[u8; N]>::try_from(vehicle_announcement_message)?;
                 buffer[offset..].copy_from_slice(&bytes);
 
                 Ok(buffer)
@@ -231,25 +250,25 @@ impl<'a, const N: usize> TryFrom<DoipMessage<'a>> for [u8; N] {
     }
 }
 
-impl<'a> TryFrom<&'a [u8]> for DoipMessage<'a> {
-    type Error = &'static str;
+// impl<'a> TryFrom<&'a [u8]> for DoipMessage<'a> {
+//     type Error = &'static str;
 
-    fn try_from(value: &'a [u8]) -> Result<Self, Self::Error> {
-        let (header_slice, rest) = value.split_at(DOIP_HEADER_LEN);
+//     fn try_from(value: &'a [u8]) -> Result<Self, Self::Error> {
+//         let (header_slice, rest) = value.split_at(DOIP_HEADER_LEN);
 
-        let header_bytes: &[u8; DOIP_HEADER_LEN] = header_slice
-            .try_into()
-            .map_err(|_| "Invalid header length")?;
+//         let header_bytes: &[u8; DOIP_HEADER_LEN] = header_slice
+//             .try_into()
+//             .map_err(|_| "Invalid header length")?;
 
-        let header: DoipHeader = DoipHeader::try_from(*header_bytes)?;
+//         let header: DoipHeader = DoipHeader::try_from(*header_bytes)?;
 
-        let (payload_slice, _) = rest.split_at(header.payload_length as usize);
+//         let (payload_slice, _) = rest.split_at(header.payload_length as usize);
 
-        let payload = DoipPayload::try_from((&header, payload_slice))?;
+//         let payload = DoipPayload::try_from((&header, payload_slice))?;
 
-        Ok(DoipMessage { header, payload })
-    }
-}
+//         Ok(DoipMessage { header, payload })
+//     }
+// }
 
 // TODO: Tests
 // TODO: Error Handling

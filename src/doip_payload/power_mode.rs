@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn test_try_from_bytes() {
-        for n in u8::MIN..u8::MAX {
+        for n in u8::MIN..=u8::MAX {
             let power_mode = PowerMode::try_from(n);
 
             match n {

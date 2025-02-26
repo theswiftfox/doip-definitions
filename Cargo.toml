@@ -10,7 +10,11 @@ license = "MIT"
 keywords = ["doip", "diagnostics", "vehicle", "standards"]
 categories = ["development-tools", "network-programming"]
 
-[profile.release]
-strip = true      # Automatically strip symbols from the binary.
-lto = true
-codegen-units = 1
+# [profile.release]
+# strip = true      # Automatically strip symbols from the binary.
+# lto = true
+# codegen-units = 1
+
+[profile.test]
+opt-level = 0
+debug = true
