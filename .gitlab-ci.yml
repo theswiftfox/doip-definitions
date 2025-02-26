@@ -33,10 +33,12 @@ docs:
   image: rust:latest
   script:
     - cargo doc --no-deps
-    - mkdir -p public
-    - cp -r target/doc/* public/
+    - mv target/doc public
   artifacts:
     paths:
-      - target/doc
-  only:
-    - main # Only generate docs for the master branch (optional, you can change this)
+      # The folder that contains the files to be exposed at the Page URL
+      - public
+  rules:
+    # This ensures that only pushes to the default branch will trigger
+    # a pages deploy
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
