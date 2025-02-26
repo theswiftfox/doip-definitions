@@ -33,7 +33,7 @@ docs:
   image: rust:latest
   script:
     - cargo doc --no-deps
-    - mv target/doc public
+    - mv target/doc/doip_definitions public
   artifacts:
     paths:
       # The folder that contains the files to be exposed at the Page URL
