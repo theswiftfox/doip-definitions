@@ -48,6 +48,8 @@ build:python:
   stage: build
   image: rust:latest
   before_script:
+    - cargo install --git https://github.com/astral-sh/uv uv
+    - uv sync
     - pip install maturin
   script:
     - maturin build --release
