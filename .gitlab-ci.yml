@@ -60,8 +60,11 @@ build:python:
     - curl https://sh.rustup.rs -sSf | sh -s -- -y
     - . "$HOME/.cargo/env"
     - uv sync --frozen
-    - uv venv
   script:
+    - source "$HOME/.cargo/env" # Ensure Rust tools are available
+    - export PATH="$HOME/.cargo/bin:$PATH" # Add Cargo binaries to PATH
+    - pip show maturin # Check if maturin is installed
+    - which maturin # Check if maturin is in the PATH
     - maturin build --release
   artifacts:
     paths:
