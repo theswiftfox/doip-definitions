@@ -36,21 +36,6 @@ test:
     - cargo test
     - cargo tarpaulin --ignore-tests --out Xml
 
-# Run tests for the Rust project
-coverage:
-  stage: test
-  image: rust:latest
-  before_script:
-    - cargo install cargo-tarpaulin -f
-  script:
-    - cargo tarpaulin
-  coverage: '/^\d+.\d+% coverage/'
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: cobertura.xml
-
 lint-code:
   stage: test
   script:
