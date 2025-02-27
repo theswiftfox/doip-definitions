@@ -102,6 +102,7 @@ pub struct DoipMessage<'a> {
 
 // Python bindings (only available when std is enabled)
 #[cfg(feature = "std")]
+#[cfg(not(test))]
 mod bindings;
 
 #[cfg(not(feature = "std"))]
