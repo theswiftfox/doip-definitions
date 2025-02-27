@@ -3,6 +3,14 @@ stages:
   - build
   - docs
 
+variables:
+  UV_VERSION: 0.6.3
+  PYTHON_VERSION: 3.11
+  BASE_LAYER: bookworm-slim
+  # GitLab CI creates a separate mountpoint for the build directory,
+  # so we need to copy instead of using hard links.
+  UV_LINK_MODE: copy
+
 # Cache dependencies to speed up subsequent runs
 cache:
   key: "$CI_COMMIT_REF_NAME"
@@ -46,9 +54,8 @@ build:rust:
 # Build the Python project
 build:python:
   stage: build
-  image: rust:latest
+  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
   before_script:
-    - cargo install --git https://github.com/astral-sh/uv uv
     - uv sync
     - pip install maturin
   script:
