@@ -63,7 +63,10 @@ build:python:
   script:
     - source "$HOME/.cargo/env" # Ensure Rust tools are available
     - export PATH="$HOME/.cargo/bin:$PATH" # Add Cargo binaries to PATH
-    - pip show maturin # Check if maturin is installed
+    - uv pip install maturin # Check if maturin is installed
+    - uv pip list # Check if maturin is installed
+    - pip install maturin # Check if maturin is installed
+    - pip list # Check if maturin is installed
     - which maturin # Check if maturin is in the PATH
     - maturin build --release
   artifacts:
