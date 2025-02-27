@@ -53,18 +53,18 @@ build:rust:
       - target/release
 
 # Build the Python extension using maturin
-build_extension:
-  image: rust:latest  # Use the official Rust image
+build:python:
+  image: rust:latest # Use the official Rust image
   stage: build
   script:
     - apt-get update && apt-get install -y python3 python3-pip python3-venv
-    - python3 -m venv $VENV_DIR  # Create a virtual environment
-    - source $VENV_DIR/bin/activate  # Activate the virtual environment
+    - python3 -m venv $VENV_DIR # Create a virtual environment
+    - source $VENV_DIR/bin/activate # Activate the virtual environment
     - pip install maturin
-    - maturin develop  # Build the Python bindings for the Rust code
+    - maturin develop # Build the Python bindings for the Rust code
   artifacts:
     paths:
-      - target/wheels/  # Store the generated wheel files
+      - target/wheels/ # Store the generated wheel files
 
 # Generate documentation
 pages:
@@ -82,3 +82,19 @@ pages:
     # This ensures that only pushes to the default branch will trigger
     # a pages deploy
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+# Build Sphinx documentation
+build_docs:
+  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER # Use the Python 3.8 image
+  stage: docs
+  script:
+    - uv venv
+    - source $VENV_DIR/Scripts/activate
+    - uv sync --frozen
+    - pip install sphinx sphinx_rtd_theme
+    - sphinx-build -b html docs/ docs/_build
+  artifacts:
+    paths:
+      - docs/_build # Store the generated documentation
+  only:
+    - main # Only build docs for the main branch (optional)
