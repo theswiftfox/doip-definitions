@@ -53,25 +53,15 @@ build:rust:
 
 # Build the Python project
 build:python:
+  image: rust:latest  # Use the official Rust image
   stage: build
-  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
-  before_script:
-    - apt-get update && apt-get install -y curl build-essential
-    - curl https://sh.rustup.rs -sSf | sh -s -- -y
-    - . "$HOME/.cargo/env"
-    - uv sync --frozen
   script:
-    - source "$HOME/.cargo/env" # Ensure Rust tools are available
-    - export PATH="$HOME/.cargo/bin:$PATH" # Add Cargo binaries to PATH
-    - uv pip install maturin # Check if maturin is installed
-    - uv pip list # Check if maturin is installed
-    - pip install maturin # Check if maturin is installed
-    - pip list # Check if maturin is installed
-    - which maturin # Check if maturin is in the PATH
-    - maturin build --release
+    - apt-get update && apt-get install -y python3 python3-pip python3-venv
+    - pip3 install maturin sphinx sphinx_rtd_theme  # Install maturin and Sphinx
+    - maturin develop  # Build the Python bindings for the Rust code
   artifacts:
     paths:
-      - target/wheels
+      - target/wheels/  # Store the generated wheel files
 
 # Generate documentation
 pages:
