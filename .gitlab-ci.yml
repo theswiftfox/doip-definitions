@@ -24,8 +24,38 @@ build:
 test:
   stage: test
   image: rust:latest
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  coverage: '/\d+\.\d+% coverage, /'
+  before_script:
+    - cargo install cargo-tarpaulin
   script:
     - cargo test
+    - cargo tarpaulin --ignore-tests --out Xml
+
+# Run tests for the Rust project
+coverage:
+  stage: test
+  image: rust:latest
+  before_script:
+    - cargo install cargo-tarpaulin -f
+  script:
+    - cargo tarpaulin
+  coverage: '/^\d+.\d+% coverage/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura.xml
+
+lint-code:
+  stage: test
+  script:
+    - rustup component add clippy
+    - cargo clippy -- -D warnings
 
 # Generate documentation
 pages:
