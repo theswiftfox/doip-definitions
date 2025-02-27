@@ -34,7 +34,7 @@ test:
     - cargo install cargo-tarpaulin
   script:
     - cargo test
-    - cargo tarpaulin --ignore-tests --out Xml
+    - cargo tarpaulin --force-clean --ignore-tests --verbose --engine llvm --fail-under=100 --out xml
 
 lint-code:
   stage: test

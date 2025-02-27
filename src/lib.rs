@@ -100,4 +100,9 @@ pub struct DoipMessage<'a> {
     pub payload: DoipPayload<'a>,
 }
 #[cfg(test)]
-mod tests {}
+mod tests {
+    #[test]
+    fn sample_test() {
+        assert!(true)
+    }
+}
