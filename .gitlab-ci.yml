@@ -54,11 +54,10 @@ build:rust:
 # Build the Python project
 build:python:
   stage: build
-  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
+  image: rust:latest
   before_script:
     - apt-get update && apt-get install -y curl
-    - curl https://sh.rustup.rs -sSf | sh -s -- -y
-    - export PATH="$HOME/.cargo/bin:$PATH" # Ensure Cargo is in the PATH
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
     - uv sync
     - pip install maturin
   script:
