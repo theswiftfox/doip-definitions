@@ -28,7 +28,7 @@ test:
     - cargo test
 
 # Generate documentation
-docs:
+pages:
   stage: docs
   image: rust:latest
   script:
