@@ -12,6 +12,7 @@ categories = ["development-tools", "network-programming"]
 
 [profile.dev]
 panic = "abort"
+features = ["std"]
 
 [profile.release]
 strip = true
@@ -33,10 +34,6 @@ pyo3 = { version = "0.23.5", features = [
   "extension-module",
 ], optional = true }
 
-
-[dev-dependencies]
-doip-definitions = { path = ".", features = ["std"] }
-
 [features]
-default = ["std"] # Default to std
+default = ["std"] # Enable std by default
 std = ["pyo3"]    # Enable std and pyo3 when building for Python

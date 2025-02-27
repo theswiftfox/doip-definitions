@@ -74,7 +74,7 @@ pub mod payload {
     pub use super::doip_payload::vehicle_identification_request_eid::*;
     pub use super::doip_payload::vehicle_identification_request_vin::*;
 }
-///
+
 /// The definitions found here are originally from Wireshark's repository. Wireshark
 /// is a packet sniffing tool with an already supported `DoIP` and UDS packet disassembly
 /// and so their definitions were lifted so to support this crate.
@@ -105,6 +105,7 @@ pub struct DoipMessage<'a> {
 #[cfg(not(test))]
 mod bindings;
 
+// Panic handler for `no_std` environments, but only when `std` is not enabled
 #[cfg(not(feature = "std"))]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
