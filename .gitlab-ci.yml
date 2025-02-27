@@ -38,6 +38,7 @@ test:
 
 lint-code:
   stage: test
+  image: rust:latest
   script:
     - rustup component add clippy
     - cargo clippy -- -D warnings
