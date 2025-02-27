@@ -10,6 +10,13 @@ cache:
     - target
     - .cargo
 
+lint-code:
+  stage: test
+  image: rust:latest
+  script:
+    - rustup component add clippy
+    - cargo clippy -- -D warnings
+
 # Build the Rust project
 build:
   stage: build
@@ -35,13 +42,6 @@ test:
   script:
     - cargo test
     - cargo tarpaulin --force-clean --ignore-tests --verbose --engine llvm --fail-under=100 --out xml
-
-lint-code:
-  stage: test
-  image: rust:latest
-  script:
-    - rustup component add clippy
-    - cargo clippy -- -D warnings
 
 # Generate documentation
 pages:

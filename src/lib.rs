@@ -1,4 +1,4 @@
-#![cfg_attr(not(test), no_std)]
+#![no_std]
 #![warn(clippy::pedantic)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
@@ -98,11 +98,4 @@ pub struct DoipMessage<'a> {
 
     /// Takes any struct implementing `DoipPayload`.
     pub payload: DoipPayload<'a>,
-}
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn sample_test() {
-        assert!(true)
-    }
 }
