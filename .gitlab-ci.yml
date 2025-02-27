@@ -1,6 +1,6 @@
 stages:
-  - build
   - test
+  - build
   - docs
 
 # Cache dependencies to speed up subsequent runs
@@ -17,16 +17,6 @@ lint-code:
     - rustup component add clippy
     - cargo clippy -- -D warnings
 
-# Build the Rust project
-build:
-  stage: build
-  image: rust:latest
-  script:
-    - cargo build --release
-  artifacts:
-    paths:
-      - target/release
-
 # Run tests for the Rust project
 test:
   stage: test
@@ -42,6 +32,28 @@ test:
   script:
     - cargo test
     - cargo tarpaulin --force-clean --ignore-tests --verbose --engine llvm --fail-under=100 --out xml
+
+# Build the Rust project
+build:rust:
+  stage: build
+  image: rust:latest
+  script:
+    - cargo build --release --no-default-features
+  artifacts:
+    paths:
+      - target/release
+
+# Build the Python project
+build:python:
+  stage: build
+  image: rust:latest
+  before_script:
+    - pip install maturin
+  script:
+    - maturin build --release
+  artifacts:
+    paths:
+      - target/wheels
 
 # Generate documentation
 pages:

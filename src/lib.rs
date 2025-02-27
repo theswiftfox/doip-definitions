@@ -1,4 +1,4 @@
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)] // Use no_std when the "std" feature is disabled
 #![warn(clippy::pedantic)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
@@ -98,4 +98,14 @@ pub struct DoipMessage<'a> {
 
     /// Takes any struct implementing `DoipPayload`.
     pub payload: DoipPayload<'a>,
+}
+
+// Python bindings (only available when std is enabled)
+#[cfg(feature = "std")]
+mod bindings;
+
+#[cfg(not(feature = "std"))]
+#[panic_handler]
+fn panic(_info: &core::panic::PanicInfo) -> ! {
+    loop {}
 }

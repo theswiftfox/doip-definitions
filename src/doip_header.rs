@@ -1,4 +1,5 @@
 use payload_type::PayloadType;
+use pyo3::pyclass;
 use version::ProtocolVersion;
 
 /// The definitive fields of a `DoIP` frame.
@@ -7,6 +8,7 @@ use version::ProtocolVersion;
 /// key field which a parser uses to identify the bytes which pertain to a `DoIP`
 /// frame.
 #[derive(Debug, PartialEq, Clone)]
+#[pyclass]
 pub struct DoipHeader {
     /// `protocol_version` acts a pair with the `inverse_protocol_version` to create
     /// a validation check to ensure the packet is constructed correctly. There

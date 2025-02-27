@@ -10,11 +10,33 @@ license = "MIT"
 keywords = ["doip", "diagnostics", "vehicle", "standards"]
 categories = ["development-tools", "network-programming"]
 
+[profile.dev]
+panic = "abort"
+
 [profile.release]
-strip = true      # Automatically strip symbols from the binary.
+strip = true
 lto = true
 codegen-units = 1
+panic = "abort"
 
 [profile.test]
 opt-level = 0
 debug = true
+
+[lib]
+name = "doip_definitions"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+pyo3 = { version = "0.23.5", features = [
+  "abi3-py311",
+  "extension-module",
+], optional = true }
+
+
+[dev-dependencies]
+doip-definitions = { path = ".", features = ["std"] }
+
+[features]
+default = ["std"] # Default to std
+std = ["pyo3"]    # Enable std and pyo3 when building for Python
