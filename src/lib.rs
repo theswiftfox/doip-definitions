@@ -99,3 +99,5 @@ pub struct DoipMessage<'a> {
     /// Takes any struct implementing `DoipPayload`.
     pub payload: DoipPayload<'a>,
 }
+#[cfg(test)]
+mod tests {}

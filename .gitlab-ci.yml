@@ -28,7 +28,7 @@ test:
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: coverage.xml
+        path: cobertura.xml
   coverage: '/\d+\.\d+% coverage, /'
   before_script:
     - cargo install cargo-tarpaulin
