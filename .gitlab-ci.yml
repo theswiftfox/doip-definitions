@@ -82,19 +82,3 @@ pages:
     # This ensures that only pushes to the default branch will trigger
     # a pages deploy
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-
-# Build Sphinx documentation
-build_docs:
-  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER # Use the Python 3.8 image
-  stage: docs
-  script:
-    - uv venv
-    - source $VENV_DIR/Scripts/activate
-    - uv sync --frozen
-    - pip install sphinx sphinx_rtd_theme
-    - sphinx-build -b html docs/ docs/_build
-  artifacts:
-    paths:
-      - docs/_build # Store the generated documentation
-  only:
-    - main # Only build docs for the main branch (optional)
