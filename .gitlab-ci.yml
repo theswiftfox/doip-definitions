@@ -51,13 +51,15 @@ build:rust:
     paths:
       - target/release
 
-# Build the Python project
-build:python:
+# Build the Python extension using maturin
+build_extension:
   image: rust:latest  # Use the official Rust image
   stage: build
   script:
     - apt-get update && apt-get install -y python3 python3-pip python3-venv
-    - pip3 install maturin sphinx sphinx_rtd_theme  # Install maturin and Sphinx
+    - python3 -m venv $VENV_DIR  # Create a virtual environment
+    - source $VENV_DIR/bin/activate  # Activate the virtual environment
+    - pip install maturin
     - maturin develop  # Build the Python bindings for the Rust code
   artifacts:
     paths:
