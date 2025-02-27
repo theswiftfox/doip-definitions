@@ -56,7 +56,7 @@ build:python:
   stage: build
   image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
   before_script:
-    - apt-get update && apt-get install -y curl
+    - apt-get update && apt-get install -y curl build-essential
     - curl https://sh.rustup.rs -sSf | sh -s -- -y
     - . "$HOME/.cargo/env"
     - uv sync --frozen
