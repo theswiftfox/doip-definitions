@@ -6,6 +6,7 @@ use crate::definitions::{
 ///
 /// Maps to `u8` values for avaiable `DoIP` protocols which are supported by this
 /// crates and ISO-13400.
+#[cfg_attr(feature = "std", pyo3::pyclass(eq, eq_int))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
 pub enum ProtocolVersion {

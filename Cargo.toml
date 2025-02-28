@@ -12,7 +12,6 @@ categories = ["development-tools", "network-programming"]
 
 [profile.dev]
 panic = "abort"
-features = ["std"]
 
 [profile.release]
 strip = true

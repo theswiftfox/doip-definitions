@@ -12,6 +12,7 @@ use crate::definitions::{
 ///
 /// `PayloadType` values map to the `u16` representing the bytes it makes up
 /// within the `DoIP` packet.
+#[cfg_attr(feature = "std", pyo3::pyclass(eq, eq_int))]
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u16)]
 pub enum PayloadType {

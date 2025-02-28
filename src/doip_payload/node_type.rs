@@ -2,6 +2,7 @@
 /// `node_type` field.
 ///
 /// Used to understand the result of a `DoIP` packet.
+#[cfg_attr(feature = "std", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
 // Node Type
 pub enum NodeType {

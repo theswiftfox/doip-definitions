@@ -7,6 +7,7 @@ use crate::{
 ///
 /// Containing the source and target entity addresses, as well as the `DiagnosticAckCode`
 /// for the `DiagnosticMessage` initially sent by the target entity.
+#[cfg_attr(feature = "std", pyo3::pyclass)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct DiagnosticMessageAck {
     /// The source address of the responding `DoIP` Entity

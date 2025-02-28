@@ -1,15 +1,12 @@
 use payload_type::PayloadType;
 use version::ProtocolVersion;
 
-#[cfg(feature = "std")]
-use pyo3::pyclass;
-
 /// The definitive fields of a `DoIP` frame.
 ///
 /// The definition of a `DoIP` frame is found in the `DoipHeader`, this contains each
 /// key field which a parser uses to identify the bytes which pertain to a `DoIP`
 /// frame.
-#[cfg_attr(feature = "std", pyclass)]
+#[cfg_attr(feature = "std", pyo3::pyclass)]
 #[derive(Debug, PartialEq, Clone)]
 pub struct DoipHeader {
     /// `protocol_version` acts a pair with the `inverse_protocol_version` to create

@@ -102,7 +102,7 @@ pub struct DoipMessage<'a> {
 
 // Python bindings (only available when std is enabled)
 #[cfg(feature = "std")]
-#[cfg(not(test))]
+#[cfg(any(not(test), rust_analyzer))]
 mod bindings;
 
 // Panic handler for `no_std` environments, but only when `std` is not enabled

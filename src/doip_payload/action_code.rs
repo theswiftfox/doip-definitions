@@ -2,6 +2,7 @@
 ///
 /// Used to inform the client of further actions which need to be taken on a
 /// `DoIP` server.
+#[cfg_attr(feature = "std", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ActionCode {
     /// No Further Action Required

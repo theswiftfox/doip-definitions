@@ -10,6 +10,7 @@ use crate::{
 /// A response to the `RoutingActivationRequest`.
 ///
 /// Contains the logical address of the recieved `DoIP` entity along with the activation code.
+#[cfg_attr(feature = "std", pyo3::pyclass)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct RoutingActivationResponse {
     /// Logical address of requested entity
