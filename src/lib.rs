@@ -90,7 +90,7 @@ mod doip_payload;
 ///
 /// Some Payload Types available in `DoIP` require a payload which is covered by
 /// `DoipPayload`.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DoipMessage<'a> {
     /// Defined by `DoipHeader`, the header supplies the information for programs
     /// to understand the payload.
