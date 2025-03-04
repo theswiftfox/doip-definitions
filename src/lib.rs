@@ -91,13 +91,13 @@ mod doip_payload;
 /// Some Payload Types available in `DoIP` require a payload which is covered by
 /// `DoipPayload`.
 #[derive(Debug, PartialEq, Clone)]
-pub struct DoipMessage<'a> {
+pub struct DoipMessage<const N: usize> {
     /// Defined by `DoipHeader`, the header supplies the information for programs
     /// to understand the payload.
     pub header: DoipHeader,
 
     /// Takes any struct implementing `DoipPayload`.
-    pub payload: DoipPayload<'a>,
+    pub payload: DoipPayload<N>,
 }
 
 // Python bindings (only available when std is enabled)
