@@ -88,6 +88,11 @@ pub mod payload {
 /// and so their definitions were lifted so to support this crate.
 pub mod definitions;
 
+/// Contains the implementations for the overarching DoIP Message structure.
+pub mod message {
+    pub use crate::doip_message::DoipMessage;
+}
+
 // endregion:      --- Modules
 
 // Python bindings (only available when std is enabled)
