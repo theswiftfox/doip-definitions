@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.5](https://github.com/samp-reston/doip-definitions/compare/v3.0.4...v3.0.5) - 2025-05-10
+
+### Fixed
+
+- fix clippy lints
+
+### Other
+
+- add std support and organise module system
+
 ## [3.0.4](https://github.com/samp-reston/doip-definitions/compare/v3.0.3...v3.0.4) - 2025-03-04
 
 ### Other
