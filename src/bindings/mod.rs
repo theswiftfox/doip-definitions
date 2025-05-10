@@ -1,5 +1,6 @@
 use pyo3::prelude::*;
 
+#[allow(clippy::wildcard_imports)]
 use crate::{
     definitions::*,
     header::{DoipHeader, PayloadType, ProtocolVersion},
@@ -25,6 +26,7 @@ fn register_header(parent_module: &Bound<'_, PyModule>) -> PyResult<()> {
     Ok(())
 }
 
+#[allow(clippy::too_many_lines)]
 fn register_definitions(parent_module: &Bound<'_, PyModule>) -> PyResult<()> {
     let child_module = PyModule::new(parent_module.py(), "definitions")?;
 

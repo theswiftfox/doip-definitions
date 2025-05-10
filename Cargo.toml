@@ -36,3 +36,9 @@ pyo3 = { version = "0.23.5", features = [
 [features]
 default = ["std"] # Enable std by default
 std = ["pyo3"]    # Enable std and pyo3 when building for Python
+
+[package.metadata]
+rust-analyzer = { checkOnSave.extraArgs = ["--check-cfg", "cfg(rust_analyzer)"] }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(rust_analyzer)"] }
