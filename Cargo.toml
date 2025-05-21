@@ -25,20 +25,18 @@ debug = true
 
 [lib]
 name = "doip_definitions"
-crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-pyo3 = { version = "0.24.2", features = [
-  "abi3-py311",
-  "extension-module",
-], optional = true }
 
 [features]
-default = ["std"] # Enable std by default
-std = ["pyo3"]    # Enable std and pyo3 when building for Python
+default = []
+no_std = []  # enable no_std
 
 [package.metadata]
-rust-analyzer = { checkOnSave.extraArgs = ["--check-cfg", "cfg(rust_analyzer)"] }
+rust-analyzer = { checkOnSave.extraArgs = [
+  "--check-cfg",
+  "cfg(rust_analyzer)",
+] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ["cfg(rust_analyzer)"] }

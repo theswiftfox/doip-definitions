@@ -54,7 +54,6 @@ pub mod sync_status;
 /// `DoipPayload` is implemented for all the `DoIP` Payload Types for the
 /// purpose of consistent encoding and decoding as well as identification within
 /// a buffer.
-#[cfg(not(feature = "std"))]
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum DoipPayload<const N: usize> {
     /// `GenericNack` variant to hold `GenericNack` struct
@@ -98,63 +97,6 @@ pub enum DoipPayload<const N: usize> {
 
     /// `DiagnosticMessage` variant to hold `DiagnosticMessage` struct
     DiagnosticMessage(DiagnosticMessage<N>),
-
-    /// `DiagnosticMessageAck` variant to hold `DiagnosticMessageAck` struct
-    DiagnosticMessageAck(DiagnosticMessageAck),
-
-    /// `DiagnosticMessageNack` variant to hold `DiagnosticMessageNack` struct
-    DiagnosticMessageNack(DiagnosticMessageNack),
-}
-
-/// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
-///
-/// `DoipPayload` is implemented for all the `DoIP` Payload Types for the
-/// purpose of consistent encoding and decoding as well as identification within
-/// a buffer.
-#[cfg(feature = "std")]
-#[derive(Debug, PartialEq, Clone)]
-pub enum DoipPayload {
-    /// `GenericNack` variant to hold `GenericNack` struct
-    GenericNack(GenericNack),
-
-    /// `VehicleIdentificationRequest` variant to hold `VehicleIdentificationRequest` struct
-    VehicleIdentificationRequest(VehicleIdentificationRequest),
-
-    /// `VehicleIdentificationRequestEid` variant to hold `VehicleIdentificationRequestEid` struct
-    VehicleIdentificationRequestEid(VehicleIdentificationRequestEid),
-
-    /// `VehicleIdentificationRequestVin` variant to hold `VehicleIdentificationRequestVin` struct
-    VehicleIdentificationRequestVin(VehicleIdentificationRequestVin),
-
-    /// `VehicleAnnouncementMessage` variant to hold `VehicleAnnouncementMessage` struct
-    VehicleAnnouncementMessage(VehicleAnnouncementMessage),
-
-    /// `RoutingActivationRequest` variant to hold `RoutingActivationRequest` struct
-    RoutingActivationRequest(RoutingActivationRequest),
-
-    /// `RoutingActivationResponse` variant to hold `RoutingActivationResponse` struct
-    RoutingActivationResponse(RoutingActivationResponse),
-
-    /// `AliveCheckRequest` variant to hold `AliveCheckRequest` struct
-    AliveCheckRequest(AliveCheckRequest),
-
-    /// `AliveCheckResponse` variant to hold `AliveCheckResponse` struct
-    AliveCheckResponse(AliveCheckResponse),
-
-    /// `EntityStatusRequest` variant to hold `EntityStatusRequest` struct
-    EntityStatusRequest(EntityStatusRequest),
-
-    /// `EntityStatusResponse` variant to hold `EntityStatusResponse` struct
-    EntityStatusResponse(EntityStatusResponse),
-
-    /// `PowerInformationRequest` variant to hold `PowerInformationRequest` struct
-    PowerInformationRequest(PowerInformationRequest),
-
-    /// `PowerInformationResponse` variant to hold `PowerInformationResponse` struct
-    PowerInformationResponse(PowerInformationResponse),
-
-    /// `DiagnosticMessage` variant to hold `DiagnosticMessage` struct
-    DiagnosticMessage(DiagnosticMessage),
 
     /// `DiagnosticMessageAck` variant to hold `DiagnosticMessageAck` struct
     DiagnosticMessageAck(DiagnosticMessageAck),

@@ -2,7 +2,7 @@
 ///
 /// This gives the status that all `DoIP` entities have synchronised their information
 /// about the VIN or GID of the vehicle.
-#[cfg_attr(feature = "std", pyo3::pyclass(eq, eq_int))]
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SyncStatus {
     /// VIN/GID Synchronized

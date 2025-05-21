@@ -1,7 +1,7 @@
 use crate::{
     definitions::{
-        DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN,
-        DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN, DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN,
+        DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN, DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN,
+        DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN,
     },
     payload::NodeType,
 };
@@ -11,7 +11,7 @@ use crate::{
 /// Containing details of the target of the `EntityStatusRequest`, the
 /// `EntityStatusResponse` provides the program with details pertaining to the
 /// active status of the entity.
-#[cfg_attr(feature = "std", pyo3::pyclass)]
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct EntityStatusResponse {
     /// The type of entity, either a `Gateway` or `Node`

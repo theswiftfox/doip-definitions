@@ -1,5 +1,4 @@
 // region:      --- Configs
-#![cfg_attr(not(feature = "std"), no_std)] // Use no_std when the "std" feature is disabled
 #![warn(clippy::pedantic)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
@@ -95,13 +94,8 @@ pub mod message {
 
 // endregion:      --- Modules
 
-// Python bindings (only available when std is enabled)
-#[cfg(feature = "std")]
-#[cfg(any(not(test), rust_analyzer))]
-mod bindings;
-
 // Panic handler for `no_std` environments, but only when `std` is not enabled
-#[cfg(not(feature = "std"))]
+#[cfg(feature = "no_std")]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
