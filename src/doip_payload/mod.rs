@@ -54,8 +54,8 @@ pub mod sync_status;
 /// `DoipPayload` is implemented for all the `DoIP` Payload Types for the
 /// purpose of consistent encoding and decoding as well as identification within
 /// a buffer.
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub enum DoipPayload<const N: usize> {
+#[derive(Debug, PartialEq, Clone)]
+pub enum DoipPayload {
     /// `GenericNack` variant to hold `GenericNack` struct
     GenericNack(GenericNack),
 
@@ -96,7 +96,7 @@ pub enum DoipPayload<const N: usize> {
     PowerInformationResponse(PowerInformationResponse),
 
     /// `DiagnosticMessage` variant to hold `DiagnosticMessage` struct
-    DiagnosticMessage(DiagnosticMessage<N>),
+    DiagnosticMessage(DiagnosticMessage),
 
     /// `DiagnosticMessageAck` variant to hold `DiagnosticMessageAck` struct
     DiagnosticMessageAck(DiagnosticMessageAck),
