@@ -9,45 +9,87 @@ pub type Result<T> = core::result::Result<T, Error>;
 /// with context.
 #[derive(Debug, From)]
 pub enum Error {
+    /// Errors when accessing a range out of the slices scope.
     OutOfBounds {
+        /// Source struct
         source: &'static str,
+
+        /// Destination variable
         variable: &'static str,
     },
+
+    /// When a slice is too small to be written to
     SliceTooSmall,
+
+    /// Invalid `ProtocolVersion`
     InvalidProtocolVersion {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `NackCode`
     InvalidNackCode {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `ActionCode`
     InvalidActionCode {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `SyncStatus`
     InvalidSyncStatus {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `ActivationCode`
     InvalidActivationCode {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `ActivationType`
     InvalidActivationType {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `NodeType`
     InvalidNodeType {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `PowerMode`
     InvalidPowerMode {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `DiagnosticNackCode`
     InvalidDiagnosticNackCode {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `DiagnosticAckCode`
     InvalidDiagnosticAckCode {
+        /// Value
         value: u8,
     },
+
+    /// Invalid `PayloadType`
     InvalidPayloadType {
+        /// Value
         value: [u8; 2],
     },
+
+    /// When the destination buffer is too small
     BufferTooSmall {
+        /// Size of the buffer
         size: usize,
     },
 

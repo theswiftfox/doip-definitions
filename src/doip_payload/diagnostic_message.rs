@@ -101,9 +101,9 @@ pub struct DiagnosticMessage {
 }
 
 #[cfg(feature = "std")]
-impl<const N: usize> From<DiagnosticMessage> for [u8; N] {
+impl From<DiagnosticMessage> for Vec<u8> {
     fn from(value: DiagnosticMessage) -> Self {
-        let mut buffer = [0u8; N];
+        let mut buffer = Vec::<u8>::new();
 
         let mut offset = 0;
 
