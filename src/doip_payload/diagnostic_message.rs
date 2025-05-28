@@ -62,6 +62,26 @@ impl<const N: usize> TryFrom<&[u8]> for DiagnosticMessage<N> {
     }
 }
 
+#[cfg(not(feature = "std"))]
+impl<const N: usize> From<DiagnosticMessage<N>> for [u8; N] {
+    fn from(value: DiagnosticMessage<N>) -> Self {
+        let mut buffer = [0u8; N];
+
+        let mut offset = 0;
+
+        buffer[offset..offset + DOIP_DIAG_COMMON_SOURCE_LEN].copy_from_slice(&value.source_address);
+        offset += DOIP_DIAG_COMMON_SOURCE_LEN;
+
+        buffer[offset..offset + DOIP_DIAG_COMMON_TARGET_LEN].copy_from_slice(&value.target_address);
+        offset += DOIP_DIAG_COMMON_TARGET_LEN;
+
+        buffer[offset..].copy_from_slice(&value.message);
+
+        buffer
+    }
+}
+
+
 /// A UDS Message to a specific target address.
 ///
 /// `DiagnosticMessage` is the most utilised payload type due to the amount of actions
@@ -80,6 +100,7 @@ pub struct DiagnosticMessage {
     pub message: Vec<u8>,
 }
 
+#[cfg(feature = "std")]
 impl<const N: usize> From<DiagnosticMessage> for [u8; N] {
     fn from(value: DiagnosticMessage) -> Self {
         let mut buffer = [0u8; N];
@@ -98,7 +119,7 @@ impl<const N: usize> From<DiagnosticMessage> for [u8; N] {
     }
 }
 
-// #[cfg(feature = "std")]
+#[cfg(feature = "std")]
 impl TryFrom<&[u8]> for DiagnosticMessage {
     type Error = Error;
 

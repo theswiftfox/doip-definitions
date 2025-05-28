@@ -115,6 +115,82 @@ pub enum DoipPayload<const N: usize> {
     DiagnosticMessageNack(DiagnosticMessageNack),
 }
 
+#[cfg(not(feature = "std"))]
+impl<const N: usize> From<DoipPayload<N>> for [u8; N] {
+    fn from(value: DoipPayload<N>) -> Self {
+        fn copy_into_buffer<const N: usize, const M: usize>(payload: [u8; M]) -> [u8; N] {
+            let mut buffer = [0u8; N];
+            buffer[..M].copy_from_slice(&payload);
+            buffer
+        }
+
+        match value {
+            DoipPayload::GenericNack(payload) => copy_into_buffer::<N, 1>(payload.into()),
+            DoipPayload::VehicleIdentificationRequest(payload) => {
+                copy_into_buffer::<N, 0>(payload.into())
+            }
+            DoipPayload::VehicleIdentificationRequestEid(payload) => {
+                copy_into_buffer::<N, DOIP_COMMON_EID_LEN>(payload.into())
+            }
+            DoipPayload::VehicleIdentificationRequestVin(payload) => {
+                copy_into_buffer::<N, DOIP_COMMON_VIN_LEN>(payload.into())
+            }
+            DoipPayload::VehicleAnnouncementMessage(payload) => copy_into_buffer::<
+                N,
+                {
+                    DOIP_COMMON_VIN_LEN
+                        + DOIP_DIAG_COMMON_SOURCE_LEN
+                        + DOIP_COMMON_EID_LEN
+                        + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
+                        + 2
+                },
+            >(payload.into()),
+            DoipPayload::RoutingActivationRequest(payload) => copy_into_buffer::<
+                N,
+                { DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN + 1 + DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN },
+            >(payload.into()),
+            DoipPayload::RoutingActivationResponse(payload) => copy_into_buffer::<
+                N,
+                {
+                    DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
+                        + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
+                        + 1
+                        + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN
+                },
+            >(payload.into()),
+            DoipPayload::AliveCheckRequest(payload) => copy_into_buffer::<N, 0>(payload.into()),
+            DoipPayload::AliveCheckResponse(payload) => {
+                copy_into_buffer::<N, DOIP_DIAG_COMMON_SOURCE_LEN>(payload.into())
+            }
+            DoipPayload::EntityStatusRequest(payload) => copy_into_buffer::<N, 0>(payload.into()),
+            DoipPayload::EntityStatusResponse(payload) => copy_into_buffer::<
+                N,
+                {
+                    1 + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN
+                        + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN
+                        + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN
+                },
+            >(payload.into()),
+            DoipPayload::PowerInformationRequest(payload) => {
+                copy_into_buffer::<N, 0>(payload.into())
+            }
+            DoipPayload::PowerInformationResponse(payload) => {
+                copy_into_buffer::<N, 1>(payload.into())
+            }
+            DoipPayload::DiagnosticMessage(payload) => copy_into_buffer::<N, N>(payload.into()),
+            DoipPayload::DiagnosticMessageAck(payload) => copy_into_buffer::<
+                N,
+                { DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1 },
+            >(payload.into()),
+            DoipPayload::DiagnosticMessageNack(payload) => copy_into_buffer::<
+                N,
+                { DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1 },
+            >(payload.into()),
+        }
+    }
+}
+
+
 /// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
 ///
 /// `DoipPayload` is implemented for all the `DoIP` Payload Types for the
@@ -172,6 +248,7 @@ pub enum DoipPayload {
     DiagnosticMessageNack(DiagnosticMessageNack),
 }
 
+#[cfg(feature = "std")]
 impl<const N: usize> From<DoipPayload> for [u8; N] {
     fn from(value: DoipPayload) -> Self {
         fn copy_into_buffer<const N: usize, const M: usize>(payload: [u8; M]) -> [u8; N] {

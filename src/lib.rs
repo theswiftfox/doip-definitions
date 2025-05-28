@@ -102,8 +102,8 @@ pub mod message {
 mod bindings;
 
 // Panic handler for `no_std` environments, but only when `std` is not enabled
-#[cfg(not(feature = "std"))]
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
+// #[cfg(not(feature = "std"))]
+// #[panic_handler]
+// fn panic(_info: &core::panic::PanicInfo) -> ! {
+//     loop {}
+// }
