@@ -22,11 +22,13 @@
 mod doip_header;
 mod doip_message;
 mod doip_payload;
-mod error;
 
 // -- Flatten
 
 // -- Public Modules
+/// Error pertaining to functionality of trait implementations.
+pub mod error;
+
 /// Contains header related logic and data structures.
 ///
 /// The `DoIP` header contains 4 items:
