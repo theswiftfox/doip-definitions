@@ -1,3 +1,5 @@
+use crate::error::{Error, Result};
+
 /// Used in Routing Activation Response for results from a Routing Activation
 /// Request.
 ///
@@ -59,4 +61,76 @@ pub enum ActivationCode {
 
     /// Activated Confirmation Required
     ActivatedConfirmationRequired = 0x11,
+}
+
+impl TryFrom<&u8> for ActivationCode {
+    type Error = Error;
+
+    fn try_from(value: &u8) -> Result<Self> {
+        let val = *value;
+
+        match val {
+            v if v == ActivationCode::DeniedUnknownSourceAddress as u8 => {
+                Ok(ActivationCode::DeniedUnknownSourceAddress)
+            }
+            v if v == ActivationCode::DeniedTCPSocketsFull as u8 => {
+                Ok(ActivationCode::DeniedTCPSocketsFull)
+            }
+            v if v == ActivationCode::DeniedTCPSocketAlreadyConnected as u8 => {
+                Ok(ActivationCode::DeniedTCPSocketAlreadyConnected)
+            }
+            v if v == ActivationCode::DeniedSourceIsAlreadyActive as u8 => {
+                Ok(ActivationCode::DeniedSourceIsAlreadyActive)
+            }
+            v if v == ActivationCode::DeniedMissingAuthentication as u8 => {
+                Ok(ActivationCode::DeniedMissingAuthentication)
+            }
+            v if v == ActivationCode::DeniedRejectedConfirmation as u8 => {
+                Ok(ActivationCode::DeniedRejectedConfirmation)
+            }
+            v if v == ActivationCode::DeniedUnsupportedRoutingActivationType as u8 => {
+                Ok(ActivationCode::DeniedUnsupportedRoutingActivationType)
+            }
+            v if v == ActivationCode::DeniedRequestEncryptedTLSConnection as u8 => {
+                Ok(ActivationCode::DeniedRequestEncryptedTLSConnection)
+            }
+            v if v == ActivationCode::ReservedByIso13400_08 as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_08)
+            }
+            v if v == ActivationCode::ReservedByIso13400_09 as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_09)
+            }
+            v if v == ActivationCode::ReservedByIso13400_0A as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_0A)
+            }
+            v if v == ActivationCode::ReservedByIso13400_0B as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_0B)
+            }
+            v if v == ActivationCode::ReservedByIso13400_0C as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_0C)
+            }
+            v if v == ActivationCode::ReservedByIso13400_0D as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_0D)
+            }
+            v if v == ActivationCode::ReservedByIso13400_0E as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_0E)
+            }
+            v if v == ActivationCode::ReservedByIso13400_0F as u8 => {
+                Ok(ActivationCode::ReservedByIso13400_0F)
+            }
+            v if v == ActivationCode::SuccessfullyActivated as u8 => {
+                Ok(ActivationCode::SuccessfullyActivated)
+            }
+            v if v == ActivationCode::ActivatedConfirmationRequired as u8 => {
+                Ok(ActivationCode::ActivatedConfirmationRequired)
+            }
+            v => Err(Error::InvalidActivationCode { value: v }),
+        }
+    }
+}
+
+impl From<ActivationCode> for u8 {
+    fn from(value: ActivationCode) -> Self {
+        value as u8
+    }
 }

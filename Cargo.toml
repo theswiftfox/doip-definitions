@@ -28,6 +28,7 @@ name = "doip_definitions"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+derive_more = { version = "2.0.1", features = ["from"] }
 pyo3 = { version = "0.24.2", features = [
   "abi3-py311",
   "extension-module",

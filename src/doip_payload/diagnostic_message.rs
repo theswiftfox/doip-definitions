@@ -1,4 +1,5 @@
 use crate::definitions::{DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN};
+use crate::error::{Error, Result};
 
 /// A UDS Message to a specific target address.
 ///
@@ -18,6 +19,49 @@ pub struct DiagnosticMessage<const N: usize> {
     pub message: [u8; N],
 }
 
+#[cfg(not(feature = "std"))]
+impl<const N: usize> TryFrom<&[u8]> for DiagnosticMessage<N> {
+    type Error = Error;
+
+    fn try_from(value: &[u8]) -> Result<Self> {
+        let mut offset = 0;
+
+        let source_address = value
+            .get(offset..DOIP_DIAG_COMMON_SOURCE_LEN)
+            .ok_or(Error::OutOfBounds {
+                source: "DiagnosticMessage",
+                variable: "Source Address",
+            })?
+            .try_into()?;
+
+        offset += DOIP_DIAG_COMMON_SOURCE_LEN;
+
+        let target_address = value
+            .get(offset..offset + DOIP_DIAG_COMMON_TARGET_LEN)
+            .ok_or(Error::OutOfBounds {
+                source: "DiagnosticMessage",
+                variable: "Target Address",
+            })?
+            .try_into()?;
+
+        offset += DOIP_DIAG_COMMON_TARGET_LEN;
+
+        let message: [u8; N] = value
+            .get(offset..)
+            .ok_or(Error::OutOfBounds {
+                source: "DiagnosticMessage",
+                variable: "Message",
+            })?
+            .try_into()?;
+
+        Ok(DiagnosticMessage {
+            source_address,
+            target_address,
+            message,
+        })
+    }
+}
+
 /// A UDS Message to a specific target address.
 ///
 /// `DiagnosticMessage` is the most utilised payload type due to the amount of actions
@@ -34,4 +78,65 @@ pub struct DiagnosticMessage {
 
     /// Message containing the UDS protocol message
     pub message: Vec<u8>,
+}
+
+impl<const N: usize> From<DiagnosticMessage> for [u8; N] {
+    fn from(value: DiagnosticMessage) -> Self {
+        let mut buffer = [0u8; N];
+
+        let mut offset = 0;
+
+        buffer[offset..offset + DOIP_DIAG_COMMON_SOURCE_LEN].copy_from_slice(&value.source_address);
+        offset += DOIP_DIAG_COMMON_SOURCE_LEN;
+
+        buffer[offset..offset + DOIP_DIAG_COMMON_TARGET_LEN].copy_from_slice(&value.target_address);
+        offset += DOIP_DIAG_COMMON_TARGET_LEN;
+
+        buffer[offset..].copy_from_slice(&value.message);
+
+        buffer
+    }
+}
+
+// #[cfg(feature = "std")]
+impl TryFrom<&[u8]> for DiagnosticMessage {
+    type Error = Error;
+
+    fn try_from(value: &[u8]) -> Result<Self> {
+        let mut offset = 0;
+
+        let source_address = value
+            .get(offset..DOIP_DIAG_COMMON_SOURCE_LEN)
+            .ok_or(Error::OutOfBounds {
+                source: "DiagnosticMessage",
+                variable: "Source Address",
+            })?
+            .try_into()?;
+
+        offset += DOIP_DIAG_COMMON_SOURCE_LEN;
+
+        let target_address = value
+            .get(offset..offset + DOIP_DIAG_COMMON_TARGET_LEN)
+            .ok_or(Error::OutOfBounds {
+                source: "DiagnosticMessage",
+                variable: "Target Address",
+            })?
+            .try_into()?;
+
+        offset += DOIP_DIAG_COMMON_TARGET_LEN;
+
+        let message = value
+            .get(offset..)
+            .ok_or(Error::OutOfBounds {
+                source: "DiagnosticMessage",
+                variable: "Message",
+            })?
+            .to_vec();
+
+        Ok(DiagnosticMessage {
+            source_address,
+            target_address,
+            message,
+        })
+    }
 }

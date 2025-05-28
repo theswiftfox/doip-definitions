@@ -1,4 +1,8 @@
-use crate::{header::DoipHeader, payload::DoipPayload};
+use crate::{
+    error::{Error, Result},
+    header::DoipHeader,
+    payload::DoipPayload,
+};
 
 /// The decoded struct of a `DoIP` packet.
 ///
@@ -34,4 +38,26 @@ pub struct DoipMessage {
 
     /// Takes any struct implementing `DoipPayload`.
     pub payload: DoipPayload,
+}
+
+impl<const N: usize> TryFrom<DoipMessage> for [u8; N] {
+    type Error = Error;
+
+    fn try_from(value: DoipMessage) -> Result<Self> {
+        let mut buffer = [0u8; N];
+
+        let payload_len = value.header.payload_length;
+
+        let header: [u8; 8] = value.header.into();
+        buffer[0..8].copy_from_slice(&header);
+
+        if N < 8 + (payload_len as usize) {
+            return Err(Error::BufferTooSmall { size: N });
+        }
+
+        let payload: [u8; N] = value.payload.into();
+        buffer[8..].copy_from_slice(&payload);
+
+        Ok(buffer)
+    }
 }

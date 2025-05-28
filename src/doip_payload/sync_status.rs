@@ -1,3 +1,5 @@
+use crate::error::{Error, Result};
+
 /// The synchronisation status of the VIN and the GID for the entity
 ///
 /// This gives the status that all `DoIP` entities have synchronised their information
@@ -55,4 +57,71 @@ pub enum SyncStatus {
 
     /// VVIN/GID Not Synchronised
     VinGidNotSynchronised = 0x10,
+}
+
+impl TryFrom<&u8> for SyncStatus {
+    type Error = Error;
+
+    fn try_from(value: &u8) -> Result<Self> {
+        let val = *value;
+
+        match val {
+            v if v == SyncStatus::VinGidSynchronized as u8 => Ok(SyncStatus::VinGidSynchronized),
+            v if v == SyncStatus::ReservedByIso13400_01 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_01)
+            }
+            v if v == SyncStatus::ReservedByIso13400_02 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_02)
+            }
+            v if v == SyncStatus::ReservedByIso13400_03 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_03)
+            }
+            v if v == SyncStatus::ReservedByIso13400_04 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_04)
+            }
+            v if v == SyncStatus::ReservedByIso13400_05 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_05)
+            }
+            v if v == SyncStatus::ReservedByIso13400_06 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_06)
+            }
+            v if v == SyncStatus::ReservedByIso13400_07 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_07)
+            }
+            v if v == SyncStatus::ReservedByIso13400_08 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_08)
+            }
+            v if v == SyncStatus::ReservedByIso13400_09 as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_09)
+            }
+            v if v == SyncStatus::ReservedByIso13400_0A as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_0A)
+            }
+            v if v == SyncStatus::ReservedByIso13400_0B as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_0B)
+            }
+            v if v == SyncStatus::ReservedByIso13400_0C as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_0C)
+            }
+            v if v == SyncStatus::ReservedByIso13400_0D as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_0D)
+            }
+            v if v == SyncStatus::ReservedByIso13400_0E as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_0E)
+            }
+            v if v == SyncStatus::ReservedByIso13400_0F as u8 => {
+                Ok(SyncStatus::ReservedByIso13400_0F)
+            }
+            v if v == SyncStatus::VinGidNotSynchronised as u8 => {
+                Ok(SyncStatus::VinGidNotSynchronised)
+            }
+            v => Err(Error::InvalidSyncStatus { value: v }),
+        }
+    }
+}
+
+impl From<SyncStatus> for u8 {
+    fn from(value: SyncStatus) -> Self {
+        value as u8
+    }
 }

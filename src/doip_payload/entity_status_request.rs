@@ -2,3 +2,15 @@
 #[cfg_attr(feature = "std", pyo3::pyclass)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct EntityStatusRequest {}
+
+impl From<EntityStatusRequest> for [u8; 0] {
+    fn from(_: EntityStatusRequest) -> Self {
+        []
+    }
+}
+
+impl From<&[u8]> for EntityStatusRequest {
+    fn from(_: &[u8]) -> Self {
+        EntityStatusRequest {}
+    }
+}

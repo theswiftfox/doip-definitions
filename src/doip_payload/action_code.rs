@@ -1,3 +1,5 @@
+use crate::error::{Error, Result};
+
 /// Used in Vehicle Announcement Messages to give next steps.
 ///
 /// Used to inform the client of further actions which need to be taken on a
@@ -55,4 +57,73 @@ pub enum ActionCode {
 
     /// Routing Activation Required
     RoutingActivationRequired = 0x10,
+}
+
+impl TryFrom<&u8> for ActionCode {
+    type Error = Error;
+
+    fn try_from(value: &u8) -> Result<Self> {
+        let val = *value;
+
+        match val {
+            v if v == ActionCode::NoFurtherActionRequired as u8 => {
+                Ok(ActionCode::NoFurtherActionRequired)
+            }
+            v if v == ActionCode::ReservedByIso13400_01 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_01)
+            }
+            v if v == ActionCode::ReservedByIso13400_02 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_02)
+            }
+            v if v == ActionCode::ReservedByIso13400_03 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_03)
+            }
+            v if v == ActionCode::ReservedByIso13400_04 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_04)
+            }
+            v if v == ActionCode::ReservedByIso13400_05 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_05)
+            }
+            v if v == ActionCode::ReservedByIso13400_06 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_06)
+            }
+            v if v == ActionCode::ReservedByIso13400_07 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_07)
+            }
+            v if v == ActionCode::ReservedByIso13400_08 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_08)
+            }
+            v if v == ActionCode::ReservedByIso13400_09 as u8 => {
+                Ok(ActionCode::ReservedByIso13400_09)
+            }
+            v if v == ActionCode::ReservedByIso13400_0A as u8 => {
+                Ok(ActionCode::ReservedByIso13400_0A)
+            }
+            v if v == ActionCode::ReservedByIso13400_0B as u8 => {
+                Ok(ActionCode::ReservedByIso13400_0B)
+            }
+            v if v == ActionCode::ReservedByIso13400_0C as u8 => {
+                Ok(ActionCode::ReservedByIso13400_0C)
+            }
+            v if v == ActionCode::ReservedByIso13400_0D as u8 => {
+                Ok(ActionCode::ReservedByIso13400_0D)
+            }
+            v if v == ActionCode::ReservedByIso13400_0E as u8 => {
+                Ok(ActionCode::ReservedByIso13400_0E)
+            }
+            v if v == ActionCode::ReservedByIso13400_0F as u8 => {
+                Ok(ActionCode::ReservedByIso13400_0F)
+            }
+            v if v == ActionCode::RoutingActivationRequired as u8 => {
+                Ok(ActionCode::RoutingActivationRequired)
+            }
+            v => Err(Error::InvalidActionCode { value: v }),
+        }
+    }
+}
+
+impl From<ActionCode> for u8 {
+    fn from(value: ActionCode) -> Self {
+        value as u8
+    }
 }

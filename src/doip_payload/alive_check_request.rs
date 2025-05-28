@@ -5,3 +5,15 @@
 #[cfg_attr(feature = "std", pyo3::pyclass)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct AliveCheckRequest {}
+
+impl From<AliveCheckRequest> for [u8; 0] {
+    fn from(_: AliveCheckRequest) -> Self {
+        []
+    }
+}
+
+impl From<&[u8]> for AliveCheckRequest {
+    fn from(_: &[u8]) -> Self {
+        AliveCheckRequest {}
+    }
+}

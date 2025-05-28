@@ -1,3 +1,5 @@
+use crate::error::{Error, Result};
+
 /// Used in `GenericNack`, `NackCode` provides the possible errors causing the
 /// NACK.
 ///
@@ -20,4 +22,29 @@ pub enum NackCode {
 
     /// Invalid Payload Length
     InvalidPayloadLength = 0x04,
+}
+
+impl From<NackCode> for u8 {
+    fn from(value: NackCode) -> Self {
+        value as u8
+    }
+}
+
+impl TryFrom<&u8> for NackCode {
+    type Error = Error;
+
+    fn try_from(value: &u8) -> Result<Self> {
+        let val = *value;
+
+        match val {
+            v if v == NackCode::IncorrectPatternFormat as u8 => {
+                Ok(NackCode::IncorrectPatternFormat)
+            }
+            v if v == NackCode::UnknownPayloadType as u8 => Ok(NackCode::UnknownPayloadType),
+            v if v == NackCode::MessageTooLarge as u8 => Ok(NackCode::MessageTooLarge),
+            v if v == NackCode::OutOfMemory as u8 => Ok(NackCode::OutOfMemory),
+            v if v == NackCode::InvalidPayloadLength as u8 => Ok(NackCode::InvalidPayloadLength),
+            v => Err(Error::InvalidNackCode { value: v }),
+        }
+    }
 }

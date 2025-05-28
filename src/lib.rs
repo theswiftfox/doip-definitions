@@ -22,6 +22,7 @@
 mod doip_header;
 mod doip_message;
 mod doip_payload;
+mod error;
 
 // -- Flatten
 
