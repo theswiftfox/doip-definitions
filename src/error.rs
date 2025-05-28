@@ -53,6 +53,7 @@ pub enum Error {
 
     /// Derived implementation for standard library IO errors
     #[from]
+    #[allow(clippy::enum_variant_names)]
     SliceError(core::array::TryFromSliceError),
 }
 

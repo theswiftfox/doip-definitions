@@ -44,10 +44,12 @@ impl From<EntityStatusResponse>
         buffer[offset] = value.node_type.into();
         offset += 1;
 
+        #[allow(clippy::range_plus_one)]
         buffer[offset..offset + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN]
             .copy_from_slice(&value.max_concurrent_sockets);
         offset += DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN;
 
+        #[allow(clippy::range_plus_one)]
         buffer[offset..offset + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN]
             .copy_from_slice(&value.currently_open_sockets);
         offset += DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN;
@@ -83,6 +85,7 @@ impl TryFrom<&[u8]> for EntityStatusResponse {
 
         offset += DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN;
 
+        #[allow(clippy::range_plus_one)]
         let currently_open_sockets = value
             .get(offset..offset + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN)
             .ok_or(Error::OutOfBounds {
