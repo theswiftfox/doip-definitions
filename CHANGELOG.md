@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.8](https://github.com/samp-reston/doip-definitions/compare/v3.0.7...v3.0.8) - 2025-05-28
+
+### Other
+
+- build from and tryfrom traits, todo: test and validate
+
 ## [3.0.7](https://github.com/samp-reston/doip-definitions/compare/v3.0.6...v3.0.7) - 2025-05-10
 
 ### Other
