@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.12](https://github.com/samp-reston/doip-definitions/compare/v3.0.11...v3.0.12) - 2025-06-26
+
+### Other
+
+- create sized buffer in Vec from DiagnosticMessage
+- decouple pyo3 bindings from std feature
+
 ## [3.0.11](https://github.com/samp-reston/doip-definitions/compare/v3.0.10...v3.0.11) - 2025-05-28
 
 ### Other
