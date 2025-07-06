@@ -115,15 +115,15 @@ pub mod message {
 /// ## Example Usage
 ///
 /// ```rust
-/// use doip_definitions::DoipMessageBuilder;
-/// use doip_definitions::payloads::AliveCheckRequest;
-/// use doip_definitions::DoipPayload;
+/// use doip_definitions::builder::DoipMessageBuilder;
+/// use doip_definitions::payload::AliveCheckRequest;
+/// use doip_definitions::payload::DoipPayload;
+/// use doip_definitions::header::ProtocolVersion;
 ///
 /// let message = DoipMessageBuilder::new()
-///     .protocol_version(ProtocolVersion::V1)
+///     .protocol_version(ProtocolVersion::Iso13400_2012)
 ///     .payload(DoipPayload::AliveCheckRequest(AliveCheckRequest {}))
-///     .build()
-///     .expect("Failed to build DoIP message");
+///     .build();
 /// ```
 ///
 /// ## Message Types Supported

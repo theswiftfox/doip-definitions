@@ -43,6 +43,7 @@ impl DoipMessageBuilder {
     ///
     /// # Example
     /// ```
+    /// use doip_definitions::builder::DoipMessageBuilder;
     /// let builder = DoipMessageBuilder::new();
     /// ```
     #[must_use]
@@ -62,7 +63,9 @@ impl DoipMessageBuilder {
     ///
     /// # Example
     /// ```
-    /// let builder = DoipMessageBuilder::new().protocol_version(ProtocolVersion::V1);
+    /// use doip_definitions::builder::DoipMessageBuilder;
+    /// use doip_definitions::header::ProtocolVersion;
+    /// let builder = DoipMessageBuilder::new().protocol_version(ProtocolVersion::Iso13400_2012);\
     /// ```
     #[must_use]
     pub fn protocol_version(mut self, protocol_version: impl Into<ProtocolVersion>) -> Self {
@@ -89,6 +92,11 @@ impl DoipMessageBuilder {
     ///
     /// # Example
     /// ```
+    /// use doip_definitions::builder::DoipMessageBuilder;
+    /// use doip_definitions::header::PayloadType;
+    /// use doip_definitions::payload::AliveCheckRequest;
+    /// use doip_definitions::payload::DoipPayload;
+    ///
     /// let builder = DoipMessageBuilder::new().payload(DoipPayload::AliveCheckRequest(AliveCheckRequest {}));
     /// ```
     #[must_use]
@@ -161,8 +169,13 @@ impl DoipMessageBuilder {
     ///
     /// # Example
     /// ```
+    /// use doip_definitions::builder::DoipMessageBuilder;
+    /// use doip_definitions::header::PayloadType;
+    /// use doip_definitions::payload::AliveCheckRequest;
+    /// use doip_definitions::payload::DoipPayload;
+    ///
     /// let message = DoipMessageBuilder::new()
-    ///     .payload(DoipPayload::AliveCheckRequest(...))
+    ///     .payload(DoipPayload::AliveCheckRequest(AliveCheckRequest {}))
     ///     .build();
     /// ```
     #[must_use]
