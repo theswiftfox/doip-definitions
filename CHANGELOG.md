@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.13](https://github.com/samp-reston/doip-definitions/compare/v3.0.12...v3.0.13) - 2025-07-06
+
+### Fixed
+
+- fix doc tests
+- make clippy happy
+
+### Other
+
+- remove weird char
+- complete builder pattern
+- begin builder pattern development
+
 ## [3.0.12](https://github.com/samp-reston/doip-definitions/compare/v3.0.11...v3.0.12) - 2025-06-26
 
 ### Other
