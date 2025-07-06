@@ -1,40 +1,166 @@
-use crate::error::{Error, Result};
-use crate::payload;
+use crate::error::Result;
+use crate::header::{PayloadType, ProtocolVersion};
+use crate::payload::AliveCheckRequest;
 use crate::{header::DoipHeader, message::DoipMessage, payload::DoipPayload};
 
+/// A builder for constructing `DoipMessage` instances with specified headers and payloads.
+///
+/// This struct provides a fluent interface to configure the protocol version,
+/// payload, and automatically populate corresponding header fields based on the payload.
 #[derive(Default, Debug)]
 pub struct DoipMessageBuilder {
-    header: Option<DoipHeader>,
-    payload: Option<DoipPayload>,
+    /// The header portion of the DoIP message, containing metadata like protocol version and payload type.
+    header: DoipHeader,
+
+    /// The payload content of the DoIP message, which varies depending on the message type.
+    payload: DoipPayload,
+}
+
+impl Default for DoipPayload {
+    /// Provides a default payload of type `AliveCheckRequest`.
+    fn default() -> Self {
+        DoipPayload::AliveCheckRequest(AliveCheckRequest {})
+    }
+}
+
+impl Default for DoipHeader {
+    /// Constructs a default `DoipHeader` with:
+    /// - Protocol version set to `DefaultValue`
+    /// - Inverse protocol version calculated automatically
+    /// - Payload type set to `AliveCheckRequest`
+    /// - Payload length initialized to 0
+    fn default() -> Self {
+        Self {
+            protocol_version: ProtocolVersion::DefaultValue,
+            inverse_protocol_version: !(ProtocolVersion::DefaultValue as u8),
+            payload_type: PayloadType::AliveCheckRequest,
+            payload_length: Default::default(),
+        }
+    }
 }
 
 impl DoipMessageBuilder {
+    /// Creates a new `DoipMessageBuilder` instance using the default header and payload.
+    ///
+    /// # Example
+    /// ```
+    /// let builder = DoipMessageBuilder::new();
+    /// ```
     pub fn new() -> Self {
         DoipMessageBuilder::default()
     }
 
-    pub fn header(&mut self, header: impl Into<DoipHeader>) -> &mut Self {
-        self.header = Some(header.into());
+    /// Sets the protocol version in the header and updates the inverse protocol version accordingly.
+    ///
+    /// # Arguments
+    ///
+    /// * `protocol_version` - An object that can be converted into a `ProtocolVersion`.
+    ///
+    /// # Returns
+    ///
+    /// The updated builder instance for chaining.
+    ///
+    /// # Example
+    /// ```
+    /// let builder = DoipMessageBuilder::new().protocol_version(ProtocolVersion::V1);
+    /// ```
+    pub fn protocol_version(mut self, protocol_version: impl Into<ProtocolVersion>) -> Self {
+        self.header.protocol_version = protocol_version.into();
+        self.header.inverse_protocol_version = !(self.header.protocol_version as u8);
         self
     }
 
-    pub fn payload(&mut self, payload: impl Into<DoipPayload>) -> &mut Self {
-        self.payload = Some(payload.into());
+    /// Sets the payload of the message and updates the header's payload type and length accordingly.
+    ///
+    /// # Arguments
+    ///
+    /// * `payload` - An object that can be converted into a `DoipPayload`.
+    ///
+    /// # Returns
+    ///
+    /// The updated builder instance for chaining.
+    ///
+    /// # Example
+    /// ```
+    /// let builder = DoipMessageBuilder::new().payload(DoipPayload::AliveCheckRequest(...));
+    /// ```
+    pub fn payload(mut self, payload: impl Into<DoipPayload>) -> Self {
+        self.payload = payload.into();
+
+        let (payload_type, size) = match self.payload {
+            DoipPayload::GenericNack(ref pay) => (PayloadType::GenericNack, size_of_val(pay)),
+            DoipPayload::VehicleIdentificationRequest(ref pay) => {
+                (PayloadType::VehicleIdentificationRequest, size_of_val(pay))
+            }
+            DoipPayload::VehicleIdentificationRequestEid(ref pay) => (
+                PayloadType::VehicleIdentificationRequestEid,
+                size_of_val(pay),
+            ),
+            DoipPayload::VehicleIdentificationRequestVin(ref pay) => (
+                PayloadType::VehicleIdentificationRequestVin,
+                size_of_val(pay),
+            ),
+            DoipPayload::VehicleAnnouncementMessage(ref pay) => {
+                (PayloadType::VehicleAnnouncementMessage, size_of_val(pay))
+            }
+            DoipPayload::RoutingActivationRequest(ref pay) => {
+                (PayloadType::RoutingActivationRequest, size_of_val(pay))
+            }
+            DoipPayload::RoutingActivationResponse(ref pay) => {
+                (PayloadType::RoutingActivationResponse, size_of_val(pay))
+            }
+            DoipPayload::AliveCheckRequest(ref pay) => {
+                (PayloadType::AliveCheckRequest, size_of_val(pay))
+            }
+            DoipPayload::AliveCheckResponse(ref pay) => {
+                (PayloadType::AliveCheckResponse, size_of_val(pay))
+            }
+            DoipPayload::EntityStatusRequest(ref pay) => {
+                (PayloadType::EntityStatusRequest, size_of_val(pay))
+            }
+            DoipPayload::EntityStatusResponse(ref pay) => {
+                (PayloadType::EntityStatusResponse, size_of_val(pay))
+            }
+            DoipPayload::PowerInformationRequest(ref pay) => {
+                (PayloadType::PowerInformationRequest, size_of_val(pay))
+            }
+            DoipPayload::PowerInformationResponse(ref pay) => {
+                (PayloadType::PowerInformationResponse, size_of_val(pay))
+            }
+            DoipPayload::DiagnosticMessage(ref pay) => {
+                (PayloadType::DiagnosticMessage, size_of_val(pay))
+            }
+            DoipPayload::DiagnosticMessageAck(ref pay) => {
+                (PayloadType::DiagnosticMessageAck, size_of_val(pay))
+            }
+            DoipPayload::DiagnosticMessageNack(ref pay) => {
+                (PayloadType::DiagnosticMessageNack, size_of_val(pay))
+            }
+        };
+
+        self.header.payload_type = payload_type;
+        self.header.payload_length = size as u32;
+
         self
     }
 
-    fn build(&self) -> Result<DoipMessage> {
-        let Some(header) = self.header.as_ref() else {
-            return Err(Error::HeaderNotBuilt);
-        };
-
-        let Some(payload) = self.payload.as_ref() else {
-            return Err(Error::PayloadNotBuilt);
-        };
-
+    /// Finalizes the builder and returns the constructed `DoipMessage`.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing the fully constructed `DoipMessage` on success.
+    ///
+    /// # Example
+    /// ```
+    /// let message = DoipMessageBuilder::new()
+    ///     .payload(DoipPayload::AliveCheckRequest(...))
+    ///     .build()
+    ///     .unwrap();
+    /// ```
+    pub fn build(self) -> Result<DoipMessage> {
         Ok(DoipMessage {
-            header: header.clone(),
-            payload: payload.clone(),
+            header: self.header,
+            payload: self.payload,
         })
     }
 }

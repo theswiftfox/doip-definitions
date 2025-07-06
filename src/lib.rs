@@ -96,6 +96,55 @@ pub mod message {
     pub use crate::doip_message::DoipMessage;
 }
 
+/// # DoIP Message Builder Library
+///
+/// This module provides functionality to construct Diagnostic over IP (DoIP) messages used in automotive diagnostics
+/// in accordance with ISO 13400 standards.
+///
+/// It includes a builder pattern implementation (`DoipMessageBuilder`) that allows users to configure and construct
+/// valid `DoipMessage` instances with appropriate protocol headers and payloads. The builder ensures that metadata
+/// such as payload type and length are automatically derived from the provided payload content.
+///
+/// ## Features
+///
+/// - Typed and extensible `DoipPayload` variants for different message types
+/// - Automatic header field population (e.g., inverse protocol version, payload length)
+/// - Fluent, chainable builder interface
+/// - Safe default values for rapid prototyping
+///
+/// ## Example Usage
+///
+/// ```rust
+/// use your_crate_name::DoipMessageBuilder;
+/// use your_crate_name::payloads::AliveCheckRequest;
+/// use your_crate_name::DoipPayload;
+///
+/// let message = DoipMessageBuilder::new()
+///     .protocol_version(ProtocolVersion::V1)
+///     .payload(DoipPayload::AliveCheckRequest(AliveCheckRequest {}))
+///     .build()
+///     .expect("Failed to build DoIP message");
+/// ```
+///
+/// ## Message Types Supported
+///
+/// - Alive Check (Request/Response)
+/// - Vehicle Identification (Generic, EID, VIN)
+/// - Vehicle Announcement
+/// - Routing Activation (Request/Response)
+/// - Entity Status (Request/Response)
+/// - Power Information (Request/Response)
+/// - Diagnostic Messages (Standard, ACK, NACK)
+///
+/// ## Intended Usage
+///
+/// This library is designed for integration into vehicle diagnostics applications,
+/// simulation tools, or any system that needs to generate or send valid DoIP messages over a network.
+///
+/// ## Compliance
+///
+/// The design adheres to the structural requirements defined in ISO 13400 and aims to maintain
+/// compatibility with UDS-on-IP diagnostic stacks and OEM-specific DoIP implementations.
 #[cfg(feature = "builder")]
 pub mod builder;
 
