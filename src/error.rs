@@ -9,6 +9,11 @@ pub type Result<T> = core::result::Result<T, Error>;
 /// with context.
 #[derive(Debug, From)]
 pub enum Error {
+    /// When utilising the builder pattern the payload is not present
+    PayloadNotBuilt,
+    /// When utilising the builder pattern the header is not present
+    HeaderNotBuilt,
+
     /// Errors when accessing a range out of the slices scope.
     OutOfBounds {
         /// Source struct
