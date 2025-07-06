@@ -96,6 +96,9 @@ pub mod message {
     pub use crate::doip_message::DoipMessage;
 }
 
+#[cfg(feature = "builder")]
+pub mod builder;
+
 // endregion:      --- Modules
 
 // Python bindings (only available when python-bindings is enabled)
