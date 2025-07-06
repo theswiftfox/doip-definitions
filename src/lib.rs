@@ -96,9 +96,9 @@ pub mod message {
     pub use crate::doip_message::DoipMessage;
 }
 
-/// # DoIP Message Builder Library
+/// # `DoIP` Message Builder Library
 ///
-/// This module provides functionality to construct Diagnostic over IP (DoIP) messages used in automotive diagnostics
+/// This module provides functionality to construct Diagnostic over IP (`DoIP`) messages used in automotive diagnostics
 /// in accordance with ISO 13400 standards.
 ///
 /// It includes a builder pattern implementation (`DoipMessageBuilder`) that allows users to configure and construct
@@ -115,9 +115,9 @@ pub mod message {
 /// ## Example Usage
 ///
 /// ```rust
-/// use your_crate_name::DoipMessageBuilder;
-/// use your_crate_name::payloads::AliveCheckRequest;
-/// use your_crate_name::DoipPayload;
+/// use doip_definitions::DoipMessageBuilder;
+/// use doip_definitions::payloads::AliveCheckRequest;
+/// use doip_definitions::DoipPayload;
 ///
 /// let message = DoipMessageBuilder::new()
 ///     .protocol_version(ProtocolVersion::V1)
@@ -139,12 +139,12 @@ pub mod message {
 /// ## Intended Usage
 ///
 /// This library is designed for integration into vehicle diagnostics applications,
-/// simulation tools, or any system that needs to generate or send valid DoIP messages over a network.
+/// simulation tools, or any system that needs to generate or send valid `DoIP` messages over a network.
 ///
 /// ## Compliance
 ///
 /// The design adheres to the structural requirements defined in ISO 13400 and aims to maintain
-/// compatibility with UDS-on-IP diagnostic stacks and OEM-specific DoIP implementations.
+/// compatibility with UDS-on-IP diagnostic stacks and OEM-specific `DoIP` implementations.
 #[cfg(feature = "builder")]
 pub mod builder;
 

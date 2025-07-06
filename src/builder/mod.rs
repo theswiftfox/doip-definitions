@@ -1,4 +1,3 @@
-use crate::error::Result;
 use crate::header::{PayloadType, ProtocolVersion};
 use crate::payload::AliveCheckRequest;
 use crate::{header::DoipHeader, message::DoipMessage, payload::DoipPayload};
@@ -9,10 +8,10 @@ use crate::{header::DoipHeader, message::DoipMessage, payload::DoipPayload};
 /// payload, and automatically populate corresponding header fields based on the payload.
 #[derive(Default, Debug)]
 pub struct DoipMessageBuilder {
-    /// The header portion of the DoIP message, containing metadata like protocol version and payload type.
+    /// The header portion of the `DoIP` message, containing metadata like protocol version and payload type.
     header: DoipHeader,
 
-    /// The payload content of the DoIP message, which varies depending on the message type.
+    /// The payload content of the `DoIP` message, which varies depending on the message type.
     payload: DoipPayload,
 }
 
@@ -46,6 +45,7 @@ impl DoipMessageBuilder {
     /// ```
     /// let builder = DoipMessageBuilder::new();
     /// ```
+    #[must_use]
     pub fn new() -> Self {
         DoipMessageBuilder::default()
     }
@@ -64,6 +64,7 @@ impl DoipMessageBuilder {
     /// ```
     /// let builder = DoipMessageBuilder::new().protocol_version(ProtocolVersion::V1);
     /// ```
+    #[must_use]
     pub fn protocol_version(mut self, protocol_version: impl Into<ProtocolVersion>) -> Self {
         self.header.protocol_version = protocol_version.into();
         self.header.inverse_protocol_version = !(self.header.protocol_version as u8);
@@ -80,10 +81,17 @@ impl DoipMessageBuilder {
     ///
     /// The updated builder instance for chaining.
     ///
+    /// # Panics
+    ///
+    /// This method panics if the size of the provided payload cannot be determined using
+    /// [`core::mem::size_of_val`]—which may occur if dynamically sized types or trait objects
+    /// are passed in as payload components.
+    ///
     /// # Example
     /// ```
-    /// let builder = DoipMessageBuilder::new().payload(DoipPayload::AliveCheckRequest(...));
+    /// let builder = DoipMessageBuilder::new().payload(DoipPayload::AliveCheckRequest(AliveCheckRequest {}));
     /// ```
+    #[must_use]
     pub fn payload(mut self, payload: impl Into<DoipPayload>) -> Self {
         self.payload = payload.into();
 
@@ -139,7 +147,8 @@ impl DoipMessageBuilder {
         };
 
         self.header.payload_type = payload_type;
-        self.header.payload_length = size as u32;
+        self.header.payload_length =
+            u32::try_from(size).expect("This should never be larger than u32.");
 
         self
     }
@@ -148,19 +157,19 @@ impl DoipMessageBuilder {
     ///
     /// # Returns
     ///
-    /// A `Result` containing the fully constructed `DoipMessage` on success.
+    /// The fully constructed `DoipMessage`.
     ///
     /// # Example
     /// ```
     /// let message = DoipMessageBuilder::new()
     ///     .payload(DoipPayload::AliveCheckRequest(...))
-    ///     .build()
-    ///     .unwrap();
+    ///     .build();
     /// ```
-    pub fn build(self) -> Result<DoipMessage> {
-        Ok(DoipMessage {
+    #[must_use]
+    pub fn build(self) -> DoipMessage {
+        DoipMessage {
             header: self.header,
             payload: self.payload,
-        })
+        }
     }
 }
