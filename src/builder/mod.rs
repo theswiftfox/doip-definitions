@@ -65,7 +65,7 @@ impl DoipMessageBuilder {
     /// ```
     /// use doip_definitions::builder::DoipMessageBuilder;
     /// use doip_definitions::header::ProtocolVersion;
-    /// let builder = DoipMessageBuilder::new().protocol_version(ProtocolVersion::Iso13400_2012);\
+    /// let builder = DoipMessageBuilder::new().protocol_version(ProtocolVersion::Iso13400_2012);
     /// ```
     #[must_use]
     pub fn protocol_version(mut self, protocol_version: impl Into<ProtocolVersion>) -> Self {
