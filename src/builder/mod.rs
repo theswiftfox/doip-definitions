@@ -1,3 +1,5 @@
+use std::mem::size_of_val;
+
 use crate::header::{PayloadType, ProtocolVersion};
 use crate::payload::AliveCheckRequest;
 use crate::{header::DoipHeader, message::DoipMessage, payload::DoipPayload};
