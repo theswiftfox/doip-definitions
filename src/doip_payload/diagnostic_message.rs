@@ -1,4 +1,5 @@
 use crate::definitions::{DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN};
+use crate::doip_payload::SizedDoipPayload;
 use crate::error::{Error, Result};
 
 /// A UDS Message to a specific target address.
@@ -162,5 +163,12 @@ impl TryFrom<&[u8]> for DiagnosticMessage {
             target_address,
             message,
         })
+    }
+}
+
+impl SizedDoipPayload for DiagnosticMessage {
+    /// Returns the size of the `DiagnosticMessage` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + self.message.len()
     }
 }

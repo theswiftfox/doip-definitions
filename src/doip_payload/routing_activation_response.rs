@@ -3,6 +3,7 @@ use crate::{
         DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN, DOIP_ROUTING_ACTIVATION_RES_ISO_LEN,
         DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN,
     },
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::ActivationCode,
 };
@@ -107,5 +108,15 @@ impl TryFrom<&[u8]> for RoutingActivationResponse {
             activation_code,
             buffer,
         })
+    }
+}
+
+impl SizedDoipPayload for RoutingActivationResponse {
+    /// Returns the size of the `RoutingActivationResponse` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_ROUTING_ACTIVATION_RES_TESTER_LEN
+            + DOIP_ROUTING_ACTIVATION_RES_ENTITY_LEN
+            + std::mem::size_of::<ActivationCode>()
+            + DOIP_ROUTING_ACTIVATION_RES_ISO_LEN
     }
 }

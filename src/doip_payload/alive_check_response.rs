@@ -1,4 +1,5 @@
 use crate::definitions::DOIP_DIAG_COMMON_SOURCE_LEN;
+use crate::doip_payload::SizedDoipPayload;
 use crate::error::{Error, Result};
 
 /// Confirmation of the `AliveCheckRequest`.
@@ -30,5 +31,12 @@ impl TryFrom<&[u8]> for AliveCheckResponse {
             .try_into()?;
 
         Ok(AliveCheckResponse { source_address })
+    }
+}
+
+impl SizedDoipPayload for AliveCheckResponse {
+    /// Returns the size of the `AliveCheckResponse` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_DIAG_COMMON_SOURCE_LEN
     }
 }

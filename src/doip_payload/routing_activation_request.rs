@@ -1,5 +1,6 @@
 use crate::{
     definitions::{DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN, DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN},
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::ActivationType,
 };
@@ -82,5 +83,14 @@ impl TryFrom<&[u8]> for RoutingActivationRequest {
             activation_type,
             buffer,
         })
+    }
+}
+
+impl SizedDoipPayload for RoutingActivationRequest {
+    /// Returns the size of the `RoutingActivationRequest` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_ROUTING_ACTIVATION_REQ_SRC_LEN
+            + std::mem::size_of::<ActivationType>()
+            + DOIP_ROUTING_ACTIVATION_REQ_ISO_LEN
     }
 }

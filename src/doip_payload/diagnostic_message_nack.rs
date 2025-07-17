@@ -1,5 +1,6 @@
 use crate::{
     definitions::{DOIP_DIAG_COMMON_SOURCE_LEN, DOIP_DIAG_COMMON_TARGET_LEN},
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::DiagnosticNackCode,
 };
@@ -19,6 +20,7 @@ pub struct DiagnosticMessageNack {
 
     /// The negative acknowledgement code
     pub nack_code: DiagnosticNackCode,
+    // todo: Add a field for the previous message that was NACKed?
 }
 
 impl From<DiagnosticMessageNack>
@@ -80,5 +82,14 @@ impl TryFrom<&[u8]> for DiagnosticMessageNack {
             target_address,
             nack_code,
         })
+    }
+}
+
+impl SizedDoipPayload for DiagnosticMessageNack {
+    /// Returns the size of the `DiagnosticMessageNack` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_DIAG_COMMON_SOURCE_LEN
+            + DOIP_DIAG_COMMON_TARGET_LEN
+            + std::mem::size_of::<DiagnosticNackCode>()
     }
 }

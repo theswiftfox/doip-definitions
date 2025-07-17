@@ -6,6 +6,7 @@ use crate::error::{Error, Result};
 /// scenarios.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 pub enum ActivationType {
     /// Default
     Default = 0x00,

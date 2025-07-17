@@ -1,4 +1,5 @@
 use crate::{
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::PowerMode,
 };
@@ -34,5 +35,12 @@ impl TryFrom<&[u8]> for PowerInformationResponse {
         let power_mode = PowerMode::try_from(power_mode_slice)?;
 
         Ok(PowerInformationResponse { power_mode })
+    }
+}
+
+impl SizedDoipPayload for PowerInformationResponse {
+    /// Returns the size of the `PowerInformationResponse` payload in bytes.
+    fn size_of(&self) -> usize {
+        std::mem::size_of::<PowerMode>()
     }
 }

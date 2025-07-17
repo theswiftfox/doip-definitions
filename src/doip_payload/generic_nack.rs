@@ -1,4 +1,5 @@
 use crate::{
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::NackCode,
 };
@@ -33,5 +34,12 @@ impl TryFrom<&[u8]> for GenericNack {
         let nack_code = NackCode::try_from(nack_code_slice)?;
 
         Ok(GenericNack { nack_code })
+    }
+}
+
+impl SizedDoipPayload for GenericNack {
+    /// Returns the size of the `GenericNack` payload in bytes.
+    fn size_of(&self) -> usize {
+        std::mem::size_of::<NackCode>()
     }
 }

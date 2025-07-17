@@ -1,3 +1,4 @@
+use crate::doip_payload::SizedDoipPayload;
 use crate::header::{PayloadType, ProtocolVersion};
 use crate::payload::AliveCheckRequest;
 use crate::{header::DoipHeader, message::DoipMessage, payload::DoipPayload};
@@ -103,56 +104,40 @@ impl DoipMessageBuilder {
     pub fn payload(mut self, payload: impl Into<DoipPayload>) -> Self {
         self.payload = payload.into();
 
-        let (payload_type, size) = match self.payload {
-            DoipPayload::GenericNack(ref pay) => (PayloadType::GenericNack, size_of_val(pay)),
-            DoipPayload::VehicleIdentificationRequest(ref pay) => {
-                (PayloadType::VehicleIdentificationRequest, size_of_val(pay))
+        let payload_type = match self.payload {
+            DoipPayload::GenericNack(ref _pay) => PayloadType::GenericNack,
+            DoipPayload::VehicleIdentificationRequest(ref _pay) => {
+                PayloadType::VehicleIdentificationRequest
             }
-            DoipPayload::VehicleIdentificationRequestEid(ref pay) => (
-                PayloadType::VehicleIdentificationRequestEid,
-                size_of_val(pay),
-            ),
-            DoipPayload::VehicleIdentificationRequestVin(ref pay) => (
-                PayloadType::VehicleIdentificationRequestVin,
-                size_of_val(pay),
-            ),
-            DoipPayload::VehicleAnnouncementMessage(ref pay) => {
-                (PayloadType::VehicleAnnouncementMessage, size_of_val(pay))
+            DoipPayload::VehicleIdentificationRequestEid(ref _pay) => {
+                PayloadType::VehicleIdentificationRequestEid
             }
-            DoipPayload::RoutingActivationRequest(ref pay) => {
-                (PayloadType::RoutingActivationRequest, size_of_val(pay))
+            DoipPayload::VehicleIdentificationRequestVin(ref _pay) => {
+                PayloadType::VehicleIdentificationRequestVin
             }
-            DoipPayload::RoutingActivationResponse(ref pay) => {
-                (PayloadType::RoutingActivationResponse, size_of_val(pay))
+            DoipPayload::VehicleAnnouncementMessage(ref _pay) => {
+                PayloadType::VehicleAnnouncementMessage
             }
-            DoipPayload::AliveCheckRequest(ref pay) => {
-                (PayloadType::AliveCheckRequest, size_of_val(pay))
+            DoipPayload::RoutingActivationRequest(ref _pay) => {
+                PayloadType::RoutingActivationRequest
             }
-            DoipPayload::AliveCheckResponse(ref pay) => {
-                (PayloadType::AliveCheckResponse, size_of_val(pay))
+            DoipPayload::RoutingActivationResponse(ref _pay) => {
+                PayloadType::RoutingActivationResponse
             }
-            DoipPayload::EntityStatusRequest(ref pay) => {
-                (PayloadType::EntityStatusRequest, size_of_val(pay))
+            DoipPayload::AliveCheckRequest(ref _pay) => PayloadType::AliveCheckRequest,
+            DoipPayload::AliveCheckResponse(ref _pay) => PayloadType::AliveCheckResponse,
+            DoipPayload::EntityStatusRequest(ref _pay) => PayloadType::EntityStatusRequest,
+            DoipPayload::EntityStatusResponse(ref _pay) => PayloadType::EntityStatusResponse,
+            DoipPayload::PowerInformationRequest(ref _pay) => PayloadType::PowerInformationRequest,
+            DoipPayload::PowerInformationResponse(ref _pay) => {
+                PayloadType::PowerInformationResponse
             }
-            DoipPayload::EntityStatusResponse(ref pay) => {
-                (PayloadType::EntityStatusResponse, size_of_val(pay))
-            }
-            DoipPayload::PowerInformationRequest(ref pay) => {
-                (PayloadType::PowerInformationRequest, size_of_val(pay))
-            }
-            DoipPayload::PowerInformationResponse(ref pay) => {
-                (PayloadType::PowerInformationResponse, size_of_val(pay))
-            }
-            DoipPayload::DiagnosticMessage(ref pay) => {
-                (PayloadType::DiagnosticMessage, size_of_val(pay))
-            }
-            DoipPayload::DiagnosticMessageAck(ref pay) => {
-                (PayloadType::DiagnosticMessageAck, size_of_val(pay))
-            }
-            DoipPayload::DiagnosticMessageNack(ref pay) => {
-                (PayloadType::DiagnosticMessageNack, size_of_val(pay))
-            }
+            DoipPayload::DiagnosticMessage(ref _pay) => PayloadType::DiagnosticMessage,
+            DoipPayload::DiagnosticMessageAck(ref _pay) => PayloadType::DiagnosticMessageAck,
+            DoipPayload::DiagnosticMessageNack(ref _pay) => PayloadType::DiagnosticMessageNack,
         };
+
+        let size = self.payload.size_of();
 
         self.header.payload_type = payload_type;
         self.header.payload_length =
@@ -183,6 +168,30 @@ impl DoipMessageBuilder {
         DoipMessage {
             header: self.header,
             payload: self.payload,
+        }
+    }
+}
+
+impl SizedDoipPayload for DoipPayload {
+    /// Returns the size of the `DoipPayload` in bytes.
+    fn size_of(&self) -> usize {
+        match self {
+            DoipPayload::GenericNack(payload) => payload.size_of(),
+            DoipPayload::VehicleIdentificationRequest(payload) => payload.size_of(),
+            DoipPayload::VehicleIdentificationRequestEid(payload) => payload.size_of(),
+            DoipPayload::VehicleIdentificationRequestVin(payload) => payload.size_of(),
+            DoipPayload::VehicleAnnouncementMessage(payload) => payload.size_of(),
+            DoipPayload::RoutingActivationRequest(payload) => payload.size_of(),
+            DoipPayload::RoutingActivationResponse(payload) => payload.size_of(),
+            DoipPayload::AliveCheckRequest(payload) => payload.size_of(),
+            DoipPayload::AliveCheckResponse(payload) => payload.size_of(),
+            DoipPayload::EntityStatusRequest(payload) => payload.size_of(),
+            DoipPayload::EntityStatusResponse(payload) => payload.size_of(),
+            DoipPayload::PowerInformationRequest(payload) => payload.size_of(),
+            DoipPayload::PowerInformationResponse(payload) => payload.size_of(),
+            DoipPayload::DiagnosticMessage(payload) => payload.size_of(),
+            DoipPayload::DiagnosticMessageAck(payload) => payload.size_of(),
+            DoipPayload::DiagnosticMessageNack(payload) => payload.size_of(),
         }
     }
 }

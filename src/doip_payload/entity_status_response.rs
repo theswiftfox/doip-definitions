@@ -3,6 +3,7 @@ use crate::{
         DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN, DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN,
         DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN,
     },
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::NodeType,
 };
@@ -110,5 +111,15 @@ impl TryFrom<&[u8]> for EntityStatusResponse {
             currently_open_sockets,
             max_data_size,
         })
+    }
+}
+
+impl SizedDoipPayload for EntityStatusResponse {
+    /// Returns the size of the `EntityStatusResponse` payload in bytes.
+    fn size_of(&self) -> usize {
+        std::mem::size_of::<NodeType>()
+            + DOIP_ENTITY_STATUS_RESPONSE_MCTS_LEN // Max Concurrent Sockets
+            + DOIP_ENTITY_STATUS_RESPONSE_NCTS_LEN // Currently Open Sockets
+            + DOIP_ENTITY_STATUS_RESPONSE_MDS_LEN // Max Data Size
     }
 }

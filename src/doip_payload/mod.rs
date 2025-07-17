@@ -58,6 +58,12 @@ pub mod sync_status;
 
 // endregion:      --- Modules
 
+/// todo
+pub trait SizedDoipPayload {
+    /// Returns the size of the payload in bytes.
+    fn size_of(&self) -> usize;
+}
+
 /// Implemented across `DoIP` Payload Types for consistent encoding and decoding of buffers.
 ///
 /// `DoipPayload` is implemented for all the `DoIP` Payload Types for the
@@ -325,11 +331,7 @@ impl From<DoipPayload> for Vec<u8> {
                 payload.to_vec()
             }
             DoipPayload::DiagnosticMessage(payload) => payload.into(),
-            DoipPayload::DiagnosticMessageAck(payload) => {
-                let payload: [u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1] =
-                    payload.into();
-                payload.to_vec()
-            }
+            DoipPayload::DiagnosticMessageAck(payload) => payload.into(),
             DoipPayload::DiagnosticMessageNack(payload) => {
                 let payload: [u8; DOIP_DIAG_COMMON_SOURCE_LEN + DOIP_DIAG_COMMON_TARGET_LEN + 1] =
                     payload.into();
