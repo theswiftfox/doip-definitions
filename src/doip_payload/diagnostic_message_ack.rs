@@ -82,3 +82,14 @@ impl TryFrom<&[u8]> for DiagnosticMessageAck {
         })
     }
 }
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_ack_size_is_correct() {
+        let sizea = size_of::<[u8; crate::definitions::DOIP_DIAG_COMMON_SOURCE_LEN]>();
+        assert_eq!(sizea, crate::definitions::DOIP_DIAG_COMMON_SOURCE_LEN);
+        let sizeb = size_of::<crate::payload::DiagnosticAckCode>();
+        assert_eq!(sizeb, size_of::<u8>());
+    }
+}

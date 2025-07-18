@@ -5,6 +5,7 @@ use crate::error::{Error, Result};
 /// Positive acknowledgement codes from the result of a sent `DiagnosticMessage`.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 pub enum DiagnosticAckCode {
     /// Acknowledged
     Acknowledged = 0x00,
