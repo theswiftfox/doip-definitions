@@ -3,6 +3,7 @@ use crate::{
         DOIP_COMMON_EID_LEN, DOIP_COMMON_VIN_LEN, DOIP_DIAG_COMMON_SOURCE_LEN,
         DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN,
     },
+    doip_payload::SizedDoipPayload,
     error::{Error, Result},
     payload::{ActionCode, SyncStatus},
 };
@@ -198,5 +199,19 @@ impl TryFrom<&[u8]> for VehicleAnnouncementMessage {
             further_action,
             vin_gid_sync,
         })
+    }
+}
+
+impl SizedDoipPayload for VehicleAnnouncementMessage {
+    /// Returns the size of the `VehicleAnnouncementMessage` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_COMMON_VIN_LEN
+            + DOIP_DIAG_COMMON_SOURCE_LEN
+            + DOIP_COMMON_EID_LEN
+            + DOIP_VEHICLE_ANNOUNCEMENT_GID_LEN
+            + std::mem::size_of::<ActionCode>()
+            + self
+                .vin_gid_sync
+                .map_or(0, |_| std::mem::size_of::<SyncStatus>())
     }
 }

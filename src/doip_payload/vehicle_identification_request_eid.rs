@@ -1,4 +1,5 @@
 use crate::definitions::DOIP_COMMON_EID_LEN;
+use crate::doip_payload::SizedDoipPayload;
 use crate::error::{Error, Result};
 
 /// Requests a `VehicleAnnouncementMessage` from entities with the same EID
@@ -30,5 +31,12 @@ impl TryFrom<&[u8]> for VehicleIdentificationRequestEid {
             .try_into()?;
 
         Ok(VehicleIdentificationRequestEid { eid })
+    }
+}
+
+impl SizedDoipPayload for VehicleIdentificationRequestEid {
+    /// Returns the size of the `VehicleIdentificationRequestEid` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_COMMON_EID_LEN
     }
 }

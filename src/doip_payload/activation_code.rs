@@ -7,6 +7,7 @@ use crate::error::{Error, Result};
 /// which logical route to take.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 pub enum ActivationCode {
     /// Denied Unknown Source Address
     DeniedUnknownSourceAddress = 0x00,

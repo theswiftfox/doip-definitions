@@ -4,6 +4,7 @@ use crate::error::{Error, Result};
 /// the `DoIP` entity can be.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 pub enum PowerMode {
     /// Not Ready
     NotReady = 0x00,

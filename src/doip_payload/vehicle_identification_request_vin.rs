@@ -1,4 +1,5 @@
 use crate::definitions::DOIP_COMMON_VIN_LEN;
+use crate::doip_payload::SizedDoipPayload;
 use crate::error::{Error, Result};
 
 /// Requests a `VehicleAnnouncementMessage` from entities with the same VIN
@@ -30,5 +31,12 @@ impl TryFrom<&[u8]> for VehicleIdentificationRequestVin {
             .try_into()?;
 
         Ok(VehicleIdentificationRequestVin { vin })
+    }
+}
+
+impl SizedDoipPayload for VehicleIdentificationRequestVin {
+    /// Returns the size of the `VehicleIdentificationRequestVin` payload in bytes.
+    fn size_of(&self) -> usize {
+        DOIP_COMMON_VIN_LEN
     }
 }

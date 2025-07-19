@@ -6,6 +6,7 @@ use crate::error::{Error, Result};
 /// Used to understand the result of a `DoIP` packet.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 // Node Type
 pub enum NodeType {
     /// Doip Gateway

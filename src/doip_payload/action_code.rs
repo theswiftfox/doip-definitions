@@ -6,6 +6,7 @@ use crate::error::{Error, Result};
 /// `DoIP` server.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 pub enum ActionCode {
     /// No Further Action Required
     NoFurtherActionRequired = 0x00,

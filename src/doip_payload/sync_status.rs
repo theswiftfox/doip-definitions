@@ -6,6 +6,7 @@ use crate::error::{Error, Result};
 /// about the VIN or GID of the vehicle.
 #[cfg_attr(feature = "python-bindings", pyo3::pyclass(eq, eq_int))]
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(u8)]
 pub enum SyncStatus {
     /// VIN/GID Synchronized
     VinGidSynchronized = 0x00,
